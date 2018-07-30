@@ -7,10 +7,12 @@
     <select id="findPageBreakByCondition" parameterType="studyQuery"
             resultType="studyDto">
         SELECT
-        <if test="study_type!=null">
-
-        </if>
-        s.*, au.author_name, au.author_img
+        s.id, s.classify, s.content, s.cover_plan_url, s.create_at, s.create_by, s.grade,
+        s.introduce, s.status, s.study_type, s.subject, s.title, s.update_at, s.update_by,
+        s.video_time, s.video_url, s.author,
+        (SELECT COUNT(id) FROM study_user WHERE type = 1 AND study_id = s.id) AS praise,
+        (SELECT COUNT(id) FROM study_user WHERE type = 2 AND study_id = s.id) AS collect,
+        au.author_name, au.author_img
         FROM
         study s
         inner join author au
