@@ -12,5 +12,9 @@ import com.ptteng.academy.business.query.ModuleQuery;
  **/
 
 public interface ManageService {
+    /* 根据条件查询模块 */
     PageInfo<ModuleDto> findModuleByName(ModuleQuery moduleQuery);
+
+    ModuleDto findModuleById(Long id);
+
 }

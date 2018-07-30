@@ -6,6 +6,7 @@ import com.ptteng.academy.business.dto.ModuleDto;
 import com.ptteng.academy.business.query.ModuleQuery;
 import com.ptteng.academy.persistence.mapper.ModuleMapper;
 import com.ptteng.academy.service.ManageService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -22,10 +23,18 @@ public class ManageServiceImpl implements ManageService {
     @Resource
     private ModuleMapper moduleMapper;
 
+    private ModuleDto moduleDto;
+
     @Override
     public PageInfo<ModuleDto> findModuleByName(ModuleQuery moduleQuery) {
         PageHelper.startPage(10,10);
         List<ModuleDto> moduleDtoList = moduleMapper.findModuleByName(moduleQuery);
         return new PageInfo<ModuleDto>(moduleDtoList);
+    }
+
+    @Override
+    public ModuleDto findModuleById(Long id) {
+        BeanUtils.copyProperties(moduleMapper.selectByPrimaryKey(id), moduleDto);
+        return moduleDto;
     }
 }
