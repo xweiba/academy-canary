@@ -1,5 +1,6 @@
 package com.ptteng.academy;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
 import com.ptteng.academy.business.dto.StudyDto;
 import com.ptteng.academy.business.query.ArticleQuery;
@@ -119,7 +120,7 @@ public class testApplicationTest {
     @Test
     public void findMould() {
         ModuleQuery moduleQuery = new ModuleQuery();
-        moduleQuery.setModuleName("用户管理");
-        System.out.println(moduleMapper.findModuleByName(moduleQuery));
+        // moduleQuery.setModuleName("用户管理");
+        System.out.println(JSONObject.toJSONString(moduleMapper.findModuleByName(moduleQuery)));
     }
 }

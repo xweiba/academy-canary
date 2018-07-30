@@ -85,8 +85,8 @@ canary:
     # 黑名单(非必填)， list
     denyIps[0]:
   qiniu:
-    access_key_id: S8HhVb1aRhnNkcnqssRCrntmbmNGkG8QhRtGZ1Jbsdsd
-    access_key_secret: 9at-Gqm1JZlWLVUp3i2c6SYz-zzlAyGnm0nGRi6odsdsa
+    access_key_id: S8HhVb1aRhnNkcnqssRCrntmbmNGkG8QhRtGZ1Jb
+    access_key_secret: 9at-Gqm1JZlWLVUp3i2c6SYz-zzlAyGnm0nGRi6o
     bucket_name: image
     # 地区
     endpoint: zone0
