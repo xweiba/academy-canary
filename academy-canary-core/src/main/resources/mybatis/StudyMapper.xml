@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.ptteng.academy.persistence.mapper.StudyMapper">
+    <!--数组下标 #{a[0]} -->
+    <select id="findPageBreakByCondition" parameterType="studyQuery"
+            resultType="studyDto">
+        SELECT
+        <if test="study_type!=null">
+
+        </if>
+        s.*, au.author_name, au.author_img
+        FROM
+        study s
+        inner join author au
+        ON s.author = au.id
+        WHERE 1=1
+        <if test="study_type==null">
+            AND s.study_type = 99
+        </if>
+        <if test="study_type!=null">
+            AND s.study_type = #{study_type}
+            <if test="title!='' and title!=null">
+                AND s.title LIKE '%${title}%'
+            </if>
+            <if test="author!='' and author!=null">
+                AND au.author_name LIKE '%${author}%'
+            </if>
+            <if test="id!=0 and id!=null">
+                AND s.id = #{id}
+            </if>
+            <if test="classify!=0 and classify!=null">
+                AND s.classify = #{classify}
+            </if>
+            <if test="grade!=0 and grade!=null">
+                AND s.grade = #{grade}
+            </if>
+            <if test="subject!=0 and subject!=null">
+                AND s.subject = #{subject}
+            </if>
+            <if test="praise!=null">
+                AND s.praise >= ${praise[0]} AND ${praise[1]} >= s.praise
+            </if>
+            <if test="collect!=null">
+                AND s.collect >= ${collect[0]} AND ${collect[1]} >= s.collect
+            </if>
+            <if test="status!=null">
+                AND s.status = #{status}
+            </if>
+        </if>
+        order by s.update_at
+    </select>
+    <update id="updateStatusById" parameterType="Long">
+        UPDATE study s SET s.status = !s.status WHERE id = #{id}
+    </update>
+
+    <select id="findVideoByVideoQuery" parameterType="homeVideoQuery"
+            resultType="homeVideoListDto">
+        SELECT
+        sd.id, sd.title, sd.praise, sd.collect, sd.create_at, sd.introduce,
+        sd.cover_plan_url, sd.video_time,
+        au.author_img, au.author_name
+        FROM
+        study sd
+        inner join author au
+        ON sd.author = au.id
+        WHERE 1 = 1
+        <if test="study_type==null">
+            AND sd.study_type = 99
+        </if>
+        <if test="study_type!=null">
+            AND sd.study_type = #{study_type}
+            <if test="grade!=0 and grade!=null">
+                AND sd.grade = #{grade}
+            </if>
+            <if test="subject!=0 and subject!=null">
+                AND sd.subject = #{subject}
+            </if>
+            <if test="classify!=0 and classify!=null">
+                AND sd.classify = #{classify}
+            </if>
+        </if>
+        order by sd.update_at ASC
+    </select>
+
+    <select id="findBannerByQuery" parameterType="homeVideoQuery"
+            resultType="homeBannerListDto">
+        SELECT
+        sd.id, sd.cover_plan_url, sd.title
+        FROM
+        study sd
+        WHERE 1 = 1
+        <if test="study_type==null">
+            AND sd.study_type = 99
+        </if>
+        <if test="study_type!=null">
+            AND sd.study_type = #{study_type}
+            <if test="grade!=0 and grade!=null">
+                AND sd.grade = #{grade}
+            </if>
+            <if test="subject!=0 and subject!=null">
+                AND sd.subject = #{subject}
+            </if>
+            <if test="classify!=0 and classify!=null">
+                AND sd.classify = #{classify}
+            </if>
+        </if>
+        <!-- 取点赞数最高的8条数据 -->
+        order by sd.praise DESC
+    </select>
+
+    <!-- 查询视频或文章详情 -->
+    <select id="findStudyByQuery" resultType="homeVideoDto">
+        SELECT
+            st.id,
+            st.title,
+            st.create_at,
+            au.author_name,
+            st.introduce,
+            st.video_url,
+            st.video_time,
+            st.cover_plan_url,
+            st.content,
+            (SELECT COUNT(id) FROM study_user WHERE type = 1 AND study_id = st.id) AS praise,
+            (SELECT COUNT(id) FROM study_user WHERE type = 2 AND study_id = st.id) AS collect,
+
+            IF (
+                COUNT(spraise_s.study_id) > 0,
+                1,
+                0
+            ) AS praise_status,
+
+            IF (
+                COUNT(scollect_s.study_id) > 0,
+                1,
+                0
+            ) AS collect_status
+        FROM
+            study st
+            LEFT OUTER JOIN author au ON au.id = st.author
+            LEFT OUTER JOIN study_user spraise_s ON spraise_s.type = 1
+            AND spraise_s.user_id = #{userId}
+            LEFT OUTER JOIN study_user scollect_s ON scollect_s.type = 2
+            AND scollect_s.user_id = #{userId}
+        WHERE
+          st.id = #{studyId}
+    </select>
+
+    <!-- 查询点赞记录 -->
+    <select id="findPraiseCollectStatus" resultType="Boolean">
+        SELECT IF (
+                COUNT(study_id) > 0,
+                1,
+                0
+            ) FROM study_user WHERE study_id = #{studyId} AND user_id = #{userId} AND type = #{type}
+    </select>
+
+    <!-- 视频点赞或收藏 -->
+    <select id="insertPraiseCollectStatus">
+        INSERT INTO study_user(study_id,user_id,type,create_at) VALUES
+        (#{studyId},#{userId},#{type},#{create_at})
+    </select>
+
+    <!-- 取消视频点赞或收藏 -->
+    <delete id="deletePraiseCollectStatus">
+        DELETE FROM study_user WHERE study_id = #{studyId} AND user_id = #{userId} AND type = #{type}
+    </delete>
+</mapper>
