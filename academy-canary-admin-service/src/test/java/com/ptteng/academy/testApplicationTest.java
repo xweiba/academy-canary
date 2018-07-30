@@ -130,8 +130,8 @@ public class testApplicationTest {
         System.out.println(JSONObject.toJSONString(manageService.findModuleByName(moduleQuery)));
     }
 
-    @Test
+    /*@Test
     public void findMouldById() {
         System.out.println(JSONObject.toJSONString(manageService.findModuleById(1L)));
-    }
+    }*/
 }
