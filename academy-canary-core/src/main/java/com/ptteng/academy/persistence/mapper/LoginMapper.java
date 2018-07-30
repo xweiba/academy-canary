@@ -21,6 +21,6 @@ public interface LoginMapper extends BaseMapper<Signin> {
     @Select("SELECT user.head_img_url,user.nick_name,user.bean,signin.* FROM user,signin WHERE user.id = signin.id AND user.id = #{id}")
     UserDto findUserById(@Param("id")Long id);
 
-    @Select("SELECT * FROM Signin WHERE id = #{id}")
+    @Select("SELECT * FROM signin WHERE id = #{id}")
     Signin findSiginById(Long id);
 }
