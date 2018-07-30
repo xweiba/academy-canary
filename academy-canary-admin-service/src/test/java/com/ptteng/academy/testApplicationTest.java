@@ -3,6 +3,7 @@ package com.ptteng.academy;
 import com.github.pagehelper.PageInfo;
 import com.ptteng.academy.business.dto.StudyDto;
 import com.ptteng.academy.business.query.ArticleQuery;
+import com.ptteng.academy.business.query.ModuleQuery;
 import com.ptteng.academy.business.query.StudyQuery;
 import com.ptteng.academy.business.query.VideoQuery;
 import com.ptteng.academy.framework.config.TaskConfig;
@@ -117,6 +118,8 @@ public class testApplicationTest {
 
     @Test
     public void findMould() {
-        System.out.println(moduleMapper.findModuleByName("用户管理"));
+        ModuleQuery moduleQuery = new ModuleQuery();
+        moduleQuery.setModuleName("用户管理");
+        System.out.println(moduleMapper.findModuleByName(moduleQuery));
     }
 }

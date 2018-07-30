@@ -7,8 +7,8 @@
             parameterType="moduleQuery">
         SELECT mo.id, mo.name, mo.parent_id, mo.module_url, mo.create_at,
         mo.create_by FROM module mo WHERE 1 = 1
-        <if test="name !='' and name!=null ">
-            AND mo.name = #{name}
+        <if test="moduleName !='' and moduleName!=null ">
+            AND mo.name = #{moduleName}
         </if>
         <if test="id !=0 and id!=null ">
             AND mo.id = #{id}

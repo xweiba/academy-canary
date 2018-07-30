@@ -25,8 +25,7 @@ public class ManageServiceImpl implements ManageService {
     @Override
     public PageInfo<ModuleDto> findModuleByName(ModuleQuery moduleQuery) {
         PageHelper.startPage(10,10);
-        List<ModuleDto> moduleDtoList = moduleMapper.findModuleByName(moduleQuery.getModuleName());
-
+        List<ModuleDto> moduleDtoList = moduleMapper.findModuleByName(moduleQuery);
         return new PageInfo<ModuleDto>(moduleDtoList);
     }
 }
