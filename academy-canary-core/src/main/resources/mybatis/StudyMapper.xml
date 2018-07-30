@@ -59,8 +59,8 @@
             resultType="homeVideoListDto">
         SELECT
         sd.id, sd.title,
-        (SELECT COUNT(id) FROM study_user WHERE type = 1 AND study_id = st.id) AS praise,
-        (SELECT COUNT(id) FROM study_user WHERE type = 2 AND study_id = st.id) AS collect,
+        (SELECT COUNT(id) FROM study_user WHERE type = 1 AND study_id = sd.id) AS praise,
+        (SELECT COUNT(id) FROM study_user WHERE type = 2 AND study_id = sd.id) AS collect,
         sd.create_at, sd.introduce,
         sd.cover_plan_url, sd.video_time,
         au.author_img, au.author_name
