@@ -22,5 +22,5 @@ public class HomeVideoListDto {
     private Date create_at; // 文章创建时间
     private String introduce; // 文章简介
     private String cover_plan_url; // 封面图
-    private Data video_time; // 视频时长
+    private Long video_time; // 视频时长
 }
