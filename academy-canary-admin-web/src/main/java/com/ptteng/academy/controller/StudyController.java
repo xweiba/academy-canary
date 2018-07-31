@@ -91,11 +91,7 @@ public class StudyController {
     public ResponseVO updateArticle(@PathVariable("id") Long id, @RequestBody ArticleDto articleDto) {
         try {
             articleDto.setId(id);
-            BeanUtils.copyProperties(articleDto, studyDto);
-            return ResultUtil.success("更新成功", studyService.updateByPrimaryKeySelective(studyDto));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return ResultUtil.error("封面图片已过期, 视频内容更新成功");
+            return ResultUtil.success("更新成功", studyService.updateByArticle(articleDto));
         } catch (Exception e) {
             e.printStackTrace();
             return ResultUtil.error("更新失败" + e.getMessage());
@@ -189,7 +185,7 @@ public class StudyController {
 
     @ApiOperation(value = "文件上传", notes = "返回处理完毕后的文件名称, 在缓存中保留半小时")
     @PostMapping(value = "/update/image")
-    public ResponseVO updateFile(@RequestPart(required = true, name = "update_img") MultipartFile update_img) {
+    public ResponseVO updateFile(@RequestPart(required = true) MultipartFile update_img) {
         if (update_img.isEmpty()) {
             return ResultUtil.error("文件为空");
         }

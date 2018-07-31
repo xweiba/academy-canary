@@ -4,10 +4,12 @@ import com.ptteng.academy.business.dto.AccountDto;
 import com.ptteng.academy.business.query.AccountQuery;
 import com.ptteng.academy.business.vo.ResponseRowsVO;
 import com.ptteng.academy.business.vo.ResponseVO;
+import com.ptteng.academy.service.ManageService;
 import com.ptteng.academy.util.ResultUtil;
 import io.swagger.annotations.Api;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -22,23 +24,18 @@ import java.util.List;
 @Api(tags = "AccountController", description = "账号相关Api")
 @RestController
 public class AccountController {
+
+
+    @Resource
+    private ManageService manageService;
+
     /**
      * @description 分页查询用户信息
      * @param: [accountQuery]
      */
     @PostMapping("/accounts")
     public ResponseRowsVO getAccounts(AccountQuery accountQuery) {
-        List<Object> Accounts = new ArrayList<Object>();
-        for (Long i = 1L; i < 10; i++) {
-            AccountDto accountDto = new AccountDto();
-            accountDto.setId(i);
-            accountDto.setRoleName("管理员" + i);
-            accountDto.setName("葫芦娃" + i);
-            accountDto.setCreateAt(new Date());
-            accountDto.setCreateBy("admin" + i);
-            Accounts.add(accountDto);
-        }
-        return ResultUtil.success("getAccounts 已执行", Accounts);
+        return ResultUtil.success("getAccounts 已执行", manageService.findAccountByQuery(accountQuery));
     }
     
     /**
@@ -49,8 +46,8 @@ public class AccountController {
     public ResponseVO getAccount(@PathVariable("id") String id) {
         AccountDto accountDto = new AccountDto();
 
-        accountDto.setRoleName("管理员" + id);
-        accountDto.setName("葫芦娃" + id);
+        accountDto.setRole_name("管理员" + id);
+        accountDto.setUsername("葫芦娃" + id);
 
         return ResultUtil.success("getAccount 已执行", accountDto);
     }

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.ptteng.academy.persistence.mapper.AccountMapper">
+    <select id="findAccountByQuery" parameterType="accountQuery" resultType="accountDto">
+        SELECT
+            acc.id,
+            acc.username,
+            ro.role_name,
+            ro.role_tag,
+            acc.create_at,
+            acc.create_by
+        FROM
+            account acc
+            LEFT JOIN role ro ON ro.id = acc.id
+        WHERE
+          1 = 1
+        <if test="role_id!=0 and role_id!=null">
+            AND ro.id = #{id}
+        </if>
+        <if test="username!='' and username!=null">
+            AND acc.username = #{username}
+        </if>
+    </select>
+</mapper>

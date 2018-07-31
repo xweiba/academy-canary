@@ -21,7 +21,7 @@ public class AccountDto {
     private Long id;
     // 账号名
     @ApiModelProperty(notes = "账号名", required = false)
-    private String name;
+    private String username;
     @JsonIgnore
     @ApiModelProperty(notes = "密码", required = false)
     private String password;
@@ -30,9 +30,9 @@ public class AccountDto {
     private String oldPassword;
     // 角色名
     @ApiModelProperty(notes = "角色名", required = false)
-    private String roleName;
+    private String role_name;
     @ApiModelProperty(notes = "创建时间", required = false)
-    private Date createAt;
+    private Date create_at;
     @ApiModelProperty(notes = "创建人", required = false)
-    private String createBy;
+    private String create_by;
 }

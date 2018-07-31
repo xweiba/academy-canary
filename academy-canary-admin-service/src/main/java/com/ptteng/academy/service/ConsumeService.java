@@ -12,4 +12,8 @@ import com.ptteng.academy.persistence.beans.Author;
  **/
 
 public interface ConsumeService extends AbstractService<AuthorDto, Long> {
+    // 通过作者名称返回作者id
+    Long findAuthorByName(String name);
+    // 通过作者id返回用户名
+    String findAuthorById(Long id);
 }

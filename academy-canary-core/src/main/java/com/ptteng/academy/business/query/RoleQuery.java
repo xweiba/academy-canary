@@ -18,5 +18,5 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = false)
 public class RoleQuery extends IQuery{
     @ApiModelProperty(notes = "角色名称", required = false)
-    private Long roleName;
+    private String role_name;
 }

@@ -4,10 +4,10 @@
 <mapper namespace="com.ptteng.academy.persistence.mapper.AuthorMapper">
     <select id="findById" parameterType="Long" resultType="author">
         SELECT
-        au.*
+        *
         FROM
-        author au
-        WHERE au.id = #{id}
+        author
+        WHERE  id = #{id}
     </select>
 </mapper>
 

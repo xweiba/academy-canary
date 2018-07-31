@@ -15,8 +15,9 @@ import java.util.List;
 @Data
 public class RoleDto {
     private Long id;
-    private String name;
+    private String role_name;
+    private String role_tag;
     private Integer[] moduleIds;
-    private Date createAt;
-    private String createBy;
+    private Date create_at;
+    private String create_by;
 }

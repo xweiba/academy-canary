@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.ptteng.academy.persistence.mapper.RoleMapper">
+    <select id="findRoleByQuery" parameterType="roleQuery" resultType="roleDto">
+        SELECT * FROM role WHERE 1 = 1 
+        <if test="role_name!='' and role_name!=null">
+           AND role_name LIKE '%${role_name}%'
+        </if>
+    </select>
+</mapper>
+

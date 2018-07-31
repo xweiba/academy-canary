@@ -77,12 +77,7 @@ public class StudyServiceImpl implements StudyService {
         return false;
     }
 
-    @Override
-    public Boolean updateByArticle(ArticleDto articleDto) {
 
-        // consumeService.getOneByEntity()
-        return null;
-    }
 
     // 更新不为空的字段
     @Override
@@ -167,7 +162,9 @@ public class StudyServiceImpl implements StudyService {
     @Override
     public ArticleDto findArticleById(Long id) throws Exception{
         ArticleDto articleDto = new ArticleDto();
-        BeanUtils.copyProperties(studyMapper.selectByPrimaryKey(id), articleDto);
+        study = studyMapper.selectByPrimaryKey(id);
+        BeanUtils.copyProperties(study, articleDto);
+        articleDto.setAuthor(consumeService.findAuthorById(study.getAuthor()));
         return articleDto;
     }
 
@@ -195,16 +192,12 @@ public class StudyServiceImpl implements StudyService {
         return study.getId();
     }
 
+    // 新增文章
     @Override
     public Long insertArticle(ArticleDto articleDto) throws Exception {
-        log.info("insertArticle 执行");
-        /* 上传图片到OSS */
-        if (!"".equals(articleDto.getCover_plan_url()) && articleDto.getCover_plan_url()!=null) {
-            log.info("文件存在: " + articleDto.getCover_plan_url());
-            articleDto.setCover_plan_url(ossService.updateFile(articleDto.getCover_plan_url()));
-        }
         BeanUtils.copyProperties(articleDto, study);
-        study.setStudy_type(1);
+        study.setAuthor(consumeService.findAuthorByName(articleDto.getAuthor()));
+        study.setStudy_type(2);
         study.setCreate_at(new Date());
         study.setUpdate_at(new Date());
         study.setCreate_by("admin");
@@ -213,4 +206,14 @@ public class StudyServiceImpl implements StudyService {
         log.debug(study.toString());
         return study.getId();
     }
+
+    // 更新文章
+    @Override
+    public Boolean updateByArticle(ArticleDto articleDto) {
+        log.info("articleDto.toString(): " + articleDto.toString());
+        BeanUtils.copyProperties(articleDto, study);
+        study.setAuthor(consumeService.findAuthorByName(articleDto.getAuthor()));
+        return studyMapper.updateByPrimaryKeySelective(study) > 0 ;
+    }
+
 }

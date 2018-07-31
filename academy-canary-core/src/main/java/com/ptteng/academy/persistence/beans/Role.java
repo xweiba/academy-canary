@@ -29,7 +29,7 @@ public class Role implements Serializable {
     private String update_by;
 
     // 角色标识 Shiro添加角色使用,如"role:admin",这个是唯一的
-    private String roleTag;
+    private String role_tag;
     // 角色描叙(角色名)
-    private String description;
+    private String role_name;
 }

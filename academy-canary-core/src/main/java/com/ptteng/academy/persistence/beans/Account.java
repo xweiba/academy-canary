@@ -1,5 +1,6 @@
 package com.ptteng.academy.persistence.beans;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.GeneratedValue;
@@ -28,5 +29,6 @@ public class Account implements Serializable {
     private String create_by;
     private String update_by;
     private String username;
+    @JsonIgnore
     private String password;
 }

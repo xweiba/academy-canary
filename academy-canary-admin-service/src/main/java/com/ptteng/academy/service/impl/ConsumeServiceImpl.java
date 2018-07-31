@@ -102,4 +102,19 @@ public class ConsumeServiceImpl implements ConsumeService {
     public List<AuthorDto> listByEntity(AuthorDto entity) {
         return null;
     }
+
+    // 根据用户名返回id
+    @Override
+    public Long findAuthorByName(String name) {
+        author.setAuthor_name(name);
+        author = authorMapper.selectOne(author);
+        return author.getId();
+    }
+    // 根据id返回用户名
+    @Override
+    public String findAuthorById(Long id) {
+        author.setId(id);
+        author = authorMapper.selectOne(author);
+        return author.getAuthor_name();
+    }
 }

@@ -1,13 +1,10 @@
 package com.ptteng.academy;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
-import com.google.gson.JsonObject;
 import com.ptteng.academy.business.dto.StudyDto;
-import com.ptteng.academy.business.query.ArticleQuery;
-import com.ptteng.academy.business.query.ModuleQuery;
-import com.ptteng.academy.business.query.StudyQuery;
-import com.ptteng.academy.business.query.VideoQuery;
+import com.ptteng.academy.business.query.*;
 import com.ptteng.academy.framework.config.TaskConfig;
 import com.ptteng.academy.framework.config.QiNiuYun;
 import com.ptteng.academy.persistence.mapper.ModuleMapper;
@@ -15,7 +12,6 @@ import com.ptteng.academy.persistence.mapper.StudyMapper;
 import com.ptteng.academy.service.ManageService;
 import com.ptteng.academy.service.StudyService;
 import com.ptteng.academy.util.RandNumUtil;
-import com.qiniu.util.Json;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.BeanUtils;
@@ -127,11 +123,29 @@ public class testApplicationTest {
         ModuleQuery moduleQuery = new ModuleQuery();
         moduleQuery.setModuleName("用户");
         System.out.println(JSONObject.toJSONString(moduleMapper.findModuleByName(moduleQuery)));
-        System.out.println(JSONObject.toJSONString(manageService.findModuleByName(moduleQuery)));
+        System.out.println(JSONObject.toJSONString(manageService.findModuleByQuery(moduleQuery)));
     }
 
     @Test
     public void findMouldById() {
         System.out.println(JSONObject.toJSONString(manageService.findModuleById(1L)));
+    }
+
+    @Test
+    public void findRole() {
+        RoleQuery roleQuery = new RoleQuery();
+        roleQuery.setId(1L);
+        System.out.println(JSONObject.toJSONString(manageService.findRoleByQuery(roleQuery)));
+    }
+
+    @Test
+    public void findAccount() {
+        AccountQuery accountQuery = new AccountQuery();
+        accountQuery.setUsername("admin");
+        System.out.println(JSONObject.toJSONString(manageService.findAccountByQuery(accountQuery)));
+    }
+    @Test
+    public void findAccountById() {
+        System.out.println(JSONObject.toJSONString(manageService.findAccountById(1L)));
     }
 }

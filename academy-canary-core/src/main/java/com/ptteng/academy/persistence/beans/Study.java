@@ -33,7 +33,7 @@ public class Study implements Serializable {
     // 封面图
     private String cover_plan_url;
     // 作者
-    private Integer author;
+    private Long author;
     // 类型 视频还是文章 1:文章 2:视频
     private Integer study_type;
     // 分类 banner还是card 1:banners 2:card

@@ -13,9 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * @program: canary
@@ -35,7 +32,7 @@ public class ModuleController {
     @ApiOperation(value = "获取模块信息列表", notes = "按id排序")
     @PostMapping("/modules")
     public ResponseRowsVO getModules(ModuleQuery moduleQuery) {
-        return ResultUtil.success("getModules 已执行", manageService.findModuleByName(moduleQuery));
+        return ResultUtil.success("getModules 已执行", manageService.findModuleByQuery(moduleQuery));
     }
 
     @ApiOperation(value = "根据id获取模块信息", notes = "返回模块信息")
