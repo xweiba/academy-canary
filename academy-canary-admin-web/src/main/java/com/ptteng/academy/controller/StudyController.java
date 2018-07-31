@@ -92,7 +92,7 @@ public class StudyController {
         try {
             articleDto.setId(id);
             BeanUtils.copyProperties(articleDto, studyDto);
-            return ResultUtil.success("更新成功", studyService.update(studyDto));
+            return ResultUtil.success("更新成功", studyService.updateByPrimaryKeySelective(studyDto));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             return ResultUtil.error("封面图片已过期, 视频内容更新成功");
