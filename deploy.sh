@@ -205,8 +205,8 @@ function backupServer(){
     tempFile="${backupsDir}/${backupsName}-`date +%Y%m%d-%T`".jar
     cp -r ${runServerName}/*.jar ${tempFile}
     echo "备份中..."
-    # 等待5s 防止压缩未完成
-    sleep 5
+    # 等待1s 防止压缩未完成
+    sleep 1
     # 判断执行状态
     runStatus
 }
