@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.ptteng.academy.business.dto.WeChatTokenDto;
 import com.ptteng.academy.business.dto.WeChatUserDto;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
@@ -13,6 +15,7 @@ import javax.net.ssl.TrustManager;
 import java.io.*;
 import java.net.ConnectException;
 import java.net.URL;
+import java.text.ParseException;
 
 /**
  * @program: canary
@@ -23,10 +26,12 @@ import java.net.URL;
 @Slf4j
 public class WeChatUtil {
     // 凭证获取（GET）
-    public final static String WeChatToken_url = "https://api.weixin.qq.com/cgi-bin/WeChatTokenDto?grant_type=client_credential&appid=APPID&secret=APPSECRET";
+    public final static String WeChatToken_url = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=APPID&secret=APPSECRET";
     public final static String WeChatByCodeToken_url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=APPID&secret=APPSECRET&code=CODE&grant_type=authorization_code";
     public final static String APPID = "wx2750055a558bbe86";
     public final static String APPSECRET = "fe33aae20890da44fc14c709468b7a91";
+    public final static String signTicketCreateUrl = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=ACCESS_TOKEN&type=jsapi";
+    private static final Logger logger = LoggerFactory.getLogger(WeChatUtil.class);
     /**
      * 发送https请求
      *
@@ -97,7 +102,7 @@ public class WeChatUtil {
         if (null != jsonObject) {
             try {
                 WeChatTokenDto = new WeChatTokenDto();
-                WeChatTokenDto.setAccessToken(jsonObject.getString("access_WeChatToken"));
+                WeChatTokenDto.setAccessToken(jsonObject.getString("access_token"));
                 WeChatTokenDto.setExpiresIn(jsonObject.getIntValue("expires_in"));
             } catch (JSONException e) {
                 WeChatTokenDto = null;
@@ -186,5 +191,20 @@ public class WeChatUtil {
             }
         }
         return WeChatTokenDto;
+    }
+    public static String getTicket(String accessToken) throws ParseException, IOException {
+
+        JSONObject postjson=new JSONObject();
+        String ticket =null;
+        String url = WeChatUtil.signTicketCreateUrl.replace("ACCESS_TOKEN",accessToken);
+        logger.info("获取签名的url="+url);
+        try {
+            JSONObject jsonObject = WeChatUtil.httpsRequest(url, "POST",postjson.toString());
+            ticket= jsonObject.getString("ticket");
+            System.out.println("ticket:"+ticket);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+        return ticket;
     }
 }

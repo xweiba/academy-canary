@@ -1,6 +1,7 @@
 package com.ptteng.academy.service;
 
 import com.ptteng.academy.business.dto.StudentCardDto;
+import com.ptteng.academy.business.query.StudentCardQuery;
 
 /**
  * description:
@@ -10,4 +11,6 @@ import com.ptteng.academy.business.dto.StudentCardDto;
  */
 public interface StudentCardService {
     StudentCardDto selectAll(Long id);
+
+    boolean updateStudentCard(StudentCardQuery studentCardQuery);
 }

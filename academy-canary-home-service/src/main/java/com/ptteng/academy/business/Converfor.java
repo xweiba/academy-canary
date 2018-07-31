@@ -3,8 +3,10 @@ package com.ptteng.academy.business;
 
 import com.ptteng.academy.business.dto.StudentCardDto;
 import com.ptteng.academy.business.dto.UserDto;
+import com.ptteng.academy.business.query.StudentCardQuery;
 import com.ptteng.academy.persistence.beans.User;
 import org.springframework.beans.BeanUtils;
+import org.springframework.context.annotation.Bean;
 
 /**
  * description:
@@ -34,6 +36,12 @@ public class Converfor{
     public static StudentCardDto UserDoToStudentCartDtoConvert(User user) {
         StudentCardDto studentCardDto= new StudentCardDto();
         BeanUtils.copyProperties(user, studentCardDto);
+        return studentCardDto;
+    }
+
+    public static StudentCardDto StudentQuerytoStudentCaedDto(StudentCardQuery studentCardQuery) {
+        StudentCardDto studentCardDto = new StudentCardDto();
+        BeanUtils.copyProperties(studentCardQuery, studentCardDto);
         return studentCardDto;
     }
 }

@@ -8,11 +8,13 @@ import com.ptteng.academy.persistence.beans.Signin;
 import com.ptteng.academy.persistence.mapper.LoginMapper;
 import com.ptteng.academy.service.SiginService;
 import com.ptteng.academy.util.ResultUtil;
+import net.sf.jsqlparser.expression.DateTimeLiteralExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -59,16 +61,8 @@ public class SiginServiceImpl implements SiginService {
         logger.info("签到信息: "+ userDto);
         //返回值的对象
         SigningDto signingDto = new SigningDto();
-
         if (userDto != null) {
             Long loginTime = userDto.getLastSigninTime();
-           //判断用户是否第一次签到
-            if (loginTime == null){
-                userDto.setTopContinuouSignin(0);
-                userDto.setLastSigninTime(0L);
-                userDto.setSigninCount(0);
-                userDto.setSigninHistory(0L);
-            }
             Date dateLoginTime = new Date(loginTime);
             String stringLoginTime = format.format(dateLoginTime);
             //判断今天是否签到过
@@ -88,6 +82,8 @@ public class SiginServiceImpl implements SiginService {
                 //更新当前签到记录
                 historySigin = (historySigin << 1) | 1;
                 userDto.setSigninHistory(historySigin);
+                userDto.setUpdate_at(new Timestamp(System.currentTimeMillis()));
+                userDto.setUpdate_by(id.toString());
 
                 final Long fHistory = historySigin;
                 String stringHistory = Long.toBinaryString(fHistory);
@@ -127,6 +123,11 @@ public class SiginServiceImpl implements SiginService {
                 return ResultUtil.error("今日已签到请勿重复签到");
             }
         }else {
+            userDto.setId(id);
+            userDto.setLastSigninTime(new Date().getTime());
+            userDto.setCreate_at(new Timestamp(System.currentTimeMillis()));
+            userDto.setCreate_by(id.toString());
+            loginMapper.insert(userDto);
             //错误501
             return ResultUtil.error(ResponseCodeEnum.USER_UNEXIST);
         }

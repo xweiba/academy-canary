@@ -1,7 +1,6 @@
 package com.ptteng.academy.business.dto;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 /**
  * description:学生证返回信息
@@ -11,9 +10,11 @@ import lombok.EqualsAndHashCode;
  */
 @Data
 public class StudentCardDto {
+    private Long id;
     private String nickName;
     private String headImgUrl;
-    private String grade;
+    private Integer grade;
     private long bean;
-    private boolean state;
+    private boolean bingding;
+    private String media_id;
 }

@@ -2,8 +2,6 @@ package com.ptteng.academy.framework.config;
 
 import com.google.gson.Gson;
 import com.ptteng.academy.framework.property.QiNiuYunProperties;
-import com.ptteng.academy.persistence.beans.Study;
-import com.ptteng.academy.persistence.mapper.StudyMapper;
 import com.qiniu.common.QiniuException;
 import com.qiniu.common.Zone;
 import com.qiniu.http.Response;
@@ -136,7 +134,7 @@ public class QiNiuYun {
         return null;
     }
 
-    private String updateFileReal(InputStream inputStream, String file_name) {
+    public String updateFileReal(InputStream inputStream, String file_name) {
         auth = getAuth();
         if (auth!=null) {
             uploadManager = getUploadManager();

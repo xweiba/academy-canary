@@ -1,13 +1,19 @@
 package com.ptteng.academy.service.Impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ptteng.academy.business.dto.WeChatTokenDto;
 import com.ptteng.academy.business.dto.WeChatUserDto;
 import com.ptteng.academy.persistence.beans.User;
 import com.ptteng.academy.persistence.mapper.UserMapper;
 import com.ptteng.academy.service.WechatService;
 import com.ptteng.academy.util.WeChatUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.text.ParseException;
 
 /**
  * description:
@@ -18,7 +24,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class WechatServiceImpl implements WechatService {
-
+    private static final Logger logger = LoggerFactory.getLogger(WechatServiceImpl.class);
     @Autowired
     UserMapper userMapper;
     @Override
@@ -55,4 +61,6 @@ public class WechatServiceImpl implements WechatService {
             return weChatUserDto1;
         }
     }
+
+
 }

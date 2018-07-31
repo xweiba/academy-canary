@@ -13,3 +13,5 @@ server:
   port: 20464
   tomcat:
       basedir: /data/services/academy-canary-server/home/logs/run
+
+mybatis.configuration.map-underscore-to-camel-case: true

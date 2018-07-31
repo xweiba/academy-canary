@@ -26,27 +26,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/student")
 public class OtherController {
-    @ApiOperation(value = "学生证首页", notes = "通过用户ID获取首页信息")
-    @ApiImplicitParam(name = "id", value = "用户id", required = true,paramType = "path", dataType = "long")
-    @GetMapping("/card/{id}")
-    public ResponseVO studentCard(@PathVariable("id") Long id) {
-        StudentCardDto studentCardDto = new StudentCardDto();
-        studentCardDto.setNickName("用户昵称");
-        studentCardDto.setHeadImgUrl("https://avatar.csdn.net/F/5/E/3_coding13.jpg");
-        studentCardDto.setGrade("一年级");
-        studentCardDto.setBean(24L);
-        studentCardDto.setState(true);
 
-        return ResultUtil.success("studentCard 执行了", studentCardDto);
-    }
-
-    @ApiOperation(value = "学生证资料编辑", notes = "需要传用户头像")
-    @ApiImplicitParams({@ApiImplicitParam( name = "id", value = "用户id", required = true,paramType = "path", dataType = "long"),@ApiImplicitParam(name = "studentCardQuery",value = "学生实体类", required = true,dataType = "StudentCardQuery")})
-    @PutMapping("/card/{id}")
-    public ResponseVO updateStudentCard(@PathVariable("id") Long id, @RequestParam("headImgUrl") MultipartFile file, StudentCardQuery studentCardQuery) {
-        // 文件和参数一起上传, 待调试
-        return ResultUtil.success("updateStudentCard 执行了, 文件和表单数据一起提交需后期调试");
-    }
 
     @ApiOperation(value = "获取绑定信息", notes = "传入用户ID返回绑定信息")
     @ApiImplicitParam(name = "id", value = "用户id",paramType = "path", required = true, dataType = "Long")
