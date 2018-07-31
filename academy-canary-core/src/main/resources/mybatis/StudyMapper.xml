@@ -6,52 +6,57 @@
     <!--数组下标 #{a[0]} -->
     <select id="findPageBreakByCondition" parameterType="studyQuery"
             resultType="studyDto">
+        SELECT * FROM (
         SELECT
         s.id, s.classify, s.content, s.cover_plan_url, s.create_at, s.create_by, s.grade,
         s.introduce, s.status, s.study_type, s.subject, s.title, s.update_at, s.update_by,
         s.video_time, s.video_url, s.author,
         (SELECT COUNT(id) FROM study_user WHERE type = 1 AND study_id = s.id) AS praise,
-        (SELECT COUNT(id) FROM study_user WHERE type = 2 AND study_id = s.id) AS collect,
+        (SELECT COUNT(id) FROM study_user WHERE type = 2 AND study_id = s.id)  AS collect,
         au.author_name, au.author_img
         FROM
-        study s
-        inner join author au
-        ON s.author = au.id
+        study s INNER JOIN author au ON s.author = au.id ) temp
         WHERE 1=1
         <if test="study_type==null">
-            AND s.study_type = 99
+            AND study_type = 99
         </if>
         <if test="study_type!=null">
-            AND s.study_type = #{study_type}
+            AND study_type = #{study_type}
             <if test="title!='' and title!=null">
-                AND s.title LIKE '%${title}%'
+                AND title LIKE '%${title}%'
             </if>
             <if test="author!='' and author!=null">
-                AND au.author_name LIKE '%${author}%'
+                AND author_name LIKE '%${author}%'
             </if>
             <if test="id!=0 and id!=null">
-                AND s.id = #{id}
+                AND id = #{id}
             </if>
             <if test="classify!=0 and classify!=null">
-                AND s.classify = #{classify}
+                AND classify = #{classify}
             </if>
             <if test="grade!=0 and grade!=null">
-                AND s.grade = #{grade}
+                AND grade = #{grade}
             </if>
             <if test="subject!=0 and subject!=null">
-                AND s.subject = #{subject}
+                AND subject = #{subject}
             </if>
-            <if test="praise!=null">
-                AND s.praise >= ${praise[0]} AND ${praise[1]} >= s.praise
+            <if test="praise[0]!=0 and praise[0]!=null">
+                AND praise >= ${praise[0]}
             </if>
-            <if test="collect!=null">
-                AND s.collect >= ${collect[0]} AND ${collect[1]} >= s.collect
+            <if test="praise[1]!=0 and praise[1]!=null">
+                AND ${praise[1]} >= praise
+            </if>
+            <if test="collect[0]!=0 and collect[0]!=null">
+                AND collect >= ${collect[0]}
+            </if>
+            <if test="collect[1]!=0 and collect[1]!=null">
+                AND ${collect[1]} >= collect
             </if>
             <if test="status!=null">
-                AND s.status = #{status}
+                AND status = #{status}
             </if>
         </if>
-        order by s.update_at
+        order by update_at
     </select>
     <update id="updateStatusById" parameterType="Long">
         UPDATE study s SET s.status = !s.status WHERE id = #{id}

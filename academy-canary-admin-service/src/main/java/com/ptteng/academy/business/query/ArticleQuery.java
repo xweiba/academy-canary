@@ -23,7 +23,7 @@ import java.util.List;
 public class ArticleQuery extends IQuery{
     @ApiModelProperty(notes = "标题", required = false)
     private String title;
-    @ApiModelProperty(notes = "作者id", required = false)
+    @ApiModelProperty(notes = "作者名称", required = false)
     private String author;
     @ApiModelProperty(notes = "文章类型id,1:banners 2:card", required = false)
     private Integer classify;
@@ -31,6 +31,8 @@ public class ArticleQuery extends IQuery{
     private Integer[] praise;
     @ApiModelProperty(notes = "收藏范围", required = false, dataType="Integer[]")
     private Integer[] collect;
+    @ApiModelProperty(notes = "文章状态", required = false, dataType="Boolean")
+    private Boolean status;
     // 文章类型
     @JsonIgnore
     private final Integer study_type = 1;

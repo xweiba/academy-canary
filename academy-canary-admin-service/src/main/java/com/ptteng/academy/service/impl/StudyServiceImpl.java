@@ -9,7 +9,9 @@ import com.ptteng.academy.business.enums.SubjectEnum;
 import com.ptteng.academy.business.query.StudyQuery;
 import com.ptteng.academy.framework.service.OSSService;
 import com.ptteng.academy.persistence.beans.Study;
+import com.ptteng.academy.persistence.mapper.AuthorMapper;
 import com.ptteng.academy.persistence.mapper.StudyMapper;
+import com.ptteng.academy.service.ConsumeService;
 import com.ptteng.academy.service.StudyService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -35,11 +37,15 @@ public class StudyServiceImpl implements StudyService {
     @Resource
     private StudyMapper studyMapper;
 
+    @Resource
+    private ConsumeService consumeService;
+
     // 文件上传
     @Resource
     private OSSService ossService;
 
     private Study study = new Study();
+    private StudyDto studyDto = new StudyDto();
 
     @Override
     public StudyDto insert(StudyDto entity) throws Exception {
@@ -69,6 +75,13 @@ public class StudyServiceImpl implements StudyService {
     @Override
     public boolean update(StudyDto entity){
         return false;
+    }
+
+    @Override
+    public Boolean updateByArticle(ArticleDto articleDto) {
+
+        // consumeService.getOneByEntity()
+        return null;
     }
 
     // 更新不为空的字段

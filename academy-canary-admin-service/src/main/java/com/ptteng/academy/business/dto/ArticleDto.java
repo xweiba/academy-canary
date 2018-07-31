@@ -16,7 +16,7 @@ public class ArticleDto {
     private String title; // 标题
     private String cover_plan_url; // 封面
     private Integer classify; // 分类
-    private Integer author;  // 作者
+    private String author;  // 作者
     private String introduce; // 摘要
     private String content; // 正文
     @JsonIgnore

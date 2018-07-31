@@ -30,7 +30,7 @@ public class Module implements Serializable {
     // 模块名称 内容管理 用户列表
     private String name;
     // 模块对应的url
-    private String url;
+    private String module_url;
     // 父级id, 定位自己属于哪一个模块
     private Long parent_id;
 }

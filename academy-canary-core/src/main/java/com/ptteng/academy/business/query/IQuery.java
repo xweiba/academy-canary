@@ -16,7 +16,7 @@ import lombok.EqualsAndHashCode;
         description = "通用查询条件")      // 描述
 @Data
 abstract class IQuery {
-    @ApiModelProperty(notes = "状态", required = false)
+    @ApiModelProperty(notes = "id", required = false)
     private Long id;
     @ApiModelProperty(notes = "每页数量", required = false)
     private Integer pageSize = 10;

@@ -47,11 +47,15 @@ public class StudyController {
     // 获取文章列表
     @ApiOperation(value = "文章分页条件查询", notes = "返回文章分页数据")
     @PostMapping("/articles")
-    public ResponseRowsVO Articles(@RequestBody ArticleQuery articleQuery) {
+    public Object Articles(@RequestBody ArticleQuery articleQuery) {
         PageInfo<?> pageInfo = null;
+        log.info("articleQuery.toString(): " + articleQuery.toString());
         try {
             pageInfo = studyService.findPageBreakByCondition(articleQuery);
-        } catch (Exception e) {
+        } catch (NullPointerException e){
+            return ResultUtil.success("无数据");
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
         return ResultUtil.success("获取文章信息成功", pageInfo);
@@ -88,7 +92,7 @@ public class StudyController {
         try {
             articleDto.setId(id);
             BeanUtils.copyProperties(articleDto, studyDto);
-            return ResultUtil.success("更新成功", studyService.updateByPrimaryKeySelective(studyDto));
+            return ResultUtil.success("更新成功", studyService.update(studyDto));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             return ResultUtil.error("封面图片已过期, 视频内容更新成功");

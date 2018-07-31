@@ -15,6 +15,17 @@ public interface ManageService {
     /* 根据条件查询模块 */
     PageInfo<ModuleDto> findModuleByName(ModuleQuery moduleQuery);
 
+    /* 根据id查询模块*/
     ModuleDto findModuleById(Long id);
+
+    /* 删除模块 */
+    Boolean deleteModule(Long id);
+
+    /* 更新模块 */
+    Boolean updateModule(ModuleDto moduleDto);
+
+    /* 插入模块 */
+    Boolean insertModule(ModuleDto moduleDto);
+
 
 }

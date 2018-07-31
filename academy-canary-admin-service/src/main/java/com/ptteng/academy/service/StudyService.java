@@ -18,6 +18,8 @@ public interface StudyService extends AbstractService<StudyDto, Long>{
     PageInfo<?> findPageBreakByCondition(Object objectQuery) throws Exception;
 
     Boolean updateStatusById(Long id) throws Exception;
+    // 更新文章
+    Boolean updateByArticle(ArticleDto articleDto);
 
     ArticleDto findArticleById(Long id) throws Exception;
     VideoDto findVideoById(Long id) throws Exception;
