@@ -5,7 +5,7 @@
 <mapper namespace="com.ptteng.academy.persistence.mapper.ModuleMapper">
     <select id="findModuleByName" resultType="moduleDto"
             parameterType="moduleQuery">
-        SELECT mo.id, mo.name, mo.parent_id, mo.module_url, mo.createAt,
+        SELECT mo.id, mo.name, mo.parent_id, mo.module_url, mo.create_at,
         mo.create_by FROM module mo WHERE 1 = 1
         <if test="moduleName !='' and moduleName!=null ">
             AND mo.name LIKE '%${moduleName}%'

@@ -13,7 +13,7 @@
         s.video_time, s.video_url, s.author,
         (SELECT COUNT(id) FROM study_user WHERE type = 1 AND study_id = s.id) AS praise,
         (SELECT COUNT(id) FROM study_user WHERE type = 2 AND study_id = s.id)  AS collect,
-        au.author_name, au.author_img
+        au.author_name, au.authorImg
         FROM
         study s INNER JOIN author au ON s.author = au.id ) temp
         WHERE 1=1
@@ -70,7 +70,7 @@
         (SELECT COUNT(id) FROM study_user WHERE type = 2 AND study_id = sd.id) AS collect,
         sd.create_at, sd.introduce,
         sd.cover_plan_url, sd.video_time AS video_time,
-        au.author_img, au.author_name
+        au.authorImg, au.author_name
         FROM
         study sd
         inner join author au
