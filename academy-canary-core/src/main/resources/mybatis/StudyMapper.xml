@@ -88,7 +88,7 @@
                 AND sd.subject = #{subject}
             </if>
             <if test="classify!=0 and classify!=null">
-                AND sd.classify = #{classify}
+                AND sd.classify = 1
             </if>
         </if>
         order by sd.update_at ASC
@@ -115,7 +115,7 @@
                 AND subject = #{subject}
             </if>
             <if test="classify!=0 and classify!=null">
-                AND classify = #{classify}
+                AND classify = 2
             </if>
         </if>
         <!-- 取点赞数最高的8条数据 -->
