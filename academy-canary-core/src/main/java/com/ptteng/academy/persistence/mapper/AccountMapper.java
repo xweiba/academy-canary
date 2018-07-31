@@ -21,6 +21,6 @@ import java.util.List;
 public interface AccountMapper extends BaseMapper<Account> {
     List<AccountDto> findAccountByQuery(AccountQuery accountQuery);
 
-    @Select("SELECT id, username, role_id")
+    @Select("SELECT id, username, role_id FROM account WHERE id = #{id}")
     AccountDto findAccountById(Long id);
 }

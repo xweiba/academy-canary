@@ -6,6 +6,7 @@
         SELECT
             acc.id,
             acc.username,
+            ro.id AS role_id,
             ro.role_name,
             ro.role_tag,
             acc.create_at,
@@ -22,4 +23,5 @@
             AND acc.username = #{username}
         </if>
     </select>
+
 </mapper>

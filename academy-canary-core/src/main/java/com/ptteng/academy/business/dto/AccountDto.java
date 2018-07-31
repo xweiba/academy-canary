@@ -22,15 +22,16 @@ public class AccountDto {
     // 账号名
     @ApiModelProperty(notes = "账号名", required = false)
     private String username;
-    @JsonIgnore
     @ApiModelProperty(notes = "密码", required = false)
     private String password;
-    @JsonIgnore
     @ApiModelProperty(notes = "老密码", required = false)
     private String oldPassword;
     // 角色名
     @ApiModelProperty(notes = "角色名", required = false)
     private String role_name;
+    // 角色名
+    @ApiModelProperty(notes = "角色id", required = false)
+    private Long role_id;
     @ApiModelProperty(notes = "创建时间", required = false)
     private Date create_at;
     @ApiModelProperty(notes = "创建人", required = false)

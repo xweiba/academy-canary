@@ -127,23 +127,31 @@ public class ManageServiceImpl implements ManageService {
 
     @Override
     public AccountDto findAccountById(Long id) {
-        AccountDto accountDto = new AccountDto();
-        BeanUtils.copyProperties(accountMapper.selectByPrimaryKey(id), accountDto);
-        return accountDto;
+        return accountMapper.findAccountById(id);
     }
 
     @Override
-    public Boolean updateAccount(Account account) {
-        return null;
+    public Boolean updateAccount(AccountDto accountDto) {
+        Account account = new Account();
+        BeanUtils.copyProperties(accountDto,account);
+        account.setUpdate_by("admin");
+        account.setUpdate_at(new Date());
+        return accountMapper.updateByPrimaryKeySelective(account) > 0;
     }
 
     @Override
     public Boolean deleteAccountById(Long id) {
-        return null;
+        return accountMapper.deleteByPrimaryKey(id) > 0;
     }
 
     @Override
-    public Boolean insertAccount(Account account) {
-        return null;
+    public Boolean insertAccount(AccountDto accountDto) {
+        Account account = new Account();
+        BeanUtils.copyProperties(accountDto,account);
+        account.setCreate_at(new Date());
+        account.setUpdate_at(new Date());
+        account.setCreate_by("admin");
+        account.setUpdate_by("admin");
+        return accountMapper.insert(account) > 0;
     }
 }

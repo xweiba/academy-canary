@@ -51,9 +51,9 @@ public interface ManageService {
     /* 账号模块 */
     PageInfo<AccountDto> findAccountByQuery(AccountQuery accountQuery);
     AccountDto findAccountById(Long id);
-    Boolean updateAccount(Account account);
+    Boolean updateAccount(AccountDto accountDto);
     Boolean deleteAccountById(Long id);
-    Boolean insertAccount(Account account);
+    Boolean insertAccount(AccountDto accountDto);
 
 
 }

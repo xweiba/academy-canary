@@ -29,6 +29,6 @@ public class Account implements Serializable {
     private String create_by;
     private String update_by;
     private String username;
-    @JsonIgnore
+    private Long role_id;
     private String password;
 }
