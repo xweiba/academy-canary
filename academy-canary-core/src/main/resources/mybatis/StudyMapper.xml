@@ -70,7 +70,7 @@
         (SELECT COUNT(id) FROM study_user WHERE type = 2 AND study_id = sd.id) AS collect,
         sd.create_at, sd.introduce,
         sd.cover_plan_url, sd.video_time AS video_time,
-        au.authorImg, au.author_name
+        au.author_img, au.author_name
         FROM
         study sd
         inner join author au
