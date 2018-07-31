@@ -69,7 +69,7 @@
         (SELECT COUNT(id) FROM study_user WHERE type = 1 AND study_id = sd.id) AS praise,
         (SELECT COUNT(id) FROM study_user WHERE type = 2 AND study_id = sd.id) AS collect,
         sd.create_at, sd.introduce,
-        sd.cover_plan_url, sd.video_time,
+        sd.cover_plan_url, sd.video_time AS video_time,
         au.author_img, au.author_name
         FROM
         study sd
@@ -96,28 +96,30 @@
 
     <select id="findBannerByQuery" parameterType="homeVideoQuery"
             resultType="homeBannerListDto">
+        SELECT * FROM (
         SELECT
-        sd.id, sd.cover_plan_url, sd.title
+        sd.id, sd.cover_plan_url, sd.title, sd.study_type,
+        (SELECT COUNT(id) FROM study_user WHERE type = 1 AND study_id = sd.id) AS praise
         FROM
-        study sd
+        study sd ) temp
         WHERE 1 = 1
         <if test="study_type==null">
-            AND sd.study_type = 99
+            AND study_type = 99
         </if>
         <if test="study_type!=null">
-            AND sd.study_type = #{study_type}
+            AND study_type = #{study_type}
             <if test="grade!=0 and grade!=null">
-                AND sd.grade = #{grade}
+                AND grade = #{grade}
             </if>
             <if test="subject!=0 and subject!=null">
-                AND sd.subject = #{subject}
+                AND subject = #{subject}
             </if>
             <if test="classify!=0 and classify!=null">
-                AND sd.classify = #{classify}
+                AND classify = #{classify}
             </if>
         </if>
         <!-- 取点赞数最高的8条数据 -->
-        order by sd.praise DESC
+        order by praise DESC
     </select>
 
     <!-- 查询视频或文章详情 -->

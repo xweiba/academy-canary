@@ -37,5 +37,5 @@ public interface StudyMapper extends BaseMapper<Study>{
     // 取消点赞/收藏状态
     Boolean deletePraiseCollectStatus(@Param("studyId")Long studyId, @Param("userId")Long userId, @Param("type")Integer type);
     // 点赞/收藏
-    Boolean insertPraiseCollectStatus(@Param("studyId")Long studyId, @Param("userId")Long userId, @Param("type")Integer type, @Param("create_at")Date create_at);
+    Boolean insertPraiseCollectStatus(@Param("studyId")Long studyId, @Param("userId")Long userId, @Param("type")Integer type, @Param("createAt")Date create_at);
 }

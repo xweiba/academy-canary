@@ -12,7 +12,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 public class HomeBannerListDto {
-    private String cover_plan_url; // 封面图
+    private String coverPlanUrl; // 封面图
     private Long id; // 文章id
     private String title; // 标题
 }

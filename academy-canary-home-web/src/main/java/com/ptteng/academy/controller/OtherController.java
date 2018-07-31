@@ -2,7 +2,6 @@ package com.ptteng.academy.controller;
 
 import com.ptteng.academy.business.dto.*;
 import com.ptteng.academy.business.query.PageQuery;
-import com.ptteng.academy.business.query.StudentCardQuery;
 import com.ptteng.academy.business.vo.ResponseRowsVO;
 import com.ptteng.academy.business.vo.ResponseVO;
 import com.ptteng.academy.util.ResultUtil;
@@ -10,7 +9,6 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -140,7 +138,7 @@ public class OtherController {
         for (Long i = 1L; i <= 10; i++) {
             HomeBannerListDto homeBannerListDto = new HomeBannerListDto();
             homeBannerListDto.setTitle("banners 标题" + i);
-            homeBannerListDto.setCover_plan_url("http://www.apachecn.org/wp-content/uploads/2017/08/java%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF%E5%9B%BE.jpeg");
+            homeBannerListDto.setCoverPlanUrl("http://www.apachecn.org/wp-content/uploads/2017/08/java%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF%E5%9B%BE.jpeg");
             homeBannerListDto.setId(i);
             banners.add(homeBannerListDto);
         }

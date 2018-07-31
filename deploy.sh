@@ -179,7 +179,6 @@ function deployServer(){
     runStatus
     echo "重载java"
     restServer
-    runStatus
     # 自杀 防止影响下次脚本运行
     echo "脚本自杀 防止影响下次脚本运行"
     ps -ed | grep all-deploy.sh $1 | grep -v grep | awk '{print $2}' | xargs kill -9 >/dev/null 2>&1

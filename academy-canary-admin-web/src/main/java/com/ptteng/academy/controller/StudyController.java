@@ -107,6 +107,7 @@ public class StudyController {
         try {
             return ResultUtil.success("获取文章成功", studyService.findArticleById(id));
         } catch (IllegalArgumentException e) {
+            e.printStackTrace();
             return ResultUtil.success("无数据");
         } catch (Exception e) {
             e.printStackTrace();
@@ -121,8 +122,10 @@ public class StudyController {
         try {
             pageInfo = studyService.findPageBreakByCondition(videoQuery);
         } catch (NullPointerException e) {
+            e.printStackTrace();
             return ResultUtil.success("无数据");
         } catch (Exception e) {
+            e.printStackTrace();
             return ResultUtil.error("查询错误");
         }
         return ResultUtil.success("获取视频信息成功", pageInfo);
@@ -147,6 +150,7 @@ public class StudyController {
         try {
             return ResultUtil.success("获取视频成功", studyService.findVideoById(id));
         } catch (IllegalArgumentException e) {
+            e.printStackTrace();
             return ResultUtil.success("无数据");
         } catch (Exception e) {
             e.printStackTrace();

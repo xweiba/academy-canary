@@ -1,5 +1,6 @@
 package com.ptteng.academy.service.Impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ptteng.academy.business.dto.HomeBannerListDto;
@@ -36,6 +37,7 @@ public class StudyServiceImpl implements StudyService{
         // 设置分页条件
         PageHelper.startPage(homeVideoQuery.getPageNum(), homeVideoQuery.getPageSize());
         List<HomeVideoListDto> homeVideoListDtoList = studyMapper.findVideoByVideoQuery(homeVideoQuery);
+        log.info(homeVideoListDtoList.get(0).toString());
         PageInfo bean = new PageInfo<HomeVideoListDto>(homeVideoListDtoList);
 
         // Banner 只输出8条, 注意这里会刷新bean的total和rows值
