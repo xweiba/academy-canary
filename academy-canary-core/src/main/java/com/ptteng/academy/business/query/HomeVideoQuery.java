@@ -23,7 +23,7 @@ public class HomeVideoQuery extends IQuery{
     private Integer subject; // 科目
 
     @ApiModelProperty(notes = "用户id", required = true)
-    private Integer stuId; // 科目
+    private Long stu_id; // 用户id
 
     @JsonIgnore
     private final Integer study_type = 2; // 文章类型 视频/文章

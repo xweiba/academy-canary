@@ -38,6 +38,7 @@ public class StudyController {
     @ApiImplicitParam(name = "homeVideoQuery", value = "实体类其中有每页显示的条数和要显示的页数，还有年级和学科", required = true, dataType = "HomeVideoQuery")
     @PostMapping("/study/videos")
     public ResponseRowsVO getVideosBanner(@RequestBody HomeVideoQuery homeVideoQuery) {
+        log.debug("homeVideoQuery.toString(): " + homeVideoQuery.toString());
         return ResultUtil.success("获取视频Banner数据成功", studyService.findVideoBannerByQuery(homeVideoQuery));
     }
 
@@ -60,8 +61,9 @@ public class StudyController {
             @ApiImplicitParam(name = "stuId", value = "用户Id", required = true, dataType = "Long")
     })
     @PutMapping("/study/video/{id}/praise")
-    public ResponseVO videoPraise(@PathVariable("id") Long id, Long stuId) {
-        return ResultUtil.success("videoPraise 已执行", studyService.updatePraiseCollectStatus(id,stuId,1));
+    public ResponseVO videoPraise(@PathVariable("id") Long id, @RequestBody Long stuId) {
+        log.info("传入参数:" + id + stuId);
+        return ResultUtil.success("视频点赞已执行", studyService.updatePraiseCollectStatus(id,stuId,1));
     }
 
     @ApiOperation(value = "视频收藏操作", notes = "传入视频id和用户id-stuId收藏操作")
@@ -69,8 +71,8 @@ public class StudyController {
             @ApiImplicitParam(name = "stuId", value = "用户Id", required = true, dataType = "Long")
     })
     @PostMapping("/study/video/{id}/collect")
-    public ResponseVO videoCollect(@PathVariable("id") Long id, Long stuId) {
+    public ResponseVO videoCollect(@PathVariable("id") Long id, @RequestBody Long stuId) {
         log.info("videoCollect传入参数: " + id + stuId);
-        return ResultUtil.success("videoPraise 已执行", studyService.updatePraiseCollectStatus(id,stuId,2));
+        return ResultUtil.success("视频收藏已执行", studyService.updatePraiseCollectStatus(id,stuId,2));
     }
 }

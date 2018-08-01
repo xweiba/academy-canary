@@ -81,8 +81,10 @@ public class StudyServiceImpl implements StudyService {
     // 更新不为空的字段
     @Override
     public boolean updateByPrimaryKeySelective(StudyDto entity) throws Exception{
+        log.debug("entity.toString()更新信息:" + entity.toString());
         /* 上传图片到OSS */
         if ("".equals(entity.getCover_plan_url()) && entity.getCover_plan_url()!=null) {
+            log.debug("开始上传到OSS");
             entity.setAuthor_img(ossService.updateFile(entity.getCover_plan_url()));
         }
         Study study = new Study();

@@ -171,10 +171,10 @@
     </select>
 
     <!-- 视频点赞或收藏 -->
-    <select id="insertPraiseCollectStatus">
+    <insert id="insertPraiseCollectStatus">
         INSERT INTO study_user(study_id,user_id,type,create_at) VALUES
         (#{studyId},#{userId},#{type},#{createAt})
-    </select>
+    </insert>
 
     <!-- 取消视频点赞或收藏 -->
     <delete id="deletePraiseCollectStatus">
