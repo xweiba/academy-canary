@@ -22,6 +22,9 @@ public class HomeVideoQuery extends IQuery{
     @ApiModelProperty(notes = "学科id, 0代表查询所有, 1-6对应对应科目 ", required = false)
     private Integer subject; // 科目
 
+    @ApiModelProperty(notes = "用户id", required = true)
+    private Integer stuId; // 科目
+
     @JsonIgnore
     private final Integer study_type = 2; // 文章类型 视频/文章
     @JsonIgnore
