@@ -71,6 +71,6 @@ public class StudyController {
     @PostMapping("/study/video/{id}/collect")
     public ResponseVO videoCollect(@PathVariable("id") Long id, Long stuId) {
         log.info("videoCollect传入参数: " + id + stuId);
-        return ResultUtil.success("videoPraise 已执行", studyService.updatePraiseCollectStatus(id,1L,2));
+        return ResultUtil.success("videoPraise 已执行", studyService.updatePraiseCollectStatus(id,stuId,2));
     }
 }
