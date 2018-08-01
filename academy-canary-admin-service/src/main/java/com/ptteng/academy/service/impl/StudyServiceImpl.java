@@ -48,8 +48,8 @@ public class StudyServiceImpl implements StudyService {
     @Override
     public StudyDto insert(StudyDto entity) throws Exception {
         /* 上传图片到OSS */
-        if ("".equals(entity.getCover_plan_url()) && entity.getCover_plan_url()!=null) {
-            entity.setAuthor_img(ossService.updateFile(entity.getCover_plan_url()));
+        if (!"".equals(entity.getCover_plan_url()) && entity.getCover_plan_url()!=null) {
+            entity.setCover_plan_url(ossService.updateFile(entity.getCover_plan_url()));
         }
         Study study = new Study();
         BeanUtils.copyProperties(entity, study);
@@ -83,9 +83,9 @@ public class StudyServiceImpl implements StudyService {
     public boolean updateByPrimaryKeySelective(StudyDto entity) throws Exception{
         log.debug("entity.toString()更新信息:" + entity.toString());
         /* 上传图片到OSS */
-        if ("".equals(entity.getCover_plan_url()) && entity.getCover_plan_url()!=null) {
+        if (!"".equals(entity.getCover_plan_url()) && entity.getCover_plan_url()!=null) {
             log.debug("开始上传到OSS");
-            entity.setAuthor_img(ossService.updateFile(entity.getCover_plan_url()));
+            entity.setCover_plan_url(ossService.updateFile(entity.getCover_plan_url()));
         }
         Study study = new Study();
         BeanUtils.copyProperties(entity, study);
@@ -199,6 +199,10 @@ public class StudyServiceImpl implements StudyService {
     // 新增文章
     @Override
     public Long insertArticle(ArticleDto articleDto) throws Exception {
+        /* 上传图片到OSS */
+        if (!"".equals(articleDto.getCover_plan_url()) && articleDto.getCover_plan_url()!=null) {
+            articleDto.setCover_plan_url(ossService.updateFile(articleDto.getCover_plan_url()));
+        }
         Study study = new Study();
         BeanUtils.copyProperties(articleDto, study);
         study.setAuthor(consumeService.findAuthorByName(articleDto.getAuthor()));
@@ -214,10 +218,14 @@ public class StudyServiceImpl implements StudyService {
 
     // 更新文章
     @Override
-    public Boolean updateByArticle(ArticleDto articleDto) {
+    public Boolean updateByArticle(ArticleDto articleDto) throws FileNotFoundException {
         log.info("articleDto.toString(): " + articleDto.toString());
         Study study = new Study();
         BeanUtils.copyProperties(articleDto, study);
+        /* 上传图片到OSS */
+        if (!"".equals(articleDto.getCover_plan_url()) && articleDto.getCover_plan_url()!=null) {
+            study.setCover_plan_url(ossService.updateFile(articleDto.getCover_plan_url()));
+        }
         study.setAuthor(consumeService.findAuthorByName(articleDto.getAuthor()));
         return studyMapper.updateByPrimaryKeySelective(study) > 0 ;
     }

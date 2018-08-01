@@ -7,6 +7,8 @@ import com.ptteng.academy.business.dto.VideoDto;
 import com.ptteng.academy.business.query.StudyQuery;
 import com.ptteng.academy.framework.pojo.AbstractService;
 
+import java.io.FileNotFoundException;
+
 /**
  * @program: canary
  * @description: 视频和文章
@@ -19,7 +21,7 @@ public interface StudyService extends AbstractService<StudyDto, Long>{
 
     Boolean updateStatusById(Long id) throws Exception;
     // 更新文章
-    Boolean updateByArticle(ArticleDto articleDto);
+    Boolean updateByArticle(ArticleDto articleDto) throws FileNotFoundException;
 
     ArticleDto findArticleById(Long id) throws Exception;
     VideoDto findVideoById(Long id) throws Exception;
