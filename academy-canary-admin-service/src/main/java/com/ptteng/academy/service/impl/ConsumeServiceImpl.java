@@ -29,14 +29,13 @@ public class ConsumeServiceImpl implements ConsumeService {
     @Resource
     private OSSService ossService;
 
-    private Author author = new Author();
-
     @Override
     public AuthorDto insert(AuthorDto entity) throws Exception{
         /* 上传图片到OSS */
         if ("".equals(entity.getAuthor_img()) && entity.getAuthor_img()!=null) {
             entity.setAuthor_img(ossService.updateFile(entity.getAuthor_img()));
         }
+        Author author = new Author();
         BeanUtils.copyProperties(entity,author);
         author.setCreate_at(new Date());
         author.setUpdate_at(new Date());
@@ -63,6 +62,7 @@ public class ConsumeServiceImpl implements ConsumeService {
         if ("".equals(entity.getAuthor_img()) && entity.getAuthor_img()!=null) {
             entity.setAuthor_img(ossService.updateFile(entity.getAuthor_img()));
         }
+        Author author = new Author();
         BeanUtils.copyProperties(entity, author);
         author.setUpdate_at(new Date());
         return authorMapper.updateByPrimaryKey(author) > 0;
@@ -106,6 +106,7 @@ public class ConsumeServiceImpl implements ConsumeService {
     // 根据用户名返回id
     @Override
     public Long findAuthorByName(String name) {
+        Author author = new Author();
         author.setAuthor_name(name);
         author = authorMapper.selectOne(author);
         return author.getId();
@@ -113,6 +114,7 @@ public class ConsumeServiceImpl implements ConsumeService {
     // 根据id返回用户名
     @Override
     public String findAuthorById(Long id) {
+        Author author = new Author();
         author.setId(id);
         author = authorMapper.selectOne(author);
         return author.getAuthor_name();
