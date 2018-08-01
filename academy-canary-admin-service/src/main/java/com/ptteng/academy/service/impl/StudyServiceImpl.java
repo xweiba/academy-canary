@@ -44,8 +44,6 @@ public class StudyServiceImpl implements StudyService {
     @Resource
     private OSSService ossService;
 
-    private Study study = new Study();
-    private StudyDto studyDto = new StudyDto();
 
     @Override
     public StudyDto insert(StudyDto entity) throws Exception {
@@ -53,6 +51,7 @@ public class StudyServiceImpl implements StudyService {
         if ("".equals(entity.getCover_plan_url()) && entity.getCover_plan_url()!=null) {
             entity.setAuthor_img(ossService.updateFile(entity.getCover_plan_url()));
         }
+        Study study = new Study();
         BeanUtils.copyProperties(entity, study);
         study.setCreate_at(new Date());
         study.setUpdate_at(new Date());
@@ -86,6 +85,7 @@ public class StudyServiceImpl implements StudyService {
         if ("".equals(entity.getCover_plan_url()) && entity.getCover_plan_url()!=null) {
             entity.setAuthor_img(ossService.updateFile(entity.getCover_plan_url()));
         }
+        Study study = new Study();
         BeanUtils.copyProperties(entity, study);
         // 更新时间
         study.setUpdate_at(new Date());
@@ -162,6 +162,7 @@ public class StudyServiceImpl implements StudyService {
     @Override
     public ArticleDto findArticleById(Long id) throws Exception{
         ArticleDto articleDto = new ArticleDto();
+        Study study = new Study();
         study = studyMapper.selectByPrimaryKey(id);
         BeanUtils.copyProperties(study, articleDto);
         articleDto.setAuthor(consumeService.findAuthorById(study.getAuthor()));
@@ -181,6 +182,7 @@ public class StudyServiceImpl implements StudyService {
         if (!"".equals(videoDto.getCover_plan_url()) && videoDto.getCover_plan_url()!=null) {
             videoDto.setCover_plan_url(ossService.updateFile(videoDto.getCover_plan_url()));
         }
+        Study study = new Study();
         BeanUtils.copyProperties(videoDto, study);
         study.setStudy_type(2);
         study.setCreate_at(new Date());
@@ -195,6 +197,7 @@ public class StudyServiceImpl implements StudyService {
     // 新增文章
     @Override
     public Long insertArticle(ArticleDto articleDto) throws Exception {
+        Study study = new Study();
         BeanUtils.copyProperties(articleDto, study);
         study.setAuthor(consumeService.findAuthorByName(articleDto.getAuthor()));
         study.setStudy_type(2);
@@ -211,6 +214,7 @@ public class StudyServiceImpl implements StudyService {
     @Override
     public Boolean updateByArticle(ArticleDto articleDto) {
         log.info("articleDto.toString(): " + articleDto.toString());
+        Study study = new Study();
         BeanUtils.copyProperties(articleDto, study);
         study.setAuthor(consumeService.findAuthorByName(articleDto.getAuthor()));
         return studyMapper.updateByPrimaryKeySelective(study) > 0 ;

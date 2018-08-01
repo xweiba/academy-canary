@@ -111,7 +111,7 @@ public class StudyController {
             return ResultUtil.success("无数据");
         } catch (Exception e) {
             e.printStackTrace();
-            return ResultUtil.error("获取视频失败");
+            return ResultUtil.error("获取文章失败");
         }
     }
 

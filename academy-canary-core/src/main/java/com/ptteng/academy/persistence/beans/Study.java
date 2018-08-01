@@ -5,6 +5,7 @@ import lombok.Data;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -48,9 +49,11 @@ public class Study implements Serializable {
     private Long video_time;
     // 状态
     private Boolean status;
-    // 点赞数
+    // 点赞数  @Transient 说明这是一个临时字段
+    @Transient
     private Long praise;
     // 收藏数
+    @Transient
     private Long collect;
     // 年级
     private Integer grade;
