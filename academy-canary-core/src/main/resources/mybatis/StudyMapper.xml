@@ -67,7 +67,9 @@
         SELECT
         sd.id, sd.title,
         (SELECT COUNT(id) FROM study_user WHERE type = 1 AND study_id = sd.id) AS praise,
+        (SELECT COUNT(id) FROM study_user WHERE type = 1 AND study_id = sd.id AND user_id = 1) AS praise_status,
         (SELECT COUNT(id) FROM study_user WHERE type = 2 AND study_id = sd.id) AS collect,
+        (SELECT COUNT(id) FROM study_user WHERE type = 2 AND study_id = sd.id AND user_id = 1) AS collect_status,
         sd.create_at, sd.introduce,
         sd.cover_plan_url, sd.video_time AS video_time,
         au.author_img, au.author_name
@@ -171,7 +173,7 @@
     <!-- 视频点赞或收藏 -->
     <select id="insertPraiseCollectStatus">
         INSERT INTO study_user(study_id,user_id,type,create_at) VALUES
-        (#{studyId},#{userId},#{type},#{create_at})
+        (#{studyId},#{userId},#{type},#{createAt})
     </select>
 
     <!-- 取消视频点赞或收藏 -->

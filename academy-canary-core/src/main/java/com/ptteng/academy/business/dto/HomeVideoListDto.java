@@ -23,4 +23,6 @@ public class HomeVideoListDto {
     private String introduce; // 文章简介
     private String coverPlanUrl; // 封面图
     private Long videoTime; // 视频时长
+    private Boolean praiseStatus; // 点赞状态
+    private Boolean collectStatus; // 收藏状态
 }

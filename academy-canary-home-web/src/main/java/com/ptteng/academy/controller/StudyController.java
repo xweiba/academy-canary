@@ -34,7 +34,7 @@ public class StudyController {
     private StudyService studyService;
 
     /*视频*/
-    @ApiOperation(value = "获取视频Banner列表", notes = "传入实体类")
+    @ApiOperation(value = "获取视频列表和Banner列表", notes = "传入实体类")
     @ApiImplicitParam(name = "homeVideoQuery", value = "实体类其中有每页显示的条数和要显示的页数，还有年级和学科", required = true, dataType = "HomeVideoQuery")
     @PostMapping("/study/videos")
     public ResponseRowsVO getVideosBanner(@RequestBody HomeVideoQuery homeVideoQuery) {
