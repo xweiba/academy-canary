@@ -59,5 +59,4 @@ public class Study implements Serializable {
     private Integer grade;
     // 科目
     private Integer subject;
-
 }

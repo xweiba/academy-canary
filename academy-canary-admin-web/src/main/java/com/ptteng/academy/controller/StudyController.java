@@ -42,8 +42,6 @@ public class StudyController {
 
     private Map<String, Object> objectMap = new HashMap<String, Object>();
 
-    private StudyDto studyDto = new StudyDto();
-
     // 获取文章列表
     @ApiOperation(value = "文章分页条件查询", notes = "返回文章分页数据")
     @PostMapping("/articles")
@@ -77,6 +75,7 @@ public class StudyController {
     @PostMapping("/article")
     public ResponseVO createArticle(@RequestBody ArticleDto articleDto) {
         try {
+            log.debug("createArticle: " + articleDto.toString());
             objectMap.put("id", studyService.insertArticle(articleDto));
             return ResultUtil.success("文章创建成功", objectMap);
         } catch (Exception e) {
@@ -162,6 +161,7 @@ public class StudyController {
     @ApiImplicitParam(name = "id", value = "视频Id", required = true, paramType = "path", dataType = "Long", defaultValue = "1")
     @PutMapping("/video/{id}")
     public ResponseVO upDataVideo(@PathVariable("id") Long id, @RequestBody VideoDto videoDto) {
+        StudyDto studyDto = new StudyDto();
         videoDto.setId(id);
         BeanUtils.copyProperties(videoDto, studyDto);
         try {

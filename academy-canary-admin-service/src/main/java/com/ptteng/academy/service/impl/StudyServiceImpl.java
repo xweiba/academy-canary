@@ -132,6 +132,7 @@ public class StudyServiceImpl implements StudyService {
                     studyDtoList) {
                 ArticleListDto articleListDto = new ArticleListDto();
                 BeanUtils.copyProperties(s, articleListDto);
+                log.debug("文章查询结果: " + articleListDto.toString());
                 articleListDto.setClassify(ClassifyEnum.getArticleEnum(s.getClassify()).getName());
                 articleListDtoList.add(articleListDto);
             }
@@ -145,6 +146,7 @@ public class StudyServiceImpl implements StudyService {
                 studyDtoList) {
             VideoListDto videoListDto = new VideoListDto();
             BeanUtils.copyProperties(s, videoListDto);
+            log.debug("视频查询结果: " + videoListDto.toString());
             videoListDto.setClassify(ClassifyEnum.getArticleEnum(s.getClassify()).getName());
             videoListDto.setSubject(SubjectEnum.getSubjectEnum(s.getSubject()).getSubject());
             videoListDto.setGrade(GradeEnum.getGradeEnum(s.getGrade()).getGrade());
@@ -175,6 +177,7 @@ public class StudyServiceImpl implements StudyService {
     public VideoDto findVideoById(Long id) throws Exception {
         VideoDto videoDto = new VideoDto();
         BeanUtils.copyProperties(studyMapper.selectByPrimaryKey(id), videoDto);
+        log.debug("findVideoById: " + videoDto.toString());
         return videoDto;
     }
 
@@ -202,15 +205,17 @@ public class StudyServiceImpl implements StudyService {
         /* 上传图片到OSS */
         if (!"".equals(articleDto.getCover_plan_url()) && articleDto.getCover_plan_url()!=null) {
             articleDto.setCover_plan_url(ossService.updateFile(articleDto.getCover_plan_url()));
+            log.debug("articleDto.getCover_plan_url():" + articleDto.getCover_plan_url());
         }
         Study study = new Study();
         BeanUtils.copyProperties(articleDto, study);
         study.setAuthor(consumeService.findAuthorByName(articleDto.getAuthor()));
-        study.setStudy_type(2);
+        study.setStudy_type(1);
         study.setCreate_at(new Date());
         study.setUpdate_at(new Date());
         study.setCreate_by("admin");
         study.setUpdate_by("admin");
+        log.debug("studyMapper.insert(study): " + study.toString());
         studyMapper.insert(study);
         log.debug(study.toString());
         return study.getId();

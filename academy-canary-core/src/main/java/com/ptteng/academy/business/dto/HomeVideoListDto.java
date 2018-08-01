@@ -18,7 +18,7 @@ public class HomeVideoListDto {
     private String authorImg;  // 作者图像
     private String authorName; // 作者名称
     private Long praise; // 收藏数
-    private Long collect; // 点赞数
+    private Long collect; // 点赞数A
     private Date createAt; // 文章创建时间
     private String introduce; // 文章简介
     private String coverPlanUrl; // 封面图

@@ -16,7 +16,7 @@ public class VideoDto {
     private Long id; // 编辑时需要
     private Integer grade; // 年级
     private Integer subject; // 科目
-    private Integer author;  // 作者
+    private Long author;  // 作者
     private String title; // 标题
     private String cover_plan_url; // 封面, 视频预览图
     private Integer classify; // 分类

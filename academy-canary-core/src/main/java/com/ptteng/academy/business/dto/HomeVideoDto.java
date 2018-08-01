@@ -16,7 +16,7 @@ import java.util.Date;
 public class HomeVideoDto {
     private Long id; // 查看时需要
     private String title; // 标题
-    private Date create_at; // 文章创建时间
+    private Date createAt; // 文章创建时间
     private String authorName; // 作者名称
     private String introduce; // 摘要
     private String videoUrl; // 视频Url

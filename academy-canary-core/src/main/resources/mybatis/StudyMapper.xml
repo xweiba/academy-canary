@@ -40,17 +40,21 @@
             <if test="subject!=0 and subject!=null">
                 AND subject = #{subject}
             </if>
-            <if test="praise[0]!=0 and praise[0]!=null">
-                AND praise >= ${praise[0]}
+            <if test="praise!=null" >
+                <if test="praise[0]!=0 and praise[0]!=null">
+                    AND praise >= ${praise[0]}
+                </if>
+                <if test="praise[1]!=0 and praise[1]!=null">
+                    AND ${praise[1]} >= praise
+                </if>
             </if>
-            <if test="praise[1]!=0 and praise[1]!=null">
-                AND ${praise[1]} >= praise
-            </if>
-            <if test="collect[0]!=0 and collect[0]!=null">
-                AND collect >= ${collect[0]}
-            </if>
-            <if test="collect[1]!=0 and collect[1]!=null">
-                AND ${collect[1]} >= collect
+            <if test="collect!=null">
+                <if test="collect[0]!=0 and collect[0]!=null">
+                    AND collect >= ${collect[0]}
+                </if>
+                <if test="collect[1]!=0 and collect[1]!=null">
+                    AND ${collect[1]} >= collect
+                </if>
             </if>
             <if test="status!=null">
                 AND status = #{status}
