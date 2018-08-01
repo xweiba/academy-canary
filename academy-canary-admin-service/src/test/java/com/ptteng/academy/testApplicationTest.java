@@ -8,6 +8,7 @@ import com.ptteng.academy.business.query.*;
 import com.ptteng.academy.framework.config.TaskConfig;
 import com.ptteng.academy.framework.config.QiNiuYun;
 import com.ptteng.academy.persistence.mapper.ModuleMapper;
+import com.ptteng.academy.persistence.mapper.RoleMapper;
 import com.ptteng.academy.persistence.mapper.StudyMapper;
 import com.ptteng.academy.service.ManageService;
 import com.ptteng.academy.service.StudyService;
@@ -35,6 +36,9 @@ public class testApplicationTest {
 
     @Resource
     ModuleMapper moduleMapper;
+
+    @Resource
+    RoleMapper roleMapper;
 
     @Test
     public void instert() throws Exception {
@@ -147,5 +151,11 @@ public class testApplicationTest {
     @Test
     public void findAccountById() {
         System.out.println(JSONObject.toJSONString(manageService.findAccountById(1L)));
+    }
+
+
+    @Test
+    public void findRoleModules() {
+        System.out.println(JSONObject.toJSONString(manageService.findRoleById(1L)));
     }
 }

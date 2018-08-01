@@ -2,6 +2,7 @@ package com.ptteng.academy.framework.config;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 /**
  * @program: canary
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
  * @create: 2018-07-26 01:44
  **/
 
+@EnableTransactionManagement
 @Component
 @MapperScan("com.ptteng.academy.persistence.mapper")
 public class MybatisConfig {

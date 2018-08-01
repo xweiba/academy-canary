@@ -52,7 +52,7 @@ public class StudyController {
     @ApiOperation(value = "获取视频详情", notes = "传入用户ID和视频Id获取视频详情")
     @ApiImplicitParams({@ApiImplicitParam( name = "stuId", value = "传入学员ID",required = true, dataType = "Long"),@ApiImplicitParam(name = "id",value = "视频Id",paramType = "path",required = true,dataType = "Long")})
     @PostMapping("/study/video/{id}")
-    public ResponseVO getVideo(@PathVariable("id") Long id, Long stuId) {
+    public ResponseVO getVideo(@PathVariable("id") Long id, @RequestBody Long stuId) {
         return ResultUtil.success("getVideo 已执行", studyService.findStudyByQuery(id, stuId));
     }
 
@@ -70,7 +70,7 @@ public class StudyController {
     @ApiImplicitParams({@ApiImplicitParam(name = "id",paramType = "path",value = "视频id", required = true, dataType = "Long"),
             @ApiImplicitParam(name = "stuId", value = "用户Id", required = true, dataType = "Long")
     })
-    @PostMapping("/study/video/{id}/collect")
+    @PutMapping("/study/video/{id}/collect")
     public ResponseVO videoCollect(@PathVariable("id") Long id, @RequestBody Long stuId) {
         log.info("videoCollect传入参数: " + id + stuId);
         return ResultUtil.success("视频收藏已执行", studyService.updatePraiseCollectStatus(id,stuId,2));

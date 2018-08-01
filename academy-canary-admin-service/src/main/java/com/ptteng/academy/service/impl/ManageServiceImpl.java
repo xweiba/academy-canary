@@ -5,7 +5,6 @@ import com.github.pagehelper.PageInfo;
 import com.ptteng.academy.business.dto.AccountDto;
 import com.ptteng.academy.business.dto.ModuleDto;
 import com.ptteng.academy.business.dto.RoleDto;
-import com.ptteng.academy.business.dto.StudyDto;
 import com.ptteng.academy.business.query.AccountQuery;
 import com.ptteng.academy.business.query.ModuleQuery;
 import com.ptteng.academy.business.query.RoleQuery;
@@ -18,10 +17,13 @@ import com.ptteng.academy.persistence.mapper.RoleMapper;
 import com.ptteng.academy.service.ManageService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -58,10 +60,14 @@ public class ManageServiceImpl implements ManageService {
         return moduleDto;
     }
 
+    // 添加事务
     @Override
     public Boolean deleteModule(Long id) {
+        // 先删除关系表
+        moduleMapper.deleteRoleModulesByModuleId(id);
         return moduleMapper.deleteByPrimaryKey(id) > 0 ;
     }
+
 
     @Override
     public Boolean updateModule(ModuleDto moduleDto) {
@@ -71,6 +77,7 @@ public class ManageServiceImpl implements ManageService {
         module.setUpdate_by("admin");
         return moduleMapper.updateByPrimaryKeySelective(module) > 0;
     }
+
 
     @Override
     public Boolean insertModule(ModuleDto moduleDto) {
@@ -86,7 +93,6 @@ public class ManageServiceImpl implements ManageService {
         PageHelper.startPage(roleQuery.getPageNum(), roleQuery.getPageSize());
         List<RoleDto> roleList =  roleMapper.findRoleByQuery(roleQuery);
         PageInfo bean = new PageInfo<RoleDto>(roleList);
-
         return bean;
     }
 
@@ -98,22 +104,62 @@ public class ManageServiceImpl implements ManageService {
 
     @Override
     public RoleDto findRoleById(Long id) {
-        return null;
+        List<Long> modules =  roleMapper.findRoleModuleById(id);
+        RoleDto roleDto = roleMapper.findRoleById(id);
+        roleDto.setModuleIds(modules);
+        return roleDto;
     }
 
     @Override
-    public Boolean deleteRoleById(Long id) {
-        return moduleMapper.deleteByPrimaryKey(id) > 0;
+    public Boolean deleteRoleById(Long id) throws Exception {
+        // 注意角色与账号绑定的, 如果需要删除角色必须先取消账号的关联
+        // 先删除关系表
+        roleMapper.deleteRoleModulesByRoleId(id);
+        return roleMapper.deleteByPrimaryKey(id) > 0;
     }
 
     @Override
-    public Boolean insertRole(RoleDto roleDto) {
-        return null;
+    public Boolean insertRole(RoleDto roleDto) throws Exception {
+            // 1. 插入角色
+            Role role = new Role();
+            BeanUtils.copyProperties(roleDto, role);
+            role.setCreate_at(new Date());
+            role.setUpdate_at(new Date());
+            role.setCreate_by("admin");
+            role.setUpdate_by("admin");
+            // 返回用户id
+            roleMapper.insert(role);
+            Long roleId = role.getId();
+            log.debug("roleId:" + role.getId());
+
+            // 2. 关联模块, 遍历插入
+            for (Long ModuleId :
+                    roleDto.getModuleIds()) {
+                    roleMapper.insertRoleModulesByRoleId(roleId, ModuleId);
+            }
+            return true;
     }
 
     @Override
-    public Boolean updateRole(RoleDto roleDto) {
-        return null;
+    public Boolean updateRole(RoleDto roleDto) throws Exception{
+        Role role = new Role();
+        BeanUtils.copyProperties(roleDto, role);
+        role.setUpdate_at(new Date());
+        role.setUpdate_by("admin");
+        roleMapper.updateByPrimaryKeySelective(role);
+        Long roleId = role.getId();
+        // 2. 关联模块, 先删除原有的, 然后遍历插入
+        roleMapper.deleteRoleModulesByRoleId(roleId);
+        for (Long ModuleId :
+                roleDto.getModuleIds()) {
+            try {
+                roleMapper.insertRoleModulesByRoleId(roleId, ModuleId);
+            } catch (DataIntegrityViolationException e) {
+                log.debug("忽略部分错误id");
+                e.printStackTrace();
+            }
+        }
+        return true;
     }
 
     /* 账号模块 */

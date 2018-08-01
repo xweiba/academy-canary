@@ -17,7 +17,7 @@ public class RoleDto {
     private Long id;
     private String role_name;
     private String role_tag;
-    private Integer[] moduleIds;
+    private List<Long> moduleIds;
     private Date create_at;
     private String create_by;
 }

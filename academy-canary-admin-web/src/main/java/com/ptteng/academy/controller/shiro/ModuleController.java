@@ -46,7 +46,12 @@ public class ModuleController {
     @ApiImplicitParam(name = "id", value = "模块Id", required = true, paramType = "path", dataType = "Long", defaultValue = "1")
     @DeleteMapping("/module/{id}")
     public ResponseVO deleteModule(@PathVariable("id") Long id) {
-        return ResultUtil.success("deleteModule 已执行", manageService.deleteModule(id));
+        try {
+            Boolean module = manageService.deleteModule(id);
+            return ResultUtil.success("删除模块成功", module);
+        } catch (Exception e){
+            return ResultUtil.error("删除模块失败, 该模块不存在!");
+        }
     }
 
     @ApiOperation(value = "根据 id 更新模块信息", notes = "执行成功返回true")

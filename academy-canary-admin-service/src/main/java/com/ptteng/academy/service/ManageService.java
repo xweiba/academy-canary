@@ -42,11 +42,11 @@ public interface ManageService {
     /*  根据id查询模块 */
     RoleDto findRoleById(Long id);
     /* 删除角色 */
-    Boolean deleteRoleById(Long id);
+    Boolean deleteRoleById(Long id) throws Exception;
     /* 新增模块 */
-    Boolean insertRole(RoleDto roleDto);
+    Boolean insertRole(RoleDto roleDto) throws Exception;
     /* 更新模块 */
-    Boolean updateRole(RoleDto roleDto);
+    Boolean updateRole(RoleDto roleDto) throws Exception;
 
     /* 账号模块 */
     PageInfo<AccountDto> findAccountByQuery(AccountQuery accountQuery);

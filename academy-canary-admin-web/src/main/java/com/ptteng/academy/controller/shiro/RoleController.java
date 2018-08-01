@@ -7,8 +7,10 @@ import com.ptteng.academy.business.vo.ResponseVO;
 import com.ptteng.academy.service.ManageService;
 import com.ptteng.academy.util.ResultUtil;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -40,34 +42,52 @@ public class RoleController {
         return ResultUtil.success("roleNames 已执行", manageService.findRoleNames());
     }
 
+    @ApiOperation(value = "分页查询角色信息", notes = "所有角色")
     @PostMapping("/roles")
     public ResponseRowsVO getRoles(@RequestBody RoleQuery roleQuery) {
         log.info("roleQuery.toString():" + roleQuery.toString());
         return ResultUtil.success("getRoles 已执行", manageService.findRoleByQuery(roleQuery));
     }
 
+    @ApiOperation(value = "通过id获取角色详细信息", notes = "所有角色")
+    @ApiImplicitParam(name = "id", value = "角色id", required = true, paramType = "path", dataType = "Long", defaultValue = "1")
     @GetMapping("/role/{id}")
     public ResponseVO getRole(@PathVariable("id") Long id) {
-        RoleDto roleDto = new RoleDto();
-        Integer [] nums = {0,1,2,3,4,5,6,7,8,9};
-        roleDto.setId(id);
-        roleDto.setRole_name("葫芦娃" + id);
-        roleDto.setCreate_at(new Date());
-        roleDto.setCreate_by("admin" + id);
-        roleDto.setModuleIds(nums);
-        return ResultUtil.success("getRole_name 已执行", roleDto);
+        return ResultUtil.success("获取角色详细信息成功", manageService.findRoleById(id));
     }
+
     @PostMapping("/role")
     public ResponseVO createRole(@RequestBody RoleDto roleDto) {
-        return ResultUtil.success("createRole 已执行", roleDto);
+        try {
+            return ResultUtil.success("角色创建成功", manageService.insertRole(roleDto));
+        } catch (DataIntegrityViolationException e) {
+            e.printStackTrace();
+            return ResultUtil.success("角色创建成功, 部分module Id错误.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResultUtil.error("角色创建失败");
+        }
     }
 
     @PutMapping("/role")
     public ResponseVO updateRole(@RequestBody RoleDto roleDto) {
-        return ResultUtil.success("updateRole 已执行", roleDto);
+        try {
+            return ResultUtil.success("角色更新成功", manageService.updateRole(roleDto));
+        } catch (DataIntegrityViolationException e) {
+            e.printStackTrace();
+            return ResultUtil.success("角色更新成功, 部分module Id不存在已忽略");
+        }catch (Exception e) {
+            e.printStackTrace();
+            return ResultUtil.success("角色更新失败");
+        }
     }
     @DeleteMapping("/role/{id}")
     public ResponseVO deleteRole(@PathVariable("id") Long id) {
-        return ResultUtil.success("deleteRole 已执行");
+        try {
+            Boolean role = manageService.deleteRoleById(id);
+            return ResultUtil.success("删除角色成功", role);
+        } catch (Exception e){
+            return ResultUtil.error("删除角色失败, 该角色不存在或与账号关联时无法删除!");
+        }
     }
 }
