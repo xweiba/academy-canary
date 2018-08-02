@@ -130,84 +130,62 @@ public class OtherController {
         return ResultUtil.success("getCollectVideo 已执行", videos);
     }
 
-    @ApiOperation(value = "获取banner文章信息", notes = "要显示的页数")
-    @ApiImplicitParam(name = "num", value = "bunner图的个数", required = true, dataType = "Integer")
-    @PostMapping("/study/article/banners")
-    public ResponseRowsVO getArticleBanner(@RequestBody Map<String, Object> pageNum) {
-        List<Object> banners = new ArrayList<>();
-        for (Long i = 1L; i <= 10; i++) {
-            HomeBannerListDto homeBannerListDto = new HomeBannerListDto();
-            homeBannerListDto.setTitle("banners 标题" + i);
-            homeBannerListDto.setCoverPlanUrl("http://www.apachecn.org/wp-content/uploads/2017/08/java%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF%E5%9B%BE.jpeg");
-            homeBannerListDto.setId(i);
-            banners.add(homeBannerListDto);
-        }
-        return ResultUtil.success("getArticleBanner 已执行", banners);
-    }
+//    @ApiOperation(value = "获取banner文章信息", notes = "要显示的页数")
+////    @ApiImplicitParam(name = "num", value = "bunner图的个数", required = true, dataType = "Integer")
+////    @PostMapping("/study/article/banners")
+////    public ResponseRowsVO getArticleBanner(@RequestBody Map<String, Object> pageNum) {
+////        List<Object> banners = new ArrayList<>();
+////        for (Long i = 1L; i <= 10; i++) {
+////            HomeBannerListDto homeBannerListDto = new HomeBannerListDto();
+////            homeBannerListDto.setTitle("banners 标题" + i);
+////            homeBannerListDto.setCoverPlanUrl("http://www.apachecn.org/wp-content/uploads/2017/08/java%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF%E5%9B%BE.jpeg");
+////            homeBannerListDto.setId(i);
+////            banners.add(homeBannerListDto);
+////        }
+////        return ResultUtil.success("getArticleBanner 已执行", banners);
+////    }
 
-    @ApiOperation(value = "获取card文章列表", notes = "传入实体类")
-    @ApiImplicitParam(name = "pageQuery", value = "实体类其中有每页显示的条数和要显示的页数", required = true, dataType = "pageQuery")
-    @PostMapping("/study/articles")
-    public ResponseRowsVO getArticles(@RequestBody PageQuery pageQuery) {
-        Date date = new Date(60 * 60);
-        List<StudentCollectDto> articles = new ArrayList<>();
-        for (Long i = 1L; i <= 10; i++) {
-            StudentCollectDto studentCollectDto = new StudentCollectDto();
-            studentCollectDto.setTitle("这是标题" + i);
-            studentCollectDto.setArticleId(i);
-            studentCollectDto.setAuthor("王五");
-            studentCollectDto.setCoverPlanUrl("http://www.apachecn.org/wp-content/uploads/2017/08/java%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF%E5%9B%BE.jpeg");
-            studentCollectDto.setDigest("这是摘要");
-            studentCollectDto.setPraise(123L);
-            studentCollectDto.setCollect(45L);
-            date = new Date(date.getTime() + 30 * 60 * 1000);
-            studentCollectDto.setCollectTime(date);
 
-            articles.add(studentCollectDto);
-        }
 
-        return ResultUtil.success("getArticles 已执行", articles);
-    }
+//    @ApiOperation(value = "获取card文章详情信息", notes = "通过文章id获取详情")
+//    @ApiImplicitParams({@ApiImplicitParam(name = "id", value = "文章id", required = true,paramType = "path",dataType = "Long"),
+//            @ApiImplicitParam(name = "stuId", value = "用户Id", required = true, dataType = "long")
+//    })
+//    @PostMapping("/study/article/{id}")
+//    public ResponseVO getArticle(@PathVariable("id") Long id, @RequestBody Long stuId) {
+//        ArticleAndVideoDto articleDto = new ArticleAndVideoDto();
+//
+//        articleDto.setTitle("这是标题");
+//        articleDto.setUpdateTime(new Date());
+//        articleDto.setContent("这是内容这是内容这是内容这是内容这是内容");
+//        articleDto.setAuthor("我是作者");
+//        articleDto.setPraise(23);
+//        articleDto.setCollect(33);
+//        articleDto.setPraiseStu(true);
+//        articleDto.setCollectStu(false);
+//
+//        return ResultUtil.success("getArticle 已执行", articleDto);
+//    }
 
-    @ApiOperation(value = "获取card文章详情信息", notes = "通过文章id获取详情")
-    @ApiImplicitParams({@ApiImplicitParam(name = "id", value = "文章id", required = true,paramType = "path",dataType = "Long"),
-            @ApiImplicitParam(name = "stuId", value = "用户Id", required = true, dataType = "long")
-    })
-    @PostMapping("/study/article/{id}")
-    public ResponseVO getArticle(@PathVariable("id") Long id, @RequestBody Long stuId) {
-        ArticleAndVideoDto articleDto = new ArticleAndVideoDto();
-
-        articleDto.setTitle("这是标题");
-        articleDto.setUpdateTime(new Date());
-        articleDto.setContent("这是内容这是内容这是内容这是内容这是内容");
-        articleDto.setAuthor("我是作者");
-        articleDto.setPraise(23);
-        articleDto.setCollect(33);
-        articleDto.setPraiseStu(true);
-        articleDto.setCollectStu(false);
-
-        return ResultUtil.success("getArticle 已执行", articleDto);
-    }
-
-    @ApiOperation(value = "文章点赞操作", notes = "传入文章id和用户id-stuId点赞操作")
-    @ApiImplicitParams({@ApiImplicitParam(name = "id", value = "文章id", required = true,paramType = "path",dataType = "stuId"),
-            @ApiImplicitParam(name = "stuId", value = "用户Id", required = true, dataType = "Long")
-    })
-    @PutMapping("/study/article/{id}/praise")
-    public ResponseVO articlePraise(@PathVariable("id") Long id, Long stuId) {
-        return ResultUtil.success("articlePraise 已执行");
-    }
-
-    @ApiOperation(value = "文章收藏操作", notes = "传入文章id和用户id-stuId收藏操作")
-    @ApiImplicitParams({@ApiImplicitParam(name = "id", value = "文章id", required = true,paramType = "path",dataType = "Long"),
-            @ApiImplicitParam(name = "stuId", value = "用户Id", required = true, dataType = "Long")
-    })
-    @PutMapping("/study/article/{id}/collect")
-    public ResponseVO articleCollect(@PathVariable("id") Long id, @RequestBody Map<String, Object> stuId) {
-        return ResultUtil.success("articleCollect 已执行");
+//    @ApiOperation(value = "文章点赞操作", notes = "传入文章id和用户id-stuId点赞操作")
+//    @ApiImplicitParams({@ApiImplicitParam(name = "id", value = "文章id", required = true,paramType = "path",dataType = "stuId"),
+//            @ApiImplicitParam(name = "stuId", value = "用户Id", required = true, dataType = "Long")
+//    })
+//    @PutMapping("/study/article/{id}/praise")
+//    public ResponseVO articlePraise(@PathVariable("id") Long id, Long stuId) {
+//        return ResultUtil.success("articlePraise 已执行");
+//    }
+//
+//    @ApiOperation(value = "文章收藏操作", notes = "传入文章id和用户id-stuId收藏操作")
+//    @ApiImplicitParams({@ApiImplicitParam(name = "id", value = "文章id", required = true,paramType = "path",dataType = "Long"),
+//            @ApiImplicitParam(name = "stuId", value = "用户Id", required = true, dataType = "Long")
+//    })
+//    @PutMapping("/study/article/{id}/collect")
+//    public ResponseVO articleCollect(@PathVariable("id") Long id, @RequestBody Map<String, Object> stuId) {
+//        return ResultUtil.success("articleCollect 已执行");
     }
 
 
 
 
-}
+

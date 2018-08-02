@@ -22,10 +22,10 @@ public class User implements Serializable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Date create_at;
-    private Date update_at;
-    private String create_by;
-    private String update_by;
+    private Date createAt;
+    private Date updateAt;
+    private String createBy;
+    private String updateBy;
 
     // 微信openId
     private String openId;

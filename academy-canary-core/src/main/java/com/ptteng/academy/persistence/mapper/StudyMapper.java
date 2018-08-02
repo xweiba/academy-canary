@@ -1,10 +1,9 @@
 package com.ptteng.academy.persistence.mapper;
 
-import com.ptteng.academy.business.dto.HomeBannerListDto;
-import com.ptteng.academy.business.dto.HomeVideoDto;
-import com.ptteng.academy.business.dto.HomeVideoListDto;
-import com.ptteng.academy.business.dto.StudyDto;
+import com.github.pagehelper.PageInfo;
+import com.ptteng.academy.business.dto.*;
 import com.ptteng.academy.business.query.HomeVideoQuery;
+import com.ptteng.academy.business.query.PageQuery;
 import com.ptteng.academy.business.query.StudyQuery;
 import com.ptteng.academy.persistence.beans.Study;
 import com.ptteng.academy.plugin.BaseMapper;
@@ -38,4 +37,10 @@ public interface StudyMapper extends BaseMapper<Study>{
     Boolean deletePraiseCollectStatus(@Param("studyId")Long studyId, @Param("userId")Long userId, @Param("type")Integer type);
     // 点赞/收藏
     Boolean insertPraiseCollectStatus(@Param("studyId")Long studyId, @Param("userId")Long userId, @Param("type")Integer type, @Param("createAt")Date createAt);
+
+    // 获取前台banner文章集合数据
+    List<HomeBannerListDto> findBannerArticleByQuery(Object objectQuery);
+
+    //获取前台card文章集合
+    List<HomeArticleListDto> findArticleByQuery();
 }

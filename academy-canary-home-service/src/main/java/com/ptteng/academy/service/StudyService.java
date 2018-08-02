@@ -1,11 +1,10 @@
 package com.ptteng.academy.service;
 
 import com.github.pagehelper.PageInfo;
-import com.ptteng.academy.business.dto.HomeBannerListDto;
-import com.ptteng.academy.business.dto.HomeVideoBannerDto;
-import com.ptteng.academy.business.dto.HomeVideoDto;
-import com.ptteng.academy.business.dto.HomeVideoListDto;
+import com.ptteng.academy.business.dto.*;
 import com.ptteng.academy.business.query.HomeVideoQuery;
+import com.ptteng.academy.business.query.PageQuery;
+import com.ptteng.academy.persistence.beans.Study;
 
 import java.util.List;
 
@@ -24,4 +23,10 @@ public interface StudyService {
     HomeVideoDto findStudyByQuery(Long studyId, Long userId);
 
     Boolean updatePraiseCollectStatus(Long studyId, Long userId, Integer type);
+
+    List<HomeBannerListDto> findArticleBanneryByQuery(Integer num);
+
+    PageInfo<HomeArticleListDto> findArticleByQuery(PageQuery pageQuery);
+
+    ArticleDetailsDto findArticleById(Long id,Long stu);
 }

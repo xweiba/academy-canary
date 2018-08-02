@@ -1,4 +1,4 @@
-# 1984组 求学大作战后台服务 academy_canary_admin_web
+                                                     # 1984组 求学大作战后台服务 academy_canary_admin_web
 # 生产环境配置
 spring:
   profiles:

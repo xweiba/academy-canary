@@ -184,4 +184,21 @@
     <delete id="deletePraiseCollectStatus">
         DELETE FROM study_user WHERE study_id = #{studyId} AND user_id = #{userId} AND type = #{type}
     </delete>
+
+    <select id="findBannerArticleByQuery" parameterType="Integer"
+            resultType="HomeBannerListDto">
+        SELECT
+        sd.id, sd.cover_plan_url, sd.title
+        FROM
+        study sd
+        WHERE sd.study_type = 1 AND sd.classify = 1
+        <!-- 取点赞数最高的8条数据 -->
+        order by sd.praise DESC LIMIT #{num}
+
+    </select>
+
+    <select id="findArticleByQuery"
+            resultType="com.ptteng.academy.business.dto.HomeArticleListDto">
+        SELECT * from study where study_type = 1 AND classify = 2
+    </select>
 </mapper>

@@ -1,13 +1,14 @@
 package com.ptteng.academy.service.Impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.ptteng.academy.business.dto.HomeBannerListDto;
-import com.ptteng.academy.business.dto.HomeVideoBannerDto;
-import com.ptteng.academy.business.dto.HomeVideoDto;
-import com.ptteng.academy.business.dto.HomeVideoListDto;
+import com.ptteng.academy.business.Converfor;
+import com.ptteng.academy.business.dto.*;
 import com.ptteng.academy.business.query.HomeVideoQuery;
+import com.ptteng.academy.business.query.PageQuery;
+import com.ptteng.academy.persistence.beans.Study;
 import com.ptteng.academy.persistence.mapper.StudyMapper;
 import com.ptteng.academy.service.StudyService;
 import lombok.Data;
@@ -39,6 +40,7 @@ public class StudyServiceImpl implements StudyService{
         List<HomeVideoListDto> homeVideoListDtoList = studyMapper.findVideoByVideoQuery(homeVideoQuery);
         log.info(homeVideoListDtoList.get(0).toString());
         PageInfo bean = new PageInfo<HomeVideoListDto>(homeVideoListDtoList);
+        log.info("欢欢的："+bean);
 
         // Banner 只输出8条, 注意这里会刷新bean的total和rows值
         homeVideoQuery.setPageSize(8);
@@ -58,7 +60,6 @@ public class StudyServiceImpl implements StudyService{
 
         objectList.add(homeVideoBannerDto);
         bean.setList(objectList);
-
         return bean;
     }
 
@@ -85,5 +86,39 @@ public class StudyServiceImpl implements StudyService{
         }
         // 2. 不存在插入记录.
         return studyMapper.insertPraiseCollectStatus(studyId,userId,type,new Date());
+    }
+//查询banner文章
+    @Override
+    public List<HomeBannerListDto> findArticleBanneryByQuery(Integer num) {
+        return studyMapper.findBannerArticleByQuery(num);
+    }
+
+    //查询card文章列表
+    @Override
+    public PageInfo<HomeArticleListDto> findArticleByQuery(PageQuery pageQuery) {
+        // 设置分页条件
+        PageHelper.startPage(pageQuery.getPageNum(), pageQuery.getPageSize());
+        Study study = new Study();
+        study.setClassify(2);
+        study.setStudy_type(1);
+        List<HomeArticleListDto> homeArticleListDtoList = studyMapper.findArticleByQuery();
+        for (HomeArticleListDto homeArticleListDto : homeArticleListDtoList) {
+            homeArticleListDto.setPraisestu(studyMapper.findPraiseCollectStatus(homeArticleListDto.getId(),pageQuery.getUserId(),1));
+            homeArticleListDto.setCollectstu(studyMapper.findPraiseCollectStatus(homeArticleListDto.getId(),pageQuery.getUserId(),2));
+        }
+        PageInfo bean = new PageInfo<HomeArticleListDto>(homeArticleListDtoList);
+        bean.setList(homeArticleListDtoList);
+        log.info("页面信息："+bean);
+        return bean;
+    }
+
+    //查看文章详情
+    @Override
+    public ArticleDetailsDto findArticleById(Long id,Long stu) {
+        Study study = studyMapper.selectByPrimaryKey(id);
+        ArticleDetailsDto articleDetailsDto = Converfor.StudytorticleDetailsDto(study);
+        articleDetailsDto.setPraisestu(studyMapper.findPraiseCollectStatus(id,stu,1));
+        articleDetailsDto.setCollectstu(studyMapper.findPraiseCollectStatus(id,stu,2));
+        return articleDetailsDto;
     }
 }
