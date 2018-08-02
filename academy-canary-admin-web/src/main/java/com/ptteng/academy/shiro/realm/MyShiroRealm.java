@@ -1,8 +1,7 @@
-package com.ptteng.academy.business.shiro.realm;
+package com.ptteng.academy.shiro.realm;
 
+import com.ptteng.academy.business.dto.AccountDto;
 import com.ptteng.academy.persistence.beans.Account;
-import com.ptteng.academy.persistence.beans.Role;
-import com.ptteng.academy.persistence.mapper.AccountMapper;
 import com.ptteng.academy.service.ManageService;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -23,6 +22,7 @@ import javax.annotation.Resource;
  * @create: 2018-08-02 16:19
  **/
 
+
 public class MyShiroRealm extends AuthorizingRealm {
 
     @Resource
@@ -37,15 +37,16 @@ public class MyShiroRealm extends AuthorizingRealm {
         System.out.println("密码效验-->MyShiroRealm.doGetAuthenticationInfo()");
         // 获取用户的输入的账号.
         String username = (String) authenticationToken.getPrincipal();
+        authenticationToken.getPrincipal();
         System.out.println("获取登陆用户名:" + username);
         System.out.println("authenticationToken.getCredentials(): " + authenticationToken.getCredentials());
         // 通过username从数据库中查找账号对象，如果找到，没找到.
         // 实际项目中，这里可以根据实际情况做缓存，如果不做，Shiro自己也是有时间间隔机制，2分钟内不会重复执行该方法
-        Account account = manageService.findAccountByUsername(username);
-        System.out.println("----->>account=" + account.toString());
+        AccountDto accountDto = manageService.findAccountByUsername(username);
+        System.out.println("----->>account=" + accountDto.toString());
 
         // 如果不存在
-        if (account == null) {
+        if (accountDto == null) {
             // 直接返回空值
             return null;
         }
@@ -53,11 +54,11 @@ public class MyShiroRealm extends AuthorizingRealm {
         // 如果存在, 注意 SimpleAuthorizationInfo 是存入链接权限的, SimpleAuthenticationInfo是验证权限的
         // 由SimpleAuthenticationInfo进行权限验证
         System.out.println("MyShiroRealm.doGetAuthenticationInfo().SimpleAuthenticationInfo");
-        System.out.println("传入参数: account:" + account.toString() + "getName():" + getName());
-        System.out.println("密码加盐- ByteSource.Util.bytes(account.getUsername()) : " + ByteSource.Util.bytes(account.getUsername()));
+        System.out.println("传入参数: account:" + accountDto.toString() + "getName():" + getName());
+        System.out.println("密码加盐- ByteSource.Util.bytes(account.getUsername()) : " + ByteSource.Util.bytes(username));
         SimpleAuthenticationInfo authorizationInfo = new SimpleAuthenticationInfo(
-                account, // 存入账号信息
-                account.getPassword(), // 存入数据库中密码
+                accountDto, // 存入账号信息
+                accountDto.getPassword(), // 存入数据库中密码
                 ByteSource.Util.bytes(username), // 加盐操作, 这里使用用户名作为盐值
                 getName() // realm 的名字: ml.xiaoweiba.config.MyShiroRealm_0
         );

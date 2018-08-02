@@ -6,6 +6,7 @@ import com.ptteng.academy.business.dto.AccountDto;
 import com.ptteng.academy.business.query.AccountQuery;
 import com.ptteng.academy.persistence.beans.Account;
 import com.ptteng.academy.plugin.BaseMapper;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Repository;
 
@@ -23,4 +24,10 @@ public interface AccountMapper extends BaseMapper<Account> {
 
     @Select("SELECT id, username, role_id FROM account WHERE id = #{id}")
     AccountDto findAccountById(Long id);
+
+    @Select("SELECT id, username, password, role_id FROM account WHERE username = #{username}")
+    AccountDto findAccountByName(String username);
+
+    @Select("SELECT id, password FROM account WHERE password = #{password} AND id = #{id}")
+    Boolean findAccountByPassword(@Param("id") Long id, @Param("password") String password);
 }

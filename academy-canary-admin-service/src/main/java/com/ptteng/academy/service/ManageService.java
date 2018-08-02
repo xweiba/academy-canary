@@ -1,6 +1,5 @@
 package com.ptteng.academy.service;
 
-import com.github.pagehelper.Page;
 import com.github.pagehelper.PageInfo;
 import com.ptteng.academy.business.dto.AccountDto;
 import com.ptteng.academy.business.dto.ModuleDto;
@@ -8,7 +7,6 @@ import com.ptteng.academy.business.dto.RoleDto;
 import com.ptteng.academy.business.query.AccountQuery;
 import com.ptteng.academy.business.query.ModuleQuery;
 import com.ptteng.academy.business.query.RoleQuery;
-import com.ptteng.academy.persistence.beans.Account;
 
 import java.util.List;
 
@@ -50,13 +48,17 @@ public interface ManageService {
 
     /* 账号模块 */
     PageInfo<AccountDto> findAccountByQuery(AccountQuery accountQuery);
+
+    // 验证账号密码
+    Boolean findAccountByPassword(String passWord);
+
     AccountDto findAccountById(Long id);
-    Account findAccountByUsername(String name);
+    AccountDto findAccountByUsername(String name);
     Boolean updateAccount(AccountDto accountDto);
     Boolean deleteAccountById(Long id);
     Boolean insertAccount(AccountDto accountDto);
 
 
-
-
+    // 通过SecurityUtils获取存储的账号信息
+    AccountDto getOnlineAccount();
 }

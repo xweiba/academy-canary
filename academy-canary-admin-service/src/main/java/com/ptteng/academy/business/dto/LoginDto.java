@@ -14,11 +14,9 @@ import lombok.Data;
 public class LoginDto {
     // 用户do
     private String accountName;
-    @JsonIgnore
     private String passWord;
     private String roleName;
     private Long id;
     // 是否勾选记住我
-    // private Boolean rememberMe;
-
+    private Boolean rememberMe;
 }

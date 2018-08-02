@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -16,7 +17,9 @@ import java.util.Date;
 @ApiModel(value = "AccountDto",       // 模型名称
         description = "账号Dto")      // 描述
 @Data
-public class AccountDto {
+public class AccountDto implements Serializable{
+    private static final long serialVersionUID = -4839818108799795556L;
+
     @ApiModelProperty(notes = "id", required = false)
     private Long id;
     // 账号名

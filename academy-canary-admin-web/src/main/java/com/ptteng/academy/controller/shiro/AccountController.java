@@ -5,11 +5,13 @@ import com.ptteng.academy.business.query.AccountQuery;
 import com.ptteng.academy.business.vo.ResponseRowsVO;
 import com.ptteng.academy.business.vo.ResponseVO;
 import com.ptteng.academy.service.ManageService;
+import com.ptteng.academy.util.PasswordUtil;
 import com.ptteng.academy.util.ResultUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -28,8 +30,6 @@ import java.util.List;
 @Api(tags = "AccountController", description = "账号相关Api")
 @RestController
 public class AccountController {
-
-
     @Resource
     private ManageService manageService;
 
@@ -89,7 +89,17 @@ public class AccountController {
      * @param: [accountDto]
      */
     @PutMapping("/account/password")
-    public ResponseVO restAccount(AccountDto accountDto) {
+    public ResponseVO restAccount(@RequestBody AccountDto accountDto) {
+        log.info("restAccount: " + accountDto);
+        try {
+            // 使用用户名为盐值对密码加密得到加密后的数据
+            String oldPassWord = PasswordUtil.encrypt(accountDto.getOldPassword(),accountDto.getUsername());
+            if(manageService.findAccountByPassword(oldPassWord)) {
+                manageService.updateAccount(accountDto);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         System.out.println(accountDto.toString());
         return ResultUtil.success("restAccount 已执行");
     }

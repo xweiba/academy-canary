@@ -15,13 +15,13 @@ import com.ptteng.academy.persistence.mapper.AccountMapper;
 import com.ptteng.academy.persistence.mapper.ModuleMapper;
 import com.ptteng.academy.persistence.mapper.RoleMapper;
 import com.ptteng.academy.service.ManageService;
+import com.ptteng.academy.util.PasswordUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
 import java.util.Date;
@@ -37,6 +37,8 @@ import java.util.List;
 @Slf4j
 @Service
 public class ManageServiceImpl implements ManageService {
+
+
     @Resource
     private ModuleMapper moduleMapper;
 
@@ -171,21 +173,33 @@ public class ManageServiceImpl implements ManageService {
         return pageInfo;
     }
 
+    // 验证账号密码
+    @Override
+    public Boolean findAccountByPassword(String passWord) {
+        return accountMapper.findAccountByPassword(getOnlineAccount().getId(), passWord);
+    }
+
     @Override
     public AccountDto findAccountById(Long id) {
         return accountMapper.findAccountById(id);
     }
 
     @Override
-    public Account findAccountByUsername(String name) {
-        return null;
+    public AccountDto findAccountByUsername(String name) {
+        return accountMapper.findAccountByName(name);
     }
 
     @Override
     public Boolean updateAccount(AccountDto accountDto) {
         Account account = new Account();
         BeanUtils.copyProperties(accountDto,account);
-        account.setUpdate_by("admin");
+        account.setId(getOnlineAccount().getId());
+        try {
+            account.setPassword(PasswordUtil.encrypt(accountDto.getPassword(),accountDto.getUsername()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        account.setUpdate_by(getOnlineAccount().getUsername());
         account.setUpdate_at(new Date());
         return accountMapper.updateByPrimaryKeySelective(account) > 0;
     }
@@ -204,5 +218,12 @@ public class ManageServiceImpl implements ManageService {
         account.setCreate_by("admin");
         account.setUpdate_by("admin");
         return accountMapper.insert(account) > 0;
+    }
+
+    // 通过SecurityUtils获取当前登陆的账号信息
+    @Override
+    public AccountDto getOnlineAccount() {
+        Subject subject = SecurityUtils.getSubject();
+        return (AccountDto) subject.getPrincipal();
     }
 }
