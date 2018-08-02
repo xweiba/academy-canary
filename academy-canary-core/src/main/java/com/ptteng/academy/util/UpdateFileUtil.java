@@ -20,6 +20,8 @@ public class UpdateFileUtil {
             fileExt = ".jpg";
         else if("image/png".equals(contentType))
             fileExt = ".png";
+        else if("image/gif".equals(contentType))
+            fileExt = ".gif";
         else if ("audio/mpeg".equals(contentType))
             fileExt = ".mp3";
         else if ("audio/amr".equals(contentType))
