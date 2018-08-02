@@ -133,7 +133,12 @@ public class StudyServiceImpl implements StudyService {
                 ArticleListDto articleListDto = new ArticleListDto();
                 BeanUtils.copyProperties(s, articleListDto);
                 log.debug("文章查询结果: " + articleListDto.toString());
-                articleListDto.setClassify(ClassifyEnum.getArticleEnum(s.getClassify()).getName());
+                try {
+                    articleListDto.setClassify(ClassifyEnum.getArticleEnum(s.getClassify()).getName());
+                } catch (Exception e) {
+                    log.debug("部分Enum 值为空");
+                    e.printStackTrace();
+                }
                 articleListDtoList.add(articleListDto);
             }
             PageInfo pageInfo = new PageInfo<ArticleListDto>(articleListDtoList);
@@ -147,9 +152,14 @@ public class StudyServiceImpl implements StudyService {
             VideoListDto videoListDto = new VideoListDto();
             BeanUtils.copyProperties(s, videoListDto);
             log.debug("视频查询结果: " + videoListDto.toString());
-            videoListDto.setClassify(ClassifyEnum.getArticleEnum(s.getClassify()).getName());
-            videoListDto.setSubject(SubjectEnum.getSubjectEnum(s.getSubject()).getSubject());
-            videoListDto.setGrade(GradeEnum.getGradeEnum(s.getGrade()).getGrade());
+            try {
+                videoListDto.setClassify(ClassifyEnum.getArticleEnum(s.getClassify()).getName());
+                videoListDto.setSubject(SubjectEnum.getSubjectEnum(s.getSubject()).getSubject());
+                videoListDto.setGrade(GradeEnum.getGradeEnum(s.getGrade()).getGrade());
+            } catch (Exception e) {
+                log.debug("部分Enum 值为空");
+                e.printStackTrace();
+            }
             videoListDtoList.add(videoListDto);
         }
         PageInfo pageInfo = new PageInfo<VideoListDto>(videoListDtoList);
@@ -194,6 +204,7 @@ public class StudyServiceImpl implements StudyService {
         study.setUpdate_at(new Date());
         study.setCreate_by("admin");
         study.setUpdate_by("admin");
+        log.debug("studyMapper.insert(study) 视频文章新增: " + study.toString());
         studyMapper.insert(study);
         log.debug(study.toString());
         return study.getId();

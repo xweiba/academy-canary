@@ -43,4 +43,7 @@ public interface StudyMapper extends BaseMapper<Study>{
 
     //获取前台card文章集合
     List<HomeArticleListDto> findArticleByQuery();
+
+    //获取用户收藏文章集合
+    List<StudentCollectArticleDto> findCollectArticle();
 }

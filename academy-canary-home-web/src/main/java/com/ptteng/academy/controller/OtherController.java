@@ -79,29 +79,29 @@ public class OtherController {
         return ResultUtil.success("StudentVerifyMail 执行了", studentBindStatusVo);
     }
 
-    @ApiOperation(value = "获取收藏文章信息", notes = "传入用户ID返回收藏文章列表")
-    @ApiImplicitParams({@ApiImplicitParam( name = "id", value = "用户id", paramType = "path",required = true, dataType = "Long"),@ApiImplicitParam(name = "pageNum",value = "显示的页数",required = true,dataType = "int")})
-    @PostMapping("/card/collect/articles/{id}")
-    public ResponseRowsVO getCollectArticle(@PathVariable("id") Long id, @RequestBody Map<String,Object> pageNum) {
-        List<StudentCollectDto> articles = new ArrayList<>();
-        for (Long i = 1L; i <= 10; i++) {
-            Date date = new Date(60 * 60);
-            StudentCollectDto studentCollectDto = new StudentCollectDto();
-            studentCollectDto.setTitle("这是标题");
-            studentCollectDto.setArticleId(i);
-            studentCollectDto.setAuthor("王五");
-            studentCollectDto.setCoverPlanUrl("http://www.apachecn.org/wp-content/uploads/2017/08/java%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF%E5%9B%BE.jpeg");
-            studentCollectDto.setDigest("这是摘要");
-            studentCollectDto.setPraise(123L);
-            studentCollectDto.setCollect(45L);
-            date = new Date(date.getTime() + 30 * 60 * 1000);
-            studentCollectDto.setCollectTime(date);
-
-            articles.add(studentCollectDto);
-        }
-
-        return ResultUtil.success("getCollectArticle 已执行", articles);
-    }
+//    @ApiOperation(value = "获取收藏文章信息", notes = "传入用户ID返回收藏文章列表")
+//    @ApiImplicitParams({@ApiImplicitParam( name = "id", value = "用户id", paramType = "path",required = true, dataType = "Long"),@ApiImplicitParam(name = "pageNum",value = "显示的页数",required = true,dataType = "int")})
+//    @PostMapping("/card/collect/articles/{id}")
+//    public ResponseRowsVO getCollectArticle(@PathVariable("id") Long id, @RequestBody Map<String,Object> pageNum) {
+//        List<StudentCollectDto> articles = new ArrayList<>();
+//        for (Long i = 1L; i <= 10; i++) {
+//            Date date = new Date(60 * 60);
+//            StudentCollectDto studentCollectDto = new StudentCollectDto();
+//            studentCollectDto.setTitle("这是标题");
+//            studentCollectDto.setArticleId(i);
+//            studentCollectDto.setAuthor("王五");
+//            studentCollectDto.setCoverPlanUrl("http://www.apachecn.org/wp-content/uploads/2017/08/java%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF%E5%9B%BE.jpeg");
+//            studentCollectDto.setDigest("这是摘要");
+//            studentCollectDto.setPraise(123L);
+//            studentCollectDto.setCollect(45L);
+//            date = new Date(date.getTime() + 30 * 60 * 1000);
+//            studentCollectDto.setCollectTime(date);
+//
+//            articles.add(studentCollectDto);
+//        }
+//
+//        return ResultUtil.success("getCollectArticle 已执行", articles);
+//    }
 
     @ApiOperation(value = "获取收藏视频信息", notes = "传入用户ID返回收藏视频列表")
     @ApiImplicitParams({@ApiImplicitParam( name = "id", value = "用户id",paramType = "path",required = true, dataType = "Long"),

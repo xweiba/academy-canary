@@ -62,7 +62,7 @@ public class StudyController {
             @ApiImplicitParam(name = "stuId", value = "用户Id", required = true, dataType = "Long")
     })
     @PutMapping("/study/video/{id}/praise")
-    public ResponseVO videoPraise(@PathVariable("id") Long id, Long stuId) {
+    public ResponseVO videoPraise(@PathVariable("id") Long id, @RequestBody Long stuId) {
         return ResultUtil.success("videoPraise 已执行", studyService.updatePraiseCollectStatus(id, stuId, 1));
     }
 

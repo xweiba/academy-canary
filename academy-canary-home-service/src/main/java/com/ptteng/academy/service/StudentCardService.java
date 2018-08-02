@@ -13,4 +13,7 @@ public interface StudentCardService {
     StudentCardDto selectAll(Long id);
 
     boolean updateStudentCard(StudentCardQuery studentCardQuery);
+
 }
+
+

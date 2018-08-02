@@ -61,6 +61,4 @@ public class WechatServiceImpl implements WechatService {
             return weChatUserDto1;
         }
     }
-
-
 }

@@ -134,6 +134,7 @@ public class StudyController {
     @PostMapping("/video")
     public ResponseVO createVideo(@RequestBody VideoDto videoDto) {
         try {
+            log.debug("createVideo:" + videoDto.toString());
             objectMap.put("id", studyService.insertVideo(videoDto));
             return ResultUtil.success("视频文章创建成功", objectMap);
         } catch (Exception e) {

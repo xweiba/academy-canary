@@ -115,7 +115,10 @@ public class StudyServiceImpl implements StudyService{
     //查看文章详情
     @Override
     public ArticleDetailsDto findArticleById(Long id,Long stu) {
-        Study study = studyMapper.selectByPrimaryKey(id);
+        Study studyQuery = new Study();
+        studyQuery.setStudy_type(1);
+        studyQuery.setId(id);
+        Study study = studyMapper.selectOne(studyQuery);
         ArticleDetailsDto articleDetailsDto = Converfor.StudytorticleDetailsDto(study);
         articleDetailsDto.setPraisestu(studyMapper.findPraiseCollectStatus(id,stu,1));
         articleDetailsDto.setCollectstu(studyMapper.findPraiseCollectStatus(id,stu,2));

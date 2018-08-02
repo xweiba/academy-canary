@@ -45,7 +45,7 @@ public class testApplicationTest {
         StudyDto studyDto = new StudyDto();
         for (int i = 0; i < 1; i++) {
             studyDto.setContent("正文" + RandNumUtil.getRandLength(20) + "正文正文正文正文正文正文正文正文");
-            studyDto.setAuthor(RandNumUtil.getRandRange(1, 7));
+            studyDto.setAuthor(Long.valueOf(RandNumUtil.getRandRange(1, 7)));
             studyDto.setClassify(RandNumUtil.getRandRange(1, 2));
             studyDto.setCollect(Long.valueOf(RandNumUtil.getRandRange(20, 1000)));
             studyDto.setIntroduce("简介简介简介简介简介简介" + RandNumUtil.getRandLength(5));

@@ -14,12 +14,18 @@ import java.util.Date;
  */
 @Data
 public class StudentCollectDto {
+    //封面
     private String coverPlanUrl;
+    //标题
     private String title;
+    //作者
     private String author;
     private String authorImgUrl;
+    //点赞数
     private long praise;
-    private String  digest;
+    //摘要
+    private String digest;
+    //收藏时间
     private long collect;
     private Date collectTime;
     private long articleId;

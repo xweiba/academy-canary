@@ -177,6 +177,11 @@ public class ManageServiceImpl implements ManageService {
     }
 
     @Override
+    public Account findAccountByUsername(String name) {
+        return null;
+    }
+
+    @Override
     public Boolean updateAccount(AccountDto accountDto) {
         Account account = new Account();
         BeanUtils.copyProperties(accountDto,account);

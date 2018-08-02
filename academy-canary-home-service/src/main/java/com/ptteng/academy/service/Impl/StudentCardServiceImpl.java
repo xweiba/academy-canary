@@ -2,6 +2,8 @@ package com.ptteng.academy.service.Impl;
 
 import com.ptteng.academy.business.Converfor;
 import com.ptteng.academy.business.dto.StudentCardDto;
+import com.ptteng.academy.business.dto.StudentCollectArticleDto;
+import com.ptteng.academy.business.dto.StudentCollectDto;
 import com.ptteng.academy.business.dto.WeixinAccessToken;
 import com.ptteng.academy.business.query.StudentCardQuery;
 import com.ptteng.academy.persistence.beans.User;
@@ -10,6 +12,7 @@ import com.ptteng.academy.service.StudentCardService;
 import com.ptteng.academy.util.WechatDoloadImgUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 /**
  * description:学生证
@@ -21,6 +24,7 @@ import org.springframework.stereotype.Service;
 public class StudentCardServiceImpl implements StudentCardService {
     @Autowired
     UserMapper userMapper;
+
 
     //查询学生证资料
     @Override
@@ -51,5 +55,11 @@ public class StudentCardServiceImpl implements StudentCardService {
         User user = Converfor.StudentCartDtoToUserDoConvert(studentCardDto);
         userMapper.updateByPrimaryKeySelective(user);
         return true;
+    }
+    //查询我的收藏文章
+    public StudentCollectArticleDto findCollectArticle(Long id){
+
+        StudentCollectArticleDto studentCollectArticleDto = new StudentCollectArticleDto();
+        return studentCollectArticleDto;
     }
 }
