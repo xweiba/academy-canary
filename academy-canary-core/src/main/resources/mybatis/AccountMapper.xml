@@ -16,7 +16,8 @@
             LEFT JOIN role ro ON ro.id = acc.id
         WHERE
           1 = 1
-        <if test="role_id!=0 and role_id!=null">
+        <!-- 这里的id 是角色id -->
+        <if test="id!=0 and id!=null">
             AND ro.id = #{id}
         </if>
         <if test="username!='' and username!=null">

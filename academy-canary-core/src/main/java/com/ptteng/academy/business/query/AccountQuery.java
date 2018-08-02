@@ -18,8 +18,6 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class AccountQuery extends IQuery {
-    @ApiModelProperty(notes = "角色名称", required = false)
-    private Long role_id;
     @ApiModelProperty(notes = "账号名称", required = false)
     private String username;
 }
