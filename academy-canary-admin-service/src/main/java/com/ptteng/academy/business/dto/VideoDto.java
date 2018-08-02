@@ -23,6 +23,9 @@ public class VideoDto {
     private String introduce; // 摘要
     private String content; // 正文
     private String video_url; // 视频Url
+    private Long video_time; // 视频时长
     @JsonIgnore
     private final Integer study_type = 2;
+    // 默认状态
+    private Boolean status = false;
 }

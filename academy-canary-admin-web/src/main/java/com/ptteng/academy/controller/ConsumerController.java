@@ -61,8 +61,8 @@ public class ConsumerController {
     @PostMapping("/author")
     public ResponseVO createAuthor(@RequestBody AuthorDto authorDto) {
         try {
-            consumeService.insert(authorDto);
-            return ResultUtil.success("创建作者成功");
+            AuthorDto result = consumeService.insert(authorDto);
+            return ResultUtil.success("创建作者成功", result);
         } catch (Exception e) {
             e.printStackTrace();
             return ResultUtil.error("创建作者失败, 作者姓名不能为空");

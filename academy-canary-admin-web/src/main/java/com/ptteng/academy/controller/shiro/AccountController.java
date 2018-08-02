@@ -42,7 +42,7 @@ public class AccountController {
     public ResponseRowsVO getAccounts(@RequestBody AccountQuery accountQuery) {
         return ResultUtil.success("获取账号列表成功", manageService.findAccountByQuery(accountQuery));
     }
-    
+
     /**
      * @description 根据id获取用户
      * @param: [id]
@@ -53,7 +53,7 @@ public class AccountController {
     public ResponseVO getAccount(@PathVariable("id") Long id) {
         return ResultUtil.success("获取账号信息成功", manageService.findAccountById(id));
     }
-    
+
     /**
      * @description 创建
      * @param: [accountDto]
@@ -89,7 +89,7 @@ public class AccountController {
      * @param: [accountDto]
      */
     @PutMapping("/account/password")
-    public ResponseVO restAccount(AccountDto accountDto){
+    public ResponseVO restAccount(AccountDto accountDto) {
         System.out.println(accountDto.toString());
         return ResultUtil.success("restAccount 已执行");
     }

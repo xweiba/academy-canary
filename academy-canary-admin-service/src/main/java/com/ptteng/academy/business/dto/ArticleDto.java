@@ -21,4 +21,6 @@ public class ArticleDto {
     private String content; // 正文
     @JsonIgnore
     private final Integer study_type = 1;
+    // 默认状态
+    private Boolean status = false;
 }

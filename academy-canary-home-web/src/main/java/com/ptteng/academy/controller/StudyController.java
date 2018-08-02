@@ -38,7 +38,6 @@ public class StudyController {
 
     /*视频*/
     @ApiOperation(value = "获取视频Banner列表", notes = "传入实体类")
-    @ApiImplicitParam(name = "homeVideoQuery", value = "实体类其中有每页显示的条数和要显示的页数，还有年级和学科", required = true, dataType = "HomeVideoQuery")
     @PostMapping("/study/videos")
     public ResponseRowsVO getVideosBanner(@RequestBody HomeVideoQuery homeVideoQuery) {
         return ResultUtil.success("获取视频Banner数据成功", studyService.findVideoBannerByQuery(homeVideoQuery));
@@ -55,7 +54,7 @@ public class StudyController {
     @ApiImplicitParams({@ApiImplicitParam(name = "stuId", value = "传入学员ID", required = true, dataType = "Long"), @ApiImplicitParam(name = "id", value = "视频Id", paramType = "path", required = true, dataType = "Long")})
     @PostMapping("/study/video/{id}")
     public ResponseVO getVideo(@PathVariable("id") Long id, @RequestBody Long stuId) {
-        return ResultUtil.success("getVideo 已执行", studyService.findStudyByQuery(id, stuId));
+        return ResultUtil.success("getVideo 已执行", studyService.findStudyByQuery(id, stuId, 2));
     }
 
     @ApiOperation(value = "视频点赞操作", notes = "传入视频id和用户id-stuId点赞操作")

@@ -71,10 +71,10 @@ public class StudyServiceImpl implements StudyService{
         List<HomeVideoListDto> homeVideoListDtoList = studyMapper.findVideoByVideoQuery(homeVideoQuery);
         return new PageInfo<HomeVideoListDto>(homeVideoListDtoList);
     }
-
+    // 获取视频文章详细信息
     @Override
-    public HomeVideoDto findStudyByQuery(Long studyId, Long userId) {
-        return studyMapper.findStudyByQuery(studyId, userId);
+    public HomeVideoDto findStudyByQuery(Long studyId, Long userId, Integer studyType) {
+        return studyMapper.findStudyByQuery(studyId, userId, studyType);
     }
 
     @Override

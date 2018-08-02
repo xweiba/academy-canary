@@ -69,7 +69,7 @@
     <select id="findVideoByVideoQuery" parameterType="homeVideoQuery"
             resultType="homeVideoListDto">
         SELECT
-        sd.id, sd.title,
+        sd.id, sd.title, sd.`status`,
         (SELECT COUNT(id) FROM study_user WHERE type = 1 AND study_id = sd.id) AS praise,
         (SELECT COUNT(id) FROM study_user WHERE type = 1 AND study_id = sd.id AND user_id = #{stu_id}) AS praise_status,
         (SELECT COUNT(id) FROM study_user WHERE type = 2 AND study_id = sd.id) AS collect,
@@ -81,7 +81,7 @@
         study sd
         inner join author au
         ON sd.author = au.id
-        WHERE 1 = 1
+        WHERE 1 = 1 AND sd.`status` = 1
         <if test="study_type==null">
             AND sd.study_type = 99
         </if>
@@ -104,11 +104,12 @@
             resultType="homeBannerListDto">
         SELECT * FROM (
         SELECT
-        sd.id, sd.cover_plan_url, sd.title, sd.study_type,
+        sd.id, sd.cover_plan_url, sd.title, sd.study_type, sd.`status`,
         (SELECT COUNT(id) FROM study_user WHERE type = 1 AND study_id = sd.id) AS praise
         FROM
         study sd ) temp
-        WHERE 1 = 1
+        <!-- 只显示上架的 -->
+        WHERE 1 = 1 AND `status` = 1
         <if test="study_type==null">
             AND study_type = 99
         </if>
@@ -133,6 +134,7 @@
         SELECT
             st.id,
             st.title,
+            st.`status`,
             st.create_at,
             au.author_name,
             st.introduce,
@@ -142,7 +144,6 @@
             st.content,
             (SELECT COUNT(id) FROM study_user WHERE type = 1 AND study_id = st.id) AS praise,
             (SELECT COUNT(id) FROM study_user WHERE type = 2 AND study_id = st.id) AS collect,
-
             IF (
                 COUNT(spraise_s.study_id) > 0,
                 1,
@@ -162,7 +163,7 @@
             LEFT OUTER JOIN study_user scollect_s ON scollect_s.type = 2
             AND scollect_s.user_id = #{userId}
         WHERE
-          st.id = #{studyId}
+          st.id = #{studyId} AND st.`status` = 1 AND st.study_type = #{studyType}
     </select>
 
     <!-- 查询点赞记录 -->

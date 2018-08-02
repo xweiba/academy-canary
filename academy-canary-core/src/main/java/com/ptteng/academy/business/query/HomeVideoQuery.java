@@ -27,6 +27,4 @@ public class HomeVideoQuery extends IQuery{
 
     @JsonIgnore
     private final Integer study_type = 2; // 文章类型 视频/文章
-    @JsonIgnore
-    private final Boolean status = true; // 只查询上架文章
 }

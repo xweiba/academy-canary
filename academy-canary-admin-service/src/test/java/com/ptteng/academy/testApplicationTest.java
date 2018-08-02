@@ -116,7 +116,7 @@ public class testApplicationTest {
 
     @Test
     public void findVide() {
-        System.out.println(studyMapper.findStudyByQuery(199L, 2L));
+        System.out.println(studyMapper.findStudyByQuery(199L, 2L, 1));
     }
 
     @Resource

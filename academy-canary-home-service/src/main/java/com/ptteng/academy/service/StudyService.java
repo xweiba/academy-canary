@@ -20,7 +20,7 @@ public interface StudyService {
 
     PageInfo<HomeVideoListDto> findVideosByQuery(HomeVideoQuery homeVideoQuery);
 
-    HomeVideoDto findStudyByQuery(Long studyId, Long userId);
+    HomeVideoDto findStudyByQuery(Long studyId, Long userId, Integer studyType);
 
     Boolean updatePraiseCollectStatus(Long studyId, Long userId, Integer type);
 

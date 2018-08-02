@@ -32,7 +32,7 @@ public class ConsumeServiceImpl implements ConsumeService {
     @Override
     public AuthorDto insert(AuthorDto entity) throws Exception{
         /* 上传图片到OSS */
-        if ("".equals(entity.getAuthor_img()) && entity.getAuthor_img()!=null) {
+        if (!"".equals(entity.getAuthor_img()) && entity.getAuthor_img()!=null) {
             entity.setAuthor_img(ossService.updateFile(entity.getAuthor_img()));
         }
         Author author = new Author();

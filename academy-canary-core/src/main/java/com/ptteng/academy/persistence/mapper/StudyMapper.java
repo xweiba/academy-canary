@@ -30,7 +30,7 @@ public interface StudyMapper extends BaseMapper<Study>{
     // 获取前台banner集合数据
     List<HomeBannerListDto> findBannerByQuery(Object objectQuery);
     // 获取前台视频详细信息
-    HomeVideoDto findStudyByQuery(@Param("studyId")Long studyId, @Param("userId")Long userId);
+    HomeVideoDto findStudyByQuery(@Param("studyId")Long studyId, @Param("userId")Long userId, @Param("studyType")Integer studyType);
     // 查询点赞/收藏状态
     Boolean findPraiseCollectStatus(@Param("studyId")Long studyId, @Param("userId")Long userId, @Param("type")Integer type);
     // 取消点赞/收藏状态
