@@ -11,13 +11,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 /**
  * @program: canary
@@ -37,6 +34,7 @@ public class AccountController {
      * @description 分页查询用户信息
      * @param: [accountQuery]
      */
+    @RequiresPermissions(".account")
     @ApiOperation(value = "根据条件获取账号信息", notes = "执行成功返回账号列表")
     @PostMapping("/accounts")
     public ResponseRowsVO getAccounts(@RequestBody AccountQuery accountQuery) {
@@ -47,6 +45,7 @@ public class AccountController {
      * @description 根据id获取用户
      * @param: [id]
      */
+    @RequiresPermissions(".account")
     @ApiOperation(value = "根据条件获取账号信息", notes = "执行成功返回账号列表信息")
     @ApiImplicitParam(name = "id", value = "账号id", required = true, paramType = "path", dataType = "Long", defaultValue = "1")
     @GetMapping("/account/{id}")
@@ -58,17 +57,24 @@ public class AccountController {
      * @description 创建
      * @param: [accountDto]
      */
+    @RequiresPermissions(".account")
     @ApiOperation(value = "创建账号信息", notes = "执行成功返回true")
     @PostMapping("/account")
     public ResponseVO createAccount(@RequestBody AccountDto accountDto) {
         log.debug("accountDto.toString(): " + accountDto.toString());
-        return ResultUtil.success("createAccount 已执行", manageService.insertAccount(accountDto));
+        try {
+            return ResultUtil.success("账号创建成功", manageService.insertAccount(accountDto));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResultUtil.error("账号创建失败");
+        }
     }
 
     /**
      * @description 更新账号
      * @param: [accountDto]
      */
+    @RequiresPermissions(".account")
     @ApiOperation(value = "根据 id 更新账号信息", notes = "执行成功返回true")
     @ApiImplicitParam(name = "id", value = "账号id", required = true, paramType = "path", dataType = "Long", defaultValue = "1")
     @PutMapping("/account/{id}")
@@ -77,30 +83,11 @@ public class AccountController {
         return ResultUtil.success("更新成功", accountDto);
     }
 
+    @RequiresPermissions(".account")
     @ApiOperation(value = "根据 id 删除账号信息", notes = "执行成功返回true")
     @ApiImplicitParam(name = "id", value = "账号id", required = true, paramType = "path", dataType = "Long", defaultValue = "1")
     @DeleteMapping("/account/{id}")
     public ResponseVO deleteAccount(@PathVariable("id") Long id) {
         return ResultUtil.success("删除成功", manageService.deleteAccountById(id));
-    }
-
-    /**
-     * @description 更新密码
-     * @param: [accountDto]
-     */
-    @PutMapping("/account/password")
-    public ResponseVO restAccount(@RequestBody AccountDto accountDto) {
-        log.info("restAccount: " + accountDto);
-        try {
-            // 使用用户名为盐值对密码加密得到加密后的数据
-            String oldPassWord = PasswordUtil.encrypt(accountDto.getOldPassword(),accountDto.getUsername());
-            if(manageService.findAccountByPassword(oldPassWord)) {
-                manageService.updateAccount(accountDto);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        System.out.println(accountDto.toString());
-        return ResultUtil.success("restAccount 已执行");
     }
 }

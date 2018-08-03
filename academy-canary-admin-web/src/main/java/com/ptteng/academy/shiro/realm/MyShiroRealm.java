@@ -1,8 +1,11 @@
 package com.ptteng.academy.shiro.realm;
 
 import com.ptteng.academy.business.dto.AccountDto;
+import com.ptteng.academy.business.dto.ModuleDto;
+import com.ptteng.academy.business.dto.RoleDto;
 import com.ptteng.academy.persistence.beans.Account;
 import com.ptteng.academy.service.ManageService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -12,8 +15,11 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.util.ByteSource;
+import org.apache.shiro.util.StringUtils;
+import tk.mybatis.mapper.util.StringUtil;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @program: canary
@@ -22,7 +28,7 @@ import javax.annotation.Resource;
  * @create: 2018-08-02 16:19
  **/
 
-
+@Slf4j
 public class MyShiroRealm extends AuthorizingRealm {
 
     @Resource
@@ -73,24 +79,33 @@ public class MyShiroRealm extends AuthorizingRealm {
     @Override
     protected AuthorizationInfo doGetAuthorizationInfo(PrincipalCollection principalCollection) {
         System.out.println("权限配置-->MyShiroRealm.doGetAuthorizationInfo()");
+        // SimpleAuthorizationInfo 用户存放认证的角色和权限信息
         SimpleAuthorizationInfo authorizationInfo = new SimpleAuthorizationInfo();
 
         // 将getPrimaryPrincipal方法返回值转为真实身份类型（在上边的doGetAuthenticationInfo认证通过填充到SimpleAuthenticationInfo中身份类型），
         // 这里可以从数据库中查询来达到修改立即生效
-        Account account = (Account) principalCollection.getPrimaryPrincipal(); // 获取认证时存入authorizationInfo的Account信息
-        System.out.println("account.getRoleList().get(0).getRoleTag() " + account.getRole_id());
-        /*for (Role role :
-                account.getRole_id()) {
-            System.out.println("role.getModuleList().get(0).getPermission() " + role.getModuleList().get(0).getPermission());
-            // 添加角色
-            authorizationInfo.addRole(role.getRoleTag());
-            for (Module module :
-                    role.getModuleList()) {
-                System.out.println("module.getPermission(): " + module.getPermission());
+        AccountDto accountDto = (AccountDto) principalCollection.getPrimaryPrincipal(); // 获取认证时存入authorizationInfo的Account信息
+        log.debug("accountDto.getRole_id() " + accountDto.getRole_id());
+        // 获取角色信息
+        RoleDto roleDto = manageService.findRoleById(accountDto.getId());
+        log.debug("roleDto.toString():" + roleDto.toString());
+        // 赋予角色
+        authorizationInfo.addRole(roleDto.getRole_tag());
+
+        // 获取模块信息
+        for (Long moduleId :
+                roleDto.getModuleIds()) {
+
+            String moduleDto = manageService.findModuleById(moduleId).getModule_url();
+            // 注意 addStringPermission 不能添加为空得权限
+            if (!StringUtil.isEmpty(moduleDto)) {
+                log.debug("Module_url: " + moduleDto);
                 // 添加所属权限
-                authorizationInfo.addStringPermission(module.getPermission());
+                authorizationInfo.addStringPermission(moduleDto);
             }
-        }*/
+        }
+        log.debug("authorizationInfo.toString():" + authorizationInfo.getStringPermissions());
+        log.debug("authorizationInfo.getRoles():" + authorizationInfo.getRoles());
         return authorizationInfo;
     }
 }

@@ -10,6 +10,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,12 +37,14 @@ public class RoleController {
      * @param: []
      */
 
+    @RequiresPermissions(".role")
     @ApiOperation(value = "获取角色列表", notes = "所有角色")
     @GetMapping("/rolenames")
     public ResponseRowsVO roleNames() {
         return ResultUtil.success("roleNames 已执行", manageService.findRoleNames());
     }
 
+    @RequiresPermissions(".role")
     @ApiOperation(value = "分页查询角色信息", notes = "所有角色")
     @PostMapping("/roles")
     public ResponseRowsVO getRoles(@RequestBody RoleQuery roleQuery) {
@@ -49,6 +52,7 @@ public class RoleController {
         return ResultUtil.success("getRoles 已执行", manageService.findRoleByQuery(roleQuery));
     }
 
+    @RequiresPermissions(".role")
     @ApiOperation(value = "通过id获取角色详细信息", notes = "所有角色")
     @ApiImplicitParam(name = "id", value = "角色id", required = true, paramType = "path", dataType = "Long", defaultValue = "1")
     @GetMapping("/role/{id}")
@@ -56,6 +60,7 @@ public class RoleController {
         return ResultUtil.success("获取角色详细信息成功", manageService.findRoleById(id));
     }
 
+    @RequiresPermissions(".role")
     @PostMapping("/role")
     public ResponseVO createRole(@RequestBody RoleDto roleDto) {
         try {
@@ -69,6 +74,7 @@ public class RoleController {
         }
     }
 
+    @RequiresPermissions(".role")
     @PutMapping("/role")
     public ResponseVO updateRole(@RequestBody RoleDto roleDto) {
         try {
@@ -81,6 +87,8 @@ public class RoleController {
             return ResultUtil.success("角色更新失败");
         }
     }
+
+    @RequiresPermissions(".role")
     @DeleteMapping("/role/{id}")
     public ResponseVO deleteRole(@PathVariable("id") Long id) {
         try {

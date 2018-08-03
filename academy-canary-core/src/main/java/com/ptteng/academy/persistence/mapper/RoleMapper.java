@@ -28,7 +28,7 @@ public interface RoleMapper extends BaseMapper<Role> {
     @Select("SELECT romd.modules_id FROM role ro INNER JOIN role_modules romd ON ro.id = romd.role_id WHERE ro.id = #{id}")
     List<Long> findRoleModuleById(Long id);
 
-    @Select("SELECT ro.id, ro.role_name, ro.create_at, ro.create_by FROM role ro WHERE id = #{id}")
+    @Select("SELECT ro.id, ro.role_name, ro.role_tag, ro.create_at, ro.create_by FROM role ro WHERE id = #{id}")
     RoleDto findRoleById(Long id);
 
     // 删除角色关系表

@@ -1,5 +1,6 @@
 package com.ptteng.academy.business.query;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
@@ -20,4 +21,6 @@ import lombok.EqualsAndHashCode;
 public class ModuleQuery extends IQuery{
     @ApiModelProperty(notes = "模块名称", required = false)
     private String moduleName;
+    @JsonIgnore
+    private Long role_id;
 }

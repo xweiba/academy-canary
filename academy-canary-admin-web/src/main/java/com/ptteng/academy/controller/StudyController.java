@@ -15,6 +15,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.Logical;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,7 +44,9 @@ public class StudyController {
 
     private Map<String, Object> objectMap = new HashMap<String, Object>();
 
+
     // 获取文章列表
+    @RequiresPermissions(".articles")
     @ApiOperation(value = "文章分页条件查询", notes = "返回文章分页数据")
     @PostMapping("/articles")
     public Object Articles(@RequestBody ArticleQuery articleQuery) {
@@ -59,6 +63,7 @@ public class StudyController {
         return ResultUtil.success("获取文章信息成功", pageInfo);
     }
 
+    @RequiresPermissions(".articles")
     @ApiOperation(value = "上下架文章", notes = "返回执行结果")
     @ApiImplicitParam(name = "id", value = "文章id", required = true, paramType = "path", dataType = "Long", defaultValue = "1")
     @PutMapping("/article/{id}/status")
@@ -71,6 +76,7 @@ public class StudyController {
         }
     }
 
+    @RequiresPermissions(".articles")
     @ApiOperation(value = "创建文章", notes = "返回article信息")
     @PostMapping("/article")
     public ResponseVO createArticle(@RequestBody ArticleDto articleDto) {
@@ -84,6 +90,7 @@ public class StudyController {
         }
     }
 
+    @RequiresPermissions(".articles")
     @ApiOperation(value = "更新文章", notes = "返回article信息")
     @ApiImplicitParam(name = "id", value = "文章id", required = true, paramType = "path", dataType = "Long", defaultValue = "1")
     @PutMapping("/article/{id}")
@@ -97,6 +104,7 @@ public class StudyController {
         }
     }
 
+    @RequiresPermissions(".articles")
     @ApiOperation(value = "获取指定文章", notes = "返回文章信息")
     @ApiImplicitParam(name = "id", value = "文章id", required = true, paramType = "path", dataType = "Long", defaultValue = "1")
     @GetMapping("/article/{id}")
@@ -114,6 +122,7 @@ public class StudyController {
         }
     }
 
+    @RequiresPermissions(".videos")
     @ApiOperation(value = "视频文章分页条件查询", notes = "返回文章集合")
     @PostMapping("/videos")
     public Object videos(@RequestBody VideoQuery videoQuery) {
@@ -130,6 +139,7 @@ public class StudyController {
         return ResultUtil.success("获取视频信息成功", pageInfo);
     }
 
+    @RequiresPermissions(".videos")
     @ApiOperation(value = "创建视频文章", notes = "返回文章id")
     @PostMapping("/video")
     public ResponseVO createVideo(@RequestBody VideoDto videoDto) {
@@ -143,6 +153,7 @@ public class StudyController {
         }
     }
 
+    @RequiresPermissions(".videos")
     @ApiOperation(value = "获取视频信息", notes = "获取视频信息")
     @ApiImplicitParam(name = "id", value = "视频Id", required = true, paramType = "path", dataType = "Long", defaultValue = "1")
     @GetMapping("/video/{id}")
@@ -158,6 +169,7 @@ public class StudyController {
         }
     }
 
+    @RequiresPermissions(".videos")
     @ApiOperation(value = "视频更新", notes = "执行成功返回true")
     @ApiImplicitParam(name = "id", value = "视频Id", required = true, paramType = "path", dataType = "Long", defaultValue = "1")
     @PutMapping("/video/{id}")
@@ -176,6 +188,7 @@ public class StudyController {
         }
     }
 
+    @RequiresPermissions(".videos")
     @ApiOperation(value = "上/下架视频", notes = "执行成功返回true")
     @ApiImplicitParam(name = "id", value = "视频Id", required = true, paramType = "path", dataType = "Long", defaultValue = "1")
     @PutMapping("/video/{id}/status")
@@ -188,6 +201,7 @@ public class StudyController {
         }
     }
 
+    @RequiresPermissions(value = {".videos",".articles"}, logical = Logical.OR)
     @ApiOperation(value = "文件上传", notes = "返回处理完毕后的文件名称, 在缓存中保留半小时")
     @PostMapping(value = "/update/image")
     public ResponseVO updateFile(@RequestPart(required = true) MultipartFile update_img) {

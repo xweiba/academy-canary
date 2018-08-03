@@ -42,7 +42,7 @@ public interface ManageService {
     /* 删除角色 */
     Boolean deleteRoleById(Long id) throws Exception;
     /* 新增模块 */
-    Boolean insertRole(RoleDto roleDto) throws Exception;
+    RoleDto insertRole(RoleDto roleDto) throws Exception;
     /* 更新模块 */
     Boolean updateRole(RoleDto roleDto) throws Exception;
 
@@ -53,10 +53,13 @@ public interface ManageService {
     Boolean findAccountByPassword(String passWord);
 
     AccountDto findAccountById(Long id);
+
+    AccountDto findAccountLoginById(String accountName);
+
     AccountDto findAccountByUsername(String name);
-    Boolean updateAccount(AccountDto accountDto);
+    Boolean updateAccount(AccountDto accountDto) throws Exception;
     Boolean deleteAccountById(Long id);
-    Boolean insertAccount(AccountDto accountDto);
+    Boolean insertAccount(AccountDto accountDto) throws Exception;
 
 
     // 通过SecurityUtils获取存储的账号信息

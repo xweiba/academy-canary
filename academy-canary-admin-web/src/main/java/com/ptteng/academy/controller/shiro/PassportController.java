@@ -1,15 +1,22 @@
 package com.ptteng.academy.controller.shiro;
 
+import com.ptteng.academy.business.dto.AccountDto;
 import com.ptteng.academy.business.vo.ResponseVO;
 import com.ptteng.academy.business.dto.LoginDto;
+import com.ptteng.academy.service.ManageService;
 import com.ptteng.academy.util.PasswordUtil;
 import com.ptteng.academy.util.ResultUtil;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.AccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.apache.shiro.subject.Subject;
 import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
 
 /**
  * @program: canary
@@ -18,22 +25,30 @@ import org.springframework.web.bind.annotation.*;
  * @create: 2018-07-18 01:16
  **/
 
+
 @Slf4j
 @Api(tags = "PassportController", description = "登陆相关Api")
 @RestController
 public class PassportController {
 
+    @Resource
+    private ManageService manageService;
+
     /**
      * @description 登陆验证
      * @param: [loginDto] 记住我可不写
      */
+    @ApiOperation(value = "登陆接口", notes = "执行成功返回登陆者信息")
     @PostMapping("/login")
     public ResponseVO Login(@RequestBody LoginDto loginDto) {
         log.info("登陆信息:" + loginDto.toString());
         System.out.println("HomeController.login()");
         try {
             System.out.println("加密后的密码: " + PasswordUtil.encrypt(loginDto.getPassWord(),loginDto.getAccountName()));
-            // 设置Shiro用户Token
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // 设置Shiro用户Token
             UsernamePasswordToken token = new UsernamePasswordToken(loginDto.getAccountName(), loginDto.getPassWord(), loginDto.getRememberMe());
             // UsernamePasswordToken token = new UsernamePasswordToken(username, password, rememberMe); 记住我
 
@@ -48,18 +63,17 @@ public class PassportController {
                 // 每个Realm都能在必要时对提交的AuthenticationTokens作出反应
                 // 所以这一步在调用login(token)方法时,它会走到xxRealm.doGetAuthenticationInfo()方法中,具体验证方式详见此方法
                 currentUser.login(token);
-                return ResultUtil.success("登陆成功", loginDto);
-            } catch (Exception e) {
-                token.clear();
-                return ResultUtil.error("登录失败，用户名: "+ loginDto.getAccountName());
+                AccountDto accountDto = manageService.findAccountLoginById(loginDto.getAccountName());
+                return ResultUtil.success("登陆成功", accountDto);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        return ResultUtil.success("登陆成功", loginDto);
+            catch (Exception e) {
+                token.clear();
+                log.debug("登录失败，用户名[{}]", loginDto.getAccountName(), e);
+                return ResultUtil.error(e.getMessage());
+            }
     }
 
+    @ApiOperation(value = "退出登陆", notes = "执行成功直接返回无权限")
     @GetMapping("/logout")
     public ResponseVO logout() {
         // http://www.oschina.net/question/99751_91561
@@ -69,12 +83,27 @@ public class PassportController {
         return ResultUtil.success("您已安全退出");
     }
 
-    @RequestMapping("/noAccessMsg")
-    public ResponseVO noAccessMsg() {
-        return ResultUtil.error("您无权访问该接口");
-    }
-    @RequestMapping("/accessMsg")
-    public ResponseVO accessMsg() {
-        return ResultUtil.success("登陆成功");
+    /**
+     * @description 更新密码
+     * @param: [accountDto]
+     */
+    @ApiOperation(value = "密码更新", notes = "执行成功直接返回提示信息")
+    @RequiresPermissions(".password")
+    @PutMapping("/account/password")
+    public ResponseVO restAccount(@RequestBody AccountDto accountDto) {
+        log.info("restAccount: " + accountDto);
+        try {
+            // 使用用户名为盐值对密码加密得到加密后的数据
+            String oldPassWord = PasswordUtil.encrypt(accountDto.getOldPassword(),accountDto.getUsername());
+            if(manageService.findAccountByPassword(oldPassWord)) {
+                manageService.updateAccount(accountDto);
+                return ResultUtil.success("密码修改成功");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResultUtil.error("输入错误");
+        }
+        System.out.println(accountDto.toString());
+        return ResultUtil.error("密码修改失败");
     }
 }

@@ -10,6 +10,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -35,6 +37,7 @@ public class ModuleController {
         return ResultUtil.success("getModules 已执行", manageService.findModuleByQuery(moduleQuery));
     }
 
+    @RequiresPermissions(".module")
     @ApiOperation(value = "根据id获取模块信息", notes = "返回模块信息")
     @ApiImplicitParam(name = "id", value = "模块Id", required = true, paramType = "path", dataType = "Long", defaultValue = "1")
     @GetMapping("/module/{id}")
@@ -42,6 +45,7 @@ public class ModuleController {
         return ResultUtil.success("获取模块信息成功", manageService.findModuleById(id));
     }
 
+    @RequiresPermissions(".module")
     @ApiOperation(value = "根据id删除", notes = "执行成功返回true")
     @ApiImplicitParam(name = "id", value = "模块Id", required = true, paramType = "path", dataType = "Long", defaultValue = "1")
     @DeleteMapping("/module/{id}")
@@ -54,6 +58,7 @@ public class ModuleController {
         }
     }
 
+    @RequiresPermissions(".module")
     @ApiOperation(value = "根据 id 更新模块信息", notes = "执行成功返回true")
     @ApiImplicitParam(name = "id", value = "模块Id", required = true, paramType = "path", dataType = "Long", defaultValue = "1")
     @PutMapping("/module/{id}")
@@ -63,6 +68,7 @@ public class ModuleController {
         return ResultUtil.success("updateModule 已执行", manageService.updateModule(moduleDto));
     }
 
+    @RequiresPermissions(".module")
     @ApiOperation(value = "创建新模块", notes = "执行成功返回true")
     @PostMapping("/module")
     public ResponseVO createModule(@RequestBody ModuleDto moduleDto) {

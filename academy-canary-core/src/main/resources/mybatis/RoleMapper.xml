@@ -4,11 +4,13 @@
 
 <mapper namespace="com.ptteng.academy.persistence.mapper.RoleMapper">
     <select id="findRoleByQuery" parameterType="roleQuery" resultType="roleDto">
-        SELECT * FROM role WHERE 1 = 1 
+        SELECT * FROM role WHERE 1 = 1
         <if test="role_name!='' and role_name!=null">
            AND role_name LIKE '%${role_name}%'
         </if>
+        <if test="id!=0 and id!=null">
+            AND id = #{id}
+        </if>
     </select>
-
 </mapper>
 

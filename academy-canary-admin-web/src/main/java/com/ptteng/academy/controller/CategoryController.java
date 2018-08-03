@@ -11,6 +11,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -27,13 +28,11 @@ import java.util.List;
 @RestController
 public class CategoryController {
 
-    @RequiresPermissions("account:view") // 权限管理 account:view 的权限才能访问该handler;
     @ApiOperation(value = "获取分类列表", notes = "根据传入分类名称返回分类对象")
     @ApiImplicitParam(name = "cName", value = "分类名称: article|grade|subject", required = true, paramType = "path", dataType = "String", defaultValue = "article")
     @GetMapping("/classify/{cName}")
     public ResponseVO getClassIfy(@PathVariable("cName") String cName) {
         List<Object> classify = new ArrayList<Object>();
-
         if ("article".equals(cName)) {
             for (ClassifyEnum article :
                     ClassifyEnum.values()) {
