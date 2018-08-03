@@ -9,9 +9,9 @@ import com.ptteng.academy.business.enums.SubjectEnum;
 import com.ptteng.academy.business.query.StudyQuery;
 import com.ptteng.academy.framework.service.OSSService;
 import com.ptteng.academy.persistence.beans.Study;
-import com.ptteng.academy.persistence.mapper.AuthorMapper;
 import com.ptteng.academy.persistence.mapper.StudyMapper;
 import com.ptteng.academy.service.ConsumeService;
+import com.ptteng.academy.service.ManageService;
 import com.ptteng.academy.service.StudyService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -44,6 +44,8 @@ public class StudyServiceImpl implements StudyService {
     @Resource
     private OSSService ossService;
 
+    @Resource
+    private ManageService manageService;
 
     @Override
     public StudyDto insert(StudyDto entity) throws Exception {
@@ -55,8 +57,8 @@ public class StudyServiceImpl implements StudyService {
         BeanUtils.copyProperties(entity, study);
         study.setCreate_at(new Date());
         study.setUpdate_at(new Date());
-        study.setCreate_by("admin");
-        study.setUpdate_by("admin");
+        study.setCreate_by(manageService.getOnlineAccount().getUsername());
+        study.setUpdate_by(manageService.getOnlineAccount().getUsername());
         studyMapper.insert(study);
         return entity;
     }
@@ -91,7 +93,7 @@ public class StudyServiceImpl implements StudyService {
         BeanUtils.copyProperties(entity, study);
         // 更新时间
         study.setUpdate_at(new Date());
-        study.setUpdate_by("admin");
+        study.setUpdate_by(manageService.getOnlineAccount().getUsername());
         return studyMapper.updateByPrimaryKeySelective(study) > 0;
     }
 
@@ -202,8 +204,8 @@ public class StudyServiceImpl implements StudyService {
         study.setStudy_type(2);
         study.setCreate_at(new Date());
         study.setUpdate_at(new Date());
-        study.setCreate_by("admin");
-        study.setUpdate_by("admin");
+        study.setCreate_by(manageService.getOnlineAccount().getUsername());
+        study.setUpdate_by(manageService.getOnlineAccount().getUsername());
         log.debug("studyMapper.insert(study) 视频文章新增: " + study.toString());
         studyMapper.insert(study);
         log.debug(study.toString());
@@ -224,8 +226,8 @@ public class StudyServiceImpl implements StudyService {
         study.setStudy_type(1);
         study.setCreate_at(new Date());
         study.setUpdate_at(new Date());
-        study.setCreate_by("admin");
-        study.setUpdate_by("admin");
+        study.setCreate_by(manageService.getOnlineAccount().getUsername());
+        study.setUpdate_by(manageService.getOnlineAccount().getUsername());
         log.debug("studyMapper.insert(study): " + study.toString());
         studyMapper.insert(study);
         log.debug(study.toString());
@@ -243,6 +245,8 @@ public class StudyServiceImpl implements StudyService {
             study.setCover_plan_url(ossService.updateFile(articleDto.getCover_plan_url()));
         }
         study.setAuthor(consumeService.findAuthorByName(articleDto.getAuthor()));
+        study.setUpdate_at(new Date());
+        study.setUpdate_by(manageService.getOnlineAccount().getUsername());
         return studyMapper.updateByPrimaryKeySelective(study) > 0 ;
     }
 

@@ -156,7 +156,7 @@ public class ShiroConfig {
      */
     public SimpleCookie rememberMeCookie() {
         // 这个参数是cookie的名称，对应前端的checkbox的name = rememberMe
-        SimpleCookie simpleCookie = new SimpleCookie("rememberMe");
+        SimpleCookie simpleCookie = new SimpleCookie("rememberMeCanary");
         // 记住我cookie生效时间30天 ,单位秒。 注释掉，默认永久不过期 2018-07-15
         // simpleCookie.setMaxAge(redisProperties.getExpire());
         return simpleCookie;
@@ -169,7 +169,7 @@ public class ShiroConfig {
         CookieRememberMeManager cookieRememberMeManager = new CookieRememberMeManager();
         cookieRememberMeManager.setCookie(rememberMeCookie());
         //rememberMe cookie加密的密钥 建议每个项目都不一样 默认AES算法 密钥长度(128 256 512 位)
-        cookieRememberMeManager.setCipherKey(Base64.decode("1QWLxg+NYmxraMoxAXu/Iw=="));
+        cookieRememberMeManager.setCipherKey(Base64.decode("9QWLxg+NYmxraMoxAXu/Iw=="));
         return cookieRememberMeManager;
     }
 }
