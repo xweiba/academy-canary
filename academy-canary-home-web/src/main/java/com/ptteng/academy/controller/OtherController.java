@@ -103,32 +103,32 @@ public class OtherController {
 //        return ResultUtil.success("getCollectArticle 已执行", articles);
 //    }
 
-    @ApiOperation(value = "获取收藏视频信息", notes = "传入用户ID返回收藏视频列表")
-    @ApiImplicitParams({@ApiImplicitParam( name = "id", value = "用户id",paramType = "path",required = true, dataType = "Long"),
-            @ApiImplicitParam(name = "pageNum",value = "查询的页数",required = true,dataType = "int")})
-    @PostMapping("/card/collect/videos/{id}")
-    public ResponseRowsVO getCollectVideo(@PathVariable("id") Long id, @RequestBody Map<String, Object> pageNum) {
-        Date date = new Date(60 * 60);
-        List<Object> videos = new ArrayList<>();
-        for (Long i = 1L; i <= 10; i++) {
-            StudentCollectDto studentCollectVideoVo = new StudentCollectDto();
-            studentCollectVideoVo.setTitle("这是标题");
-            studentCollectVideoVo.setArticleId(i);
-            studentCollectVideoVo.setAuthor("王五");
-            studentCollectVideoVo.setCoverPlanUrl("http://www.apachecn.org/wp-content/uploads/2017/08/java%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF%E5%9B%BE.jpeg");
-            studentCollectVideoVo.setDigest("这是摘要");
-            studentCollectVideoVo.setPraise(123L);
-            studentCollectVideoVo.setCollect(45L);
-            date = new Date(date.getTime() + 30 * 60 * 1000);
-            studentCollectVideoVo.setCollectTime(date);
-            studentCollectVideoVo.setAuthorImgUrl("https://avatar.csdn.net/F/5/E/3_coding13.jpg");
-            studentCollectVideoVo.setVideoUrl("https://rx325n.jomodns.com/r/bdcdnct.inter.71edge.com/videos/v0/20180711/40/93/e53c9c4822e188b47bdd7e7b1c68465d.f4v?key=035b0046b2b4005f677813aab385bc103&dis_k=577e9771b9f9391c14e81a65d4f8b566&dis_t=1531505915&dis_dz=CT-HuBei_WuHan&dis_st=42&src=iqiyi.com&uuid=3baee8bc-5b48ecfb-fe&rn=1531505914662&qd_tm=1531505894908&qd_tvid=1167231300&qd_vipdyn=0&qd_k=ebc0a10909edfda9cd4386fc1198fd08&cross-domain=1&qd_aid=202124401&qd_uid=&qd_stert=0&qypid=1167231300_02020031010000000000&qd_p=3baee8bc&qd_src=01010031010000000000&qd_index=1&qd_vip=0&qyid=482b307c199b23b13efb2a37b83b8f02&pv=0.1&qd_vipres=0&range=13721600-21269503");
-
-            videos.add(studentCollectVideoVo);
-        }
-
-        return ResultUtil.success("getCollectVideo 已执行", videos);
-    }
+//    @ApiOperation(value = "获取收藏视频信息", notes = "传入用户ID返回收藏视频列表")
+//    @ApiImplicitParams({@ApiImplicitParam( name = "id", value = "用户id",paramType = "path",required = true, dataType = "Long"),
+//            @ApiImplicitParam(name = "pageNum",value = "查询的页数",required = true,dataType = "int")})
+//    @PostMapping("/card/collect/videos/{id}")
+//    public ResponseRowsVO getCollectVideo(@PathVariable("id") Long id, @RequestBody Map<String, Object> pageNum) {
+//        Date date = new Date(60 * 60);
+//        List<Object> videos = new ArrayList<>();
+//        for (Long i = 1L; i <= 10; i++) {
+//            StudentCollectDto studentCollectVideoVo = new StudentCollectDto();
+//            studentCollectVideoVo.setTitle("这是标题");
+//            studentCollectVideoVo.setArticleId(i);
+//            studentCollectVideoVo.setAuthor("王五");
+//            studentCollectVideoVo.setCoverPlanUrl("http://www.apachecn.org/wp-content/uploads/2017/08/java%E5%AD%A6%E4%B9%A0%E8%B7%AF%E7%BA%BF%E5%9B%BE.jpeg");
+//            studentCollectVideoVo.setDigest("这是摘要");
+//            studentCollectVideoVo.setPraise(123L);
+//            studentCollectVideoVo.setCollect(45L);
+//            date = new Date(date.getTime() + 30 * 60 * 1000);
+//            studentCollectVideoVo.setCollectTime(date);
+//            studentCollectVideoVo.setAuthorImgUrl("https://avatar.csdn.net/F/5/E/3_coding13.jpg");
+//            studentCollectVideoVo.setVideoUrl("https://rx325n.jomodns.com/r/bdcdnct.inter.71edge.com/videos/v0/20180711/40/93/e53c9c4822e188b47bdd7e7b1c68465d.f4v?key=035b0046b2b4005f677813aab385bc103&dis_k=577e9771b9f9391c14e81a65d4f8b566&dis_t=1531505915&dis_dz=CT-HuBei_WuHan&dis_st=42&src=iqiyi.com&uuid=3baee8bc-5b48ecfb-fe&rn=1531505914662&qd_tm=1531505894908&qd_tvid=1167231300&qd_vipdyn=0&qd_k=ebc0a10909edfda9cd4386fc1198fd08&cross-domain=1&qd_aid=202124401&qd_uid=&qd_stert=0&qypid=1167231300_02020031010000000000&qd_p=3baee8bc&qd_src=01010031010000000000&qd_index=1&qd_vip=0&qyid=482b307c199b23b13efb2a37b83b8f02&pv=0.1&qd_vipres=0&range=13721600-21269503");
+//
+//            videos.add(studentCollectVideoVo);
+//        }
+//
+//        return ResultUtil.success("getCollectVideo 已执行", videos);
+//    }
 
 //    @ApiOperation(value = "获取banner文章信息", notes = "要显示的页数")
 ////    @ApiImplicitParam(name = "num", value = "bunner图的个数", required = true, dataType = "Integer")

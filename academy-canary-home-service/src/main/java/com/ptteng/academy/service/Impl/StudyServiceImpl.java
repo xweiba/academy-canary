@@ -40,8 +40,6 @@ public class StudyServiceImpl implements StudyService{
         List<HomeVideoListDto> homeVideoListDtoList = studyMapper.findVideoByVideoQuery(homeVideoQuery);
         log.info(homeVideoListDtoList.get(0).toString());
         PageInfo bean = new PageInfo<HomeVideoListDto>(homeVideoListDtoList);
-        log.info("欢欢的："+bean);
-
         // Banner 只输出8条, 注意这里会刷新bean的total和rows值
         homeVideoQuery.setPageSize(8);
         List<HomeBannerListDto> homeBannerListDtos = studyMapper.findBannerByQuery(homeVideoQuery);
@@ -51,7 +49,6 @@ public class StudyServiceImpl implements StudyService{
                 return null;
             }
         }
-
         List<HomeVideoBannerDto> objectList = new ArrayList<>();
 
         HomeVideoBannerDto homeVideoBannerDto = new HomeVideoBannerDto();
@@ -98,9 +95,6 @@ public class StudyServiceImpl implements StudyService{
     public PageInfo<HomeArticleListDto> findArticleByQuery(PageQuery pageQuery) {
         // 设置分页条件
         PageHelper.startPage(pageQuery.getPageNum(), pageQuery.getPageSize());
-        Study study = new Study();
-        study.setClassify(2);
-        study.setStudy_type(1);
         List<HomeArticleListDto> homeArticleListDtoList = studyMapper.findArticleByQuery();
         for (HomeArticleListDto homeArticleListDto : homeArticleListDtoList) {
             homeArticleListDto.setPraisestu(studyMapper.findPraiseCollectStatus(homeArticleListDto.getId(),pageQuery.getUserId(),1));

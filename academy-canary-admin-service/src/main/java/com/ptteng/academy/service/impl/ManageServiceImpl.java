@@ -24,6 +24,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -37,7 +38,6 @@ import java.util.List;
 @Slf4j
 @Service
 public class ManageServiceImpl implements ManageService {
-
 
     @Resource
     private ModuleMapper moduleMapper;
@@ -56,7 +56,6 @@ public class ManageServiceImpl implements ManageService {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         List<ModuleDto> moduleDtoList = moduleMapper.findModuleByName(moduleQuery);
         return new PageInfo<ModuleDto>(moduleDtoList);
     }
@@ -76,7 +75,6 @@ public class ManageServiceImpl implements ManageService {
         return moduleMapper.deleteByPrimaryKey(id) > 0;
     }
 
-
     @Override
     public Boolean updateModule(ModuleDto moduleDto) {
         Module module = new Module();
@@ -86,14 +84,37 @@ public class ManageServiceImpl implements ManageService {
         return moduleMapper.updateByPrimaryKeySelective(module) > 0;
     }
 
-
+    /**
+     * @description 新增模块时, 需要添加模块与角色关系表
+     * @param: [moduleDto]
+     */
     @Override
     public Boolean insertModule(ModuleDto moduleDto) {
         Module module = new Module();
         BeanUtils.copyProperties(moduleDto, module);
+        module.setUpdate_at(new Date());
+        module.setUpdate_by("admin");
         module.setCreate_at(new Date());
         module.setCreate_by("admin");
-        return moduleMapper.insert(module) > 0;
+        try {
+            moduleMapper.insert(module);
+            log.debug("新增模块id" + module.getId());
+            try {
+                // 添加当前用户权限
+                roleMapper.insertRoleModulesByRoleId(getOnlineAccount().getRole_id(), module.getId());
+                // 添加管理员和超级管理员的权限
+                roleMapper.insertRoleModulesByRoleId(1L, module.getId());
+                roleMapper.insertRoleModulesByRoleId(2L, module.getId());
+            } catch (Exception e) {
+                e.printStackTrace();
+                log.debug("当前用户是管理员或超级管理员");
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.debug("添加失败");
+        }
+        return false;
     }
 
     @Override
@@ -127,7 +148,7 @@ public class ManageServiceImpl implements ManageService {
     }
 
     @Override
-    public RoleDto insertRole(RoleDto roleDto) throws Exception {
+    public RoleDto insertRole(RoleDto roleDto) {
         // 1. 插入角色
         Role role = new Role();
         BeanUtils.copyProperties(roleDto, role);
@@ -139,17 +160,24 @@ public class ManageServiceImpl implements ManageService {
         roleMapper.insert(role);
         Long roleId = role.getId();
         log.debug("roleId:" + role.getId());
-
         // 2. 关联模块, 遍历插入
         for (Long ModuleId :
                 roleDto.getModuleIds()) {
-            roleMapper.insertRoleModulesByRoleId(roleId, ModuleId);
+            try {
+                roleMapper.insertRoleModulesByRoleId(roleId, ModuleId);
+            } catch (Exception e) {
+                log.error("部分id错误");
+                e.printStackTrace();
+            }
         }
+        roleDto.setId(role.getId());
+        roleDto.setRole_name(role.getRole_name());
+        roleDto.setModuleIds(null);
         return roleDto;
     }
 
     @Override
-    public Boolean updateRole(RoleDto roleDto) throws Exception {
+    public RoleDto updateRole(RoleDto roleDto) {
         Role role = new Role();
         BeanUtils.copyProperties(roleDto, role);
         role.setUpdate_at(new Date());
@@ -157,17 +185,17 @@ public class ManageServiceImpl implements ManageService {
         roleMapper.updateByPrimaryKeySelective(role);
         Long roleId = role.getId();
         // 2. 关联模块, 先删除原有的, 然后遍历插入
-        roleMapper.deleteRoleModulesByRoleId(roleId);
+        // roleMapper.deleteRoleModulesByRoleId(roleId);
         for (Long ModuleId :
                 roleDto.getModuleIds()) {
             try {
                 roleMapper.insertRoleModulesByRoleId(roleId, ModuleId);
-            } catch (DataIntegrityViolationException e) {
-                log.debug("忽略部分错误id");
+            } catch (Exception e) {
+                log.debug("忽略部分错误id和原有id");
                 e.printStackTrace();
             }
         }
-        return true;
+        return roleDto;
     }
 
     /* 账号模块 */

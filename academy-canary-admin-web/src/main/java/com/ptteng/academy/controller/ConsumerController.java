@@ -1,25 +1,24 @@
 package com.ptteng.academy.controller;
 
 
-import com.alibaba.fastjson.JSONObject;
-import com.fasterxml.jackson.annotation.JsonFilter;
 import com.ptteng.academy.business.dto.AuthorDto;
 import com.ptteng.academy.business.dto.UserDto;
 import com.ptteng.academy.business.query.UserQuery;
 import com.ptteng.academy.business.vo.ResponseRowsVO;
 import com.ptteng.academy.business.vo.ResponseVO;
-import com.ptteng.academy.persistence.beans.Author;
+import com.ptteng.academy.persistence.beans.User;
+import com.ptteng.academy.persistence.mapper.UserMapper;
 import com.ptteng.academy.service.ConsumeService;
 import com.ptteng.academy.util.ResultUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.springframework.beans.BeanUtils;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,13 +27,14 @@ import java.util.List;
  * @author: xiaoweiba1028@gmail.com
  * @create: 2018-07-19 03:06
  **/
-
+@Slf4j
 @Api(tags = "ConsumerController", description = "微信用户/作者相关Api")
 @RestController
 public class ConsumerController {
     @Resource
     private ConsumeService consumeService;
-    private Boolean status = false; // 状态
+    @Resource
+    private UserMapper userMapper;
 
 
     @ApiOperation(value = "获取作者信息", notes = "返回所有作者信息")
@@ -75,44 +75,28 @@ public class ConsumerController {
     }
 
     @RequiresPermissions(".user")
-    // 获取用户信息
+    @ApiOperation(value = "获取用户列表", notes = "获取用户列表")
     @PostMapping("/users")
     public ResponseRowsVO queryUser(@RequestBody UserQuery userQuery) {
-        List<Object> users = new ArrayList<Object>();
-        for (Long i = 1L; i <= userQuery.getPageSize(); i++) {
-            UserDto userDto = new UserDto();
-            userDto.setId(i);
-            userDto.setNickName("第" + userQuery.getPageNum() + "昵称" + i);
-            userDto.setEmail("173828" + i + "@qq.com");
-            userDto.setPhone(138967001451L + i);
-            userDto.setBean(Math.toIntExact(i));
-            userDto.setGrade("一年级");
-            userDto.setPrefecture("北京");
-            userDto.setStatus(true);
-            users.add(userDto);
-        }
-        return ResultUtil.success("queryUser 调用成功", users);
+        return ResultUtil.success("queryUser 调用成功", consumeService.findUser(userQuery));
     }
 
     @RequiresPermissions(".user")
+    @ApiOperation(value = "改变用户状态", notes = "根据ID改变用户状态")
     @PutMapping("/user/{id}/status")
-    public ResponseVO setStatus(@PathVariable("id") Integer id) {
-        /*  赋值时 !Status 即可 */
-        return ResultUtil.success("status 调用成功", !status);
+    public ResponseVO setStatus(@PathVariable("id") Long id) {
+        User user = userMapper.selectByPrimaryKey(id);
+        user.setStatus(!user.getStatus());
+        log.info("改变用户状态"+user);
+        return ResultUtil.success("status 调用成功", userMapper.updateByPrimaryKeySelective(user));
     }
-
+    @ApiOperation(value = "获取用户详情", notes = "根据ID获取用户详情")
     @RequiresPermissions(".user")
     @GetMapping("/user/{id}")
-    public ResponseVO getUser(@PathVariable("id") Integer id) {
-        UserDto getUserDto = new UserDto();
-        getUserDto.setId(12L);
-        getUserDto.setNickName("昵称");
-        getUserDto.setEmail("173828" + "@qq.com");
-        getUserDto.setGrade("二年级");
-        getUserDto.setPhone(17555551234L);
-        getUserDto.setPrefecture("重庆");
-        getUserDto.setBean(45);
-        getUserDto.setHeadImgUrl("http://93.179.100.194:8080/hand.jpg");
-        return ResultUtil.success("getUser 调用成功", getUserDto);
+    public ResponseVO getUser(@PathVariable("id") Long id) {
+        User user = userMapper.selectByPrimaryKey(id);
+        UserDto userDto = new UserDto();
+         BeanUtils.copyProperties(user,userDto);
+        return ResultUtil.success("getUser 调用成功", userDto);
     }
 }

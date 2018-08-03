@@ -186,20 +186,37 @@
         DELETE FROM study_user WHERE study_id = #{studyId} AND user_id = #{userId} AND type = #{type}
     </delete>
 
-    <select id="findBannerArticleByQuery" parameterType="Integer"
-            resultType="HomeBannerListDto">
+    <select id="findBannerArticleByQuery"  resultType="HomeBannerListDto">
+ SELECT * FROM (
         SELECT
-        sd.id, sd.cover_plan_url, sd.title
+        sd.id, sd.cover_plan_url, sd.title, sd.study_type, sd.`status`,
+        (SELECT COUNT(id) FROM study_user WHERE type = 1 AND study_id = sd.id) AS praise
         FROM
-        study sd
-        WHERE sd.study_type = 1 AND sd.classify = 1
-        <!-- 取点赞数最高的8条数据 -->
-        order by sd.praise DESC LIMIT #{num}
-
+        study sd ) temp
+        WHERE 1 = 1 AND `status` = 1 AND study_type = 1 ORDER BY praise DESC  LIMIT #{num}
     </select>
 
     <select id="findArticleByQuery"
             resultType="com.ptteng.academy.business.dto.HomeArticleListDto">
-        SELECT * from study where study_type = 1 AND classify = 2
+       SELECT * FROM (
+        SELECT
+        s.id, s.classify, s.content, s.cover_plan_url, s.create_at, s.create_by, s.grade,
+        s.introduce, s.status, s.study_type, s.subject, s.title, s.update_at, s.update_by,
+        s.video_time, s.video_url, s.author,
+        (SELECT COUNT(id) FROM study_user WHERE type = 1 AND study_id = s.id) AS praise,
+        (SELECT COUNT(id) FROM study_user WHERE type = 2 AND study_id = s.id)  AS collect,
+        au.author_name, au.author_img
+        FROM
+        study s INNER JOIN author au ON s.author = au.id ) temp
+        WHERE study_type = 1 order by update_at DESC
+    </select>
+
+    <select id="findCollectArticle" resultType="com.ptteng.academy.business.dto.StudentCollectArticleDto" >
+        SELECT study_user.create_at as create_time,study.* FROM study,study_user  WHERE study.id =study_user.study_id AND  study_user.user_id = #{id}
+        AND study.study_type = 1 AND type = 2 ORDER BY create_time DESC
+    </select>
+    <select id="findCollectVideo" resultType="com.ptteng.academy.business.dto.HomeVideoDto" >
+        SELECT study_user.create_at as create_time,study.* FROM study,study_user  WHERE study.id =study_user.study_id AND  study_user.user_id = #{id}
+        AND study.study_type = 2 AND type = 2 ORDER BY create_time DESC
     </select>
 </mapper>

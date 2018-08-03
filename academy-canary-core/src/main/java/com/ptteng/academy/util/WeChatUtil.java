@@ -102,8 +102,8 @@ public class WeChatUtil {
         if (null != jsonObject) {
             try {
                 WeChatTokenDto = new WeChatTokenDto();
-                WeChatTokenDto.setAccessToken(jsonObject.getString("access_token"));
-                WeChatTokenDto.setExpiresIn(jsonObject.getIntValue("expires_in"));
+                WeChatTokenDto.setAccess_token(jsonObject.getString("access_token"));
+                WeChatTokenDto.setExpires_in(jsonObject.getIntValue("expires_in"));
             } catch (JSONException e) {
                 WeChatTokenDto = null;
                 // 获取WeChatToken失败
@@ -133,8 +133,8 @@ public class WeChatUtil {
     public static WeChatUserDto getUserInfo(String accessWeChatToken, String openId) {
         WeChatUserDto weChatUserDto = null;
         // 拼接请求地址
-        String requestUrl = "https://api.weixin.qq.com/cgi-bin/user/info?access_WeChatToken=ACCESS_WeChatToken&openid=OPENID";
-        requestUrl = requestUrl.replace("ACCESS_WeChatToken", accessWeChatToken).replace("OPENID", openId);
+        String requestUrl = "https://api.weixin.qq.com/sns/userinfo?access_token=ACCESS_TOKEN&openid=OPENID&lang=zh_CN";
+        requestUrl = requestUrl.replace("ACCESS_TOKEN", accessWeChatToken).replace("OPENID", openId);
         // 获取用户信息
         JSONObject jsonObject = WeChatUtil.httpsRequest(requestUrl, "GET", null);
         if (null != jsonObject) {
@@ -182,8 +182,9 @@ public class WeChatUtil {
         if (null != jsonObject) {
             try {
                 WeChatTokenDto = new WeChatTokenDto();
-                WeChatTokenDto.setAccessToken(jsonObject.getString("access_WeChatToken"));
-                WeChatTokenDto.setExpiresIn(jsonObject.getIntValue("expires_in"));
+                WeChatTokenDto.setAccess_token(jsonObject.getString("access_token"));
+                WeChatTokenDto.setExpires_in(jsonObject.getIntValue("expires_in"));
+                WeChatTokenDto.setOpenid(jsonObject.getString("openid"));
             } catch (JSONException e) {
                 WeChatTokenDto = null;
                 // 获取WeChatToken失败

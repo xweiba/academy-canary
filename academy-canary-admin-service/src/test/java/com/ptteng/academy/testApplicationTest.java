@@ -64,31 +64,31 @@ public class testApplicationTest {
     }
 
     /* 视频查询 */
-    @Test
-    public void findVideo() throws Exception {
-        VideoQuery videoQuery = new VideoQuery();
-        // videoQuery.setPageNum(2);
-        // videoQuery.setPageSize(10);
-/*        videoQuery.setTitle("0");
-        Integer[] aa = {1, 300};
-        videoQuery.setStatus(true);
-        videoQuery.setPraise(aa);*/
-        StudyQuery studyQuery = new StudyQuery();
-        videoQuery.setTitle("这是标");
-        BeanUtils.copyProperties(videoQuery, studyQuery);
-        PageInfo<?> videoDtoPageInfo = studyService.findPageBreakByCondition(studyQuery);
-        System.out.println(videoDtoPageInfo.getTotal());
-        System.out.println(videoDtoPageInfo.getSize());
-    }
-
-    /* 文章查询 */
-    @Test
-    public void articlQueryTest() throws Exception {
-        ArticleQuery articleQuery = new ArticleQuery();
-        StudyQuery studyQuery = new StudyQuery();
-        BeanUtils.copyProperties(articleQuery, studyQuery);
-        PageInfo<?> videoDtoPageInfo = studyService.findPageBreakByCondition(studyQuery);
-    }
+//    @Test
+//    public void findVideo() throws Exception {
+//        VideoQuery videoQuery = new VideoQuery();
+//        // videoQuery.setPageNum(2);
+//        // videoQuery.setPageSize(10);
+///*        videoQuery.setTitle("0");
+//        Integer[] aa = {1, 300};
+//        videoQuery.setStatus(true);
+//        videoQuery.setPraise(aa);*/
+//        StudyQuery studyQuery = new StudyQuery();
+//        videoQuery.setTitle("这是标");
+//        BeanUtils.copyProperties(videoQuery, studyQuery);
+//        PageInfo<?> videoDtoPageInfo = studyService.findPageBreakByCondition(studyQuery);
+//        System.out.println(videoDtoPageInfo.getTotal());
+//        System.out.println(videoDtoPageInfo.getSize());
+//    }
+//
+//    /* 文章查询 */
+//    @Test
+//    public void articlQueryTest() throws Exception {
+//        ArticleQuery articleQuery = new ArticleQuery();
+//        StudyQuery studyQuery = new StudyQuery();
+//        BeanUtils.copyProperties(articleQuery, studyQuery);
+//        PageInfo<?> videoDtoPageInfo = studyService.findPageBreakByCondition(studyQuery);
+//    }
 
     @Test
     public void deleteFile() {

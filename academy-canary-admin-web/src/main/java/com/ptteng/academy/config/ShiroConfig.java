@@ -3,11 +3,14 @@ package com.ptteng.academy.config;
 import com.ptteng.academy.shiro.credentials.RetryLimitCredentialsMatcher;
 import com.ptteng.academy.shiro.realm.MyShiroRealm;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.shiro.codec.Base64;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
+import org.apache.shiro.web.mgt.CookieRememberMeManager;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
+import org.apache.shiro.web.servlet.SimpleCookie;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -56,7 +59,7 @@ public class ShiroConfig {
 
         /* 开始权限判断, 由上至下 注意顺序  未登录状态下, 登录后就都可以访问了 */
         // filterChainDefinitionMap.put("/static/**", "anon"); // anon-无需权限即可访问 配置不会拦截的链接
-        filterChainDefinitionMap.put("/logout", "logout"); // 配置退出的链接, 只要调用/logout 就会自动退出
+        // filterChainDefinitionMap.put("/logout", "logout"); // 配置退出的链接, 只要调用/logout 就会自动退出
         filterChainDefinitionMap.put("/login", "anon"); // 登陆验证调用url, 会自动调用MyShiroRealm.doGetAuthenticationInfo() 去做登陆验证.
         filterChainDefinitionMap.put("/**", "authc"); // 认证过滤, 给所有url加权限, authc-所有url都必须认证通过才可以访问, 这里是认证过滤链
         /* 登陆状态下的过滤 */
@@ -103,8 +106,8 @@ public class ShiroConfig {
         /*securityManager.setCacheManager(redisCacheManager());
         // 自定义session管理 使用redis
         securityManager.setSessionManager(sessionManager());
-        // 注入记住我管理器
-        securityManager.setRememberMeManager(rememberMeManager());*/
+        // 注入记住我管理器*/
+        securityManager.setRememberMeManager(rememberMeManager());
         return securityManager;
     }
 
@@ -119,6 +122,7 @@ public class ShiroConfig {
         authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
         return authorizationAttributeSourceAdvisor;
     }
+
     /**
      * @description 开启shiro注解, 不开启@RequiresPermissions注解无效
      */
@@ -145,5 +149,27 @@ public class ShiroConfig {
         simpleMappingExceptionResolver.setExceptionAttribute("ex"); // 程序抛出的异常
 
         return simpleMappingExceptionResolver;
+    }
+
+    /**
+     * @description Cookie 对象
+     */
+    public SimpleCookie rememberMeCookie() {
+        // 这个参数是cookie的名称，对应前端的checkbox的name = rememberMe
+        SimpleCookie simpleCookie = new SimpleCookie("rememberMe");
+        // 记住我cookie生效时间30天 ,单位秒。 注释掉，默认永久不过期 2018-07-15
+        // simpleCookie.setMaxAge(redisProperties.getExpire());
+        return simpleCookie;
+    }
+
+    /**
+     * cookie管理对象;记住我功能, 添加到 securityManager
+     */
+    public CookieRememberMeManager rememberMeManager() {
+        CookieRememberMeManager cookieRememberMeManager = new CookieRememberMeManager();
+        cookieRememberMeManager.setCookie(rememberMeCookie());
+        //rememberMe cookie加密的密钥 建议每个项目都不一样 默认AES算法 密钥长度(128 256 512 位)
+        cookieRememberMeManager.setCipherKey(Base64.decode("1QWLxg+NYmxraMoxAXu/Iw=="));
+        return cookieRememberMeManager;
     }
 }

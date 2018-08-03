@@ -79,7 +79,10 @@ public class PassportController {
         // http://www.oschina.net/question/99751_91561
         // 此处有坑： 退出登录，其实不用实现任何东西，只需要保留这个接口即可，也不可能通过下方的代码进行退出
         // SecurityUtils.getSubject().logout();
-        // 因为退出操作是由Shiro控制的
+        // 因为退出操作是由Shiro控制的, 但是shiro会直接跳转到未授权页面
+        // 获取当前的Subject
+        Subject currentUser = SecurityUtils.getSubject();
+        currentUser.logout();
         return ResultUtil.success("您已安全退出");
     }
 

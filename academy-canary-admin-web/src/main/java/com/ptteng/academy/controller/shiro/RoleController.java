@@ -78,10 +78,8 @@ public class RoleController {
     @PutMapping("/role")
     public ResponseVO updateRole(@RequestBody RoleDto roleDto) {
         try {
+            roleDto = manageService.updateRole(roleDto);
             return ResultUtil.success("角色更新成功", manageService.updateRole(roleDto));
-        } catch (DataIntegrityViolationException e) {
-            e.printStackTrace();
-            return ResultUtil.success("角色更新成功, 部分module Id不存在已忽略");
         }catch (Exception e) {
             e.printStackTrace();
             return ResultUtil.success("角色更新失败");

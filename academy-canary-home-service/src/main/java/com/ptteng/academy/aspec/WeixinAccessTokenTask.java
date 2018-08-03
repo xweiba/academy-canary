@@ -26,13 +26,12 @@ public class WeixinAccessTokenTask {
     @Scheduled(initialDelay = 1000, fixedDelay = 7000 * 1000 )
     public void getWeixinAccessToken(){
         try {
-            String token = WeChatUtil.getToken(WeChatUtil.APPID, WeChatUtil.APPSECRET).getAccessToken();
+            String token = WeChatUtil.getToken(WeChatUtil.APPID, WeChatUtil.APPSECRET).getAccess_token();
             WeixinAccessToken.setAccessToken(token);
             logger.info("获取到的微信accessToken为"+token);
         } catch (Exception e) {
             logger.error("获取微信adcessToken出错，信息如下");
             e.printStackTrace();
-            this.getWeixinAccessToken();
             // 此处可能陷入死循环
         }
 

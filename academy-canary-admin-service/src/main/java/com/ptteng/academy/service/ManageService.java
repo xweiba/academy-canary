@@ -44,7 +44,7 @@ public interface ManageService {
     /* 新增模块 */
     RoleDto insertRole(RoleDto roleDto) throws Exception;
     /* 更新模块 */
-    Boolean updateRole(RoleDto roleDto) throws Exception;
+    RoleDto updateRole(RoleDto roleDto) throws Exception;
 
     /* 账号模块 */
     PageInfo<AccountDto> findAccountByQuery(AccountQuery accountQuery);

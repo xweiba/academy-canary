@@ -31,6 +31,7 @@ public class ModuleController {
     @Resource
     ManageService manageService;
 
+    @RequiresPermissions(".module")
     @ApiOperation(value = "获取模块信息列表", notes = "按id排序")
     @PostMapping("/modules")
     public ResponseRowsVO getModules(ModuleQuery moduleQuery) {
@@ -58,7 +59,6 @@ public class ModuleController {
         }
     }
 
-    @RequiresPermissions(".module")
     @ApiOperation(value = "根据 id 更新模块信息", notes = "执行成功返回true")
     @ApiImplicitParam(name = "id", value = "模块Id", required = true, paramType = "path", dataType = "Long", defaultValue = "1")
     @PutMapping("/module/{id}")
@@ -67,8 +67,6 @@ public class ModuleController {
         log.info("updateModule:", moduleDto.toString());
         return ResultUtil.success("updateModule 已执行", manageService.updateModule(moduleDto));
     }
-
-    @RequiresPermissions(".module")
     @ApiOperation(value = "创建新模块", notes = "执行成功返回true")
     @PostMapping("/module")
     public ResponseVO createModule(@RequestBody ModuleDto moduleDto) {

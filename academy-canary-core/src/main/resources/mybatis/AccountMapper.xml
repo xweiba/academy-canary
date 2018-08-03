@@ -21,7 +21,7 @@
             AND ro.id = #{id}
         </if>
         <if test="username!='' and username!=null">
-            AND acc.username = #{username}
+            AND acc.username LIKE '%${username}%'
         </if>
     </select>
 

@@ -39,11 +39,13 @@ public interface StudyMapper extends BaseMapper<Study>{
     Boolean insertPraiseCollectStatus(@Param("studyId")Long studyId, @Param("userId")Long userId, @Param("type")Integer type, @Param("createAt")Date createAt);
 
     // 获取前台banner文章集合数据
-    List<HomeBannerListDto> findBannerArticleByQuery(Object objectQuery);
+    List<HomeBannerListDto> findBannerArticleByQuery(@Param("num")Integer num);
 
     //获取前台card文章集合
     List<HomeArticleListDto> findArticleByQuery();
 
     //获取用户收藏文章集合
-    List<StudentCollectArticleDto> findCollectArticle();
+    List<StudentCollectArticleDto> findCollectArticle(@Param("id")Long id);
+    //获取用户收藏视频集合
+    List<HomeVideoDto> findCollectVideo(@Param("id")Long id);
 }

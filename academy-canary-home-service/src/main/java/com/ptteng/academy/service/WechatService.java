@@ -10,6 +10,6 @@ import com.ptteng.academy.business.dto.WeChatUserDto;
  */
 public interface WechatService {
     //用户登陆
-    public WeChatUserDto userLogin(String code);
+    WeChatUserDto userLogin(String code);
 
 }

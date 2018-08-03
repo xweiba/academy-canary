@@ -12,6 +12,7 @@ import com.ptteng.academy.util.WechatSignUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,6 +26,7 @@ import java.util.Map;
  * Time:11:14
  */
 
+@Slf4j
 @Api(tags = "WechatController", description = "微信相关Api")
 @RestController
 @RequestMapping("/a/student")
@@ -35,6 +37,7 @@ public class WechatController {
     @ApiOperation(value = "微信登陆", notes = "获取用户code值登陆")
     @GetMapping("/{code}")
     public ResponseVO mychatAccredit(@PathVariable String code) {
+        log.info(code);
         WeChatUserDto weChatUserDto = wechatService.userLogin(code);
         return ResultUtil.success("微信登陆成功", weChatUserDto);
     }

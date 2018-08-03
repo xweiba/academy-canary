@@ -31,7 +31,6 @@ public class WeixingJsapiTicketTask {
             } catch (Exception e) {
                 logger.error("获取微信JsapiTicket出错，信息如下");
                 e.printStackTrace();
-                this.getJsapiTicket();
                 // 此处可能陷入死循环
             }
         }

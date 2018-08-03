@@ -36,6 +36,9 @@ public class RetryLimitCredentialsMatcher extends CredentialsMatcher {
     @Override
     public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {
         log.info("RetryLimitCredentialsMatcher -> doCredentialsMatch" + info.getPrincipals().getPrimaryPrincipal());
+       /* if(true) {
+            return true;
+        }*/
         // 此时登陆信息还未存储, 不能使用manageService 的方法获取登陆账户信息
         AccountDto accountDto =  (AccountDto) info.getPrincipals().getPrimaryPrincipal();
         log.info("accountDto:" + accountDto.toString());

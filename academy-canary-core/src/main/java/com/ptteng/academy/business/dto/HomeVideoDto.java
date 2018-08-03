@@ -22,9 +22,9 @@ public class HomeVideoDto {
     private String videoUrl; // 视频Url
     private Long videoTime; // 视频时长
     private String coverPlanUrl; // 预览图
-    private String content; // 文章内容
     private Long praise; // 收藏数
     private Long collect; // 点赞数
     private Boolean praiseStatus; // 点赞状态
     private Boolean collectStatus; // 收藏状态
+    private Date createTime; //收藏时间
 }

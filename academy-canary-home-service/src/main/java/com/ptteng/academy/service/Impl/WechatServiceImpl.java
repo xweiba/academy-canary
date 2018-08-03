@@ -7,13 +7,16 @@ import com.ptteng.academy.persistence.beans.User;
 import com.ptteng.academy.persistence.mapper.UserMapper;
 import com.ptteng.academy.service.WechatService;
 import com.ptteng.academy.util.WeChatUtil;
+import net.sf.jsqlparser.expression.DateTimeLiteralExpression;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.text.ParseException;
+import java.util.Date;
 
 /**
  * description:
@@ -30,10 +33,12 @@ public class WechatServiceImpl implements WechatService {
     @Override
     public WeChatUserDto userLogin(String code) {
         WeChatTokenDto weChatTokenDto = WeChatUtil.getTokenBycode(WeChatUtil.APPID, WeChatUtil.APPSECRET, code);
-        String accessToken = weChatTokenDto.getAccessToken();
+        String accessToken = weChatTokenDto.getAccess_token();
         String openId = weChatTokenDto.getOpenid();
+        User user1 = new User();
+        user1.setOpenId(openId);
         //数据库里用户的信息
-        User user = userMapper.selectByPrimaryKey(openId);
+        User user = userMapper.selectOne(user1);
         //返回信息
         WeChatUserDto UserDto = new WeChatUserDto();
         if (user != null) {
@@ -49,16 +54,19 @@ public class WechatServiceImpl implements WechatService {
             newUser.setHeadImgUrl(weChatUserDto.getHeadImgUrl());
             newUser.setPrefecture(weChatUserDto.getCity());
             newUser.setBean(0);
-            newUser.setBinding(true);
+            newUser.setBinding(false);
             newUser.setStatus(true);
+            Date date = new Date();
+            Timestamp timestamp = new Timestamp(date.getTime());
+            newUser.setCreateAt(timestamp);
+            newUser.setCreateBy("用户");
             userMapper.insert(newUser);
             //新建后用户（为了取自增的ID）
-            User user1 = userMapper.selectByPrimaryKey(weChatUserDto.getOpenId());
+            User user2 = userMapper.selectOne(newUser);
             //新建一个返回值
-            WeChatUserDto weChatUserDto1 = new WeChatUserDto();
-            weChatUserDto1.setOpenId(weChatUserDto.getOpenId());
-            weChatUserDto1.setId(user1.getId());
-            return weChatUserDto1;
+            UserDto.setOpenId(user2.getOpenId());
+            UserDto.setId(user2.getId());
+            return UserDto;
         }
     }
 }

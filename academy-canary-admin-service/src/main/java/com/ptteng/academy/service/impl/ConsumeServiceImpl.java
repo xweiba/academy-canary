@@ -1,12 +1,21 @@
 package com.ptteng.academy.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.ptteng.academy.business.dto.AccountDto;
 import com.ptteng.academy.business.dto.AuthorDto;
+import com.ptteng.academy.business.dto.UserBackDto;
+import com.ptteng.academy.business.dto.UserDto;
+import com.ptteng.academy.business.query.UserQuery;
 import com.ptteng.academy.framework.service.OSSService;
+import com.ptteng.academy.persistence.mapper.UserMapper;
 import com.ptteng.academy.service.ConsumeService;
 import com.ptteng.academy.persistence.mapper.AuthorMapper;
 import com.ptteng.academy.persistence.beans.Author;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -22,9 +31,13 @@ import java.util.List;
  * @create: 2018-07-25 19:34
  **/
 @Service
+@Slf4j
 public class ConsumeServiceImpl implements ConsumeService {
     @Autowired
     private AuthorMapper authorMapper;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @Resource
     private OSSService ossService;
@@ -119,4 +132,20 @@ public class ConsumeServiceImpl implements ConsumeService {
         author = authorMapper.selectOne(author);
         return author.getAuthor_name();
     }
+
+    @Override
+    public PageInfo<UserBackDto> findUser(UserQuery userQuery){
+        log.info("查询用户列表传入参数："+userQuery);
+        if (userQuery.getPageNum() == null) {
+            userQuery.setPageNum(1);
+        }
+        if (userQuery.getPageSize() == null) {
+            userQuery.setPageSize(10);
+        }
+        PageHelper.startPage(userQuery.getPageNum(), userQuery.getPageSize());
+            List<UserBackDto> userBackDtoList = userMapper.findUser(userQuery);
+        PageInfo<UserBackDto> pageInfo = new PageInfo<UserBackDto>(userBackDtoList);
+        return pageInfo;
+    }
+
 }
