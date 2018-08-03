@@ -48,8 +48,8 @@ public class PassportController {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        // 设置Shiro用户Token
-            UsernamePasswordToken token = new UsernamePasswordToken(loginDto.getAccountName(), loginDto.getPassWord(), loginDto.getRememberMe());
+        // 设置Shiro用户Token  测试, true
+            UsernamePasswordToken token = new UsernamePasswordToken(loginDto.getAccountName(), loginDto.getPassWord(), true);
             // UsernamePasswordToken token = new UsernamePasswordToken(username, password, rememberMe); 记住我
 
             // 获取当前的Subject
@@ -64,6 +64,8 @@ public class PassportController {
                 // 所以这一步在调用login(token)方法时,它会走到xxRealm.doGetAuthenticationInfo()方法中,具体验证方式详见此方法
                 currentUser.login(token);
                 AccountDto accountDto = manageService.findAccountLoginById(loginDto.getAccountName());
+                // 登陆成功后设置session过期时间
+                currentUser.getSession().setTimeout(60*60*24*7);
                 return ResultUtil.success("登陆成功", accountDto);
             }
             catch (Exception e) {

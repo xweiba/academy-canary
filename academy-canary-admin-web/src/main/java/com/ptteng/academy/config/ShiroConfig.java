@@ -157,8 +157,9 @@ public class ShiroConfig {
     public SimpleCookie rememberMeCookie() {
         // 这个参数是cookie的名称，对应前端的checkbox的name = rememberMe
         SimpleCookie simpleCookie = new SimpleCookie("rememberMeCanary");
-        // 记住我cookie生效时间30天 ,单位秒。 注释掉，默认永久不过期 2018-07-15
+        // 记住我cookie生效时间30天 ,单位秒。 注释掉，默认会话关闭过期
         // simpleCookie.setMaxAge(redisProperties.getExpire());
+        simpleCookie.setMaxAge(60*60*24*7);
         return simpleCookie;
     }
 
