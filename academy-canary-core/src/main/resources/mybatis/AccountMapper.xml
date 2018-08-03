@@ -13,7 +13,7 @@
             acc.create_by
         FROM
             account acc
-            LEFT JOIN role ro ON ro.id = acc.id
+            LEFT JOIN role ro ON ro.id = acc.role_id
         WHERE
           1 = 1
         <!-- 这里的id 是角色id -->

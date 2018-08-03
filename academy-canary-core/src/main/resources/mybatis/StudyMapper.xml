@@ -60,7 +60,7 @@
                 AND status = #{status}
             </if>
         </if>
-        order by update_at
+        order by update_at DESC
     </select>
     <update id="updateStatusById" parameterType="Long">
         UPDATE study s SET s.status = !s.status WHERE id = #{id}

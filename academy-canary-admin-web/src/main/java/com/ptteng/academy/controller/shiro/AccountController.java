@@ -80,7 +80,12 @@ public class AccountController {
     @PutMapping("/account/{id}")
     public ResponseVO updateAccount(@PathVariable("id") Long id, @RequestBody AccountDto accountDto) {
         accountDto.setId(id);
-        return ResultUtil.success("更新成功", accountDto);
+        try {
+            return ResultUtil.success("更新成功", manageService.updateAccount(accountDto));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResultUtil.error("更新失败");
+        }
     }
 
     @RequiresPermissions(".account")

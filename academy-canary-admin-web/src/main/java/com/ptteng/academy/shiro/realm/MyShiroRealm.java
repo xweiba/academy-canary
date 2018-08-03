@@ -87,7 +87,7 @@ public class MyShiroRealm extends AuthorizingRealm {
         AccountDto accountDto = (AccountDto) principalCollection.getPrimaryPrincipal(); // 获取认证时存入authorizationInfo的Account信息
         log.debug("accountDto.getRole_id() " + accountDto.getRole_id());
         // 获取角色信息
-        RoleDto roleDto = manageService.findRoleById(accountDto.getId());
+        RoleDto roleDto = manageService.findRoleById(accountDto.getRole_id());
         log.debug("roleDto.toString():" + roleDto.toString());
         // 赋予角色
         authorizationInfo.addRole(roleDto.getRole_tag());

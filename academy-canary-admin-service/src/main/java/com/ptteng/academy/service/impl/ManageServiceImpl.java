@@ -80,7 +80,7 @@ public class ManageServiceImpl implements ManageService {
         Module module = new Module();
         BeanUtils.copyProperties(moduleDto, module);
         module.setUpdate_at(new Date());
-        module.setUpdate_by("admin");
+        module.setUpdate_by(getOnlineAccount().getUsername());
         return moduleMapper.updateByPrimaryKeySelective(module) > 0;
     }
 
@@ -93,9 +93,9 @@ public class ManageServiceImpl implements ManageService {
         Module module = new Module();
         BeanUtils.copyProperties(moduleDto, module);
         module.setUpdate_at(new Date());
-        module.setUpdate_by("admin");
+        module.setUpdate_by(getOnlineAccount().getUsername());
         module.setCreate_at(new Date());
-        module.setCreate_by("admin");
+        module.setCreate_by(getOnlineAccount().getUsername());
         try {
             moduleMapper.insert(module);
             log.debug("新增模块id" + module.getId());
@@ -154,8 +154,8 @@ public class ManageServiceImpl implements ManageService {
         BeanUtils.copyProperties(roleDto, role);
         role.setCreate_at(new Date());
         role.setUpdate_at(new Date());
-        role.setCreate_by("admin");
-        role.setUpdate_by("admin");
+        role.setCreate_by(getOnlineAccount().getUsername());
+        role.setUpdate_by(getOnlineAccount().getUsername());
         // 返回用户id
         roleMapper.insert(role);
         Long roleId = role.getId();
@@ -181,7 +181,7 @@ public class ManageServiceImpl implements ManageService {
         Role role = new Role();
         BeanUtils.copyProperties(roleDto, role);
         role.setUpdate_at(new Date());
-        role.setUpdate_by("admin");
+        role.setUpdate_by(getOnlineAccount().getUsername());
         roleMapper.updateByPrimaryKeySelective(role);
         Long roleId = role.getId();
         // 2. 关联模块, 先删除原有的, 然后遍历插入
@@ -232,10 +232,11 @@ public class ManageServiceImpl implements ManageService {
     public Boolean updateAccount(AccountDto accountDto) throws Exception{
         Account account = new Account();
         BeanUtils.copyProperties(accountDto, account);
-        account.setId(getOnlineAccount().getId());
         account.setPassword(PasswordUtil.encrypt(accountDto.getPassword(), accountDto.getUsername()));
         account.setUpdate_by(getOnlineAccount().getUsername());
         account.setUpdate_at(new Date());
+        account.setId(getOnlineAccount().getId());
+        log.debug("更新账号:" + account.toString());
         return accountMapper.updateByPrimaryKeySelective(account) > 0;
     }
 
@@ -248,12 +249,12 @@ public class ManageServiceImpl implements ManageService {
     public Boolean insertAccount(AccountDto accountDto) throws Exception{
         Account account = new Account();
         BeanUtils.copyProperties(accountDto, account);
-
         account.setPassword(PasswordUtil.encrypt(accountDto.getPassword(), accountDto.getUsername()));
         account.setCreate_at(new Date());
         account.setUpdate_at(new Date());
-        account.setCreate_by("admin");
-        account.setUpdate_by("admin");
+        account.setCreate_by(getOnlineAccount().getUsername());
+        account.setUpdate_by(getOnlineAccount().getUsername());
+        log.debug("新增账号account: " + account.toString());
         return accountMapper.insert(account) > 0;
     }
 

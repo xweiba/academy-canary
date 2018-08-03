@@ -31,7 +31,7 @@ public class ModuleController {
     @Resource
     ManageService manageService;
 
-    @RequiresPermissions(".module")
+    /* 这里不能加权限 所有登陆用户都需要获取模块列表 */
     @ApiOperation(value = "获取模块信息列表", notes = "按id排序")
     @PostMapping("/modules")
     public ResponseRowsVO getModules(ModuleQuery moduleQuery) {
