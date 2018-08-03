@@ -1,0 +1,24 @@
+# 1984组 求学大作战前台服务 academy_canary_admin_web
+# 生产环境配置
+spring:
+  profiles:
+    # 生产环境标识
+    active: prod
+    # 引入核心配置
+    include: core
+  datasource:
+    # 连接池
+    type: com.alibaba.druid.pool.DruidDataSource
+    # 数据库驱动
+    driver-class-name: com.mysql.jdbc.Driver
+    # 数据库url
+    url: jdbc:mysql://localhost:3306/academy_canary?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&useSSL=false
+    username: arthur
+    password: arthur
+server:
+  port: 20464
+  tomcat:
+    basedir: /data/services/academy-canary-server/home/logs/run
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
