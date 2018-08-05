@@ -18,7 +18,7 @@ public class UserDto {
     private String nickName;
     private String email;
     private Long phone;
-    private String grade;
+    private Integer grade;
     private String prefecture;
     private Integer bean;
     private String headImgUrl;

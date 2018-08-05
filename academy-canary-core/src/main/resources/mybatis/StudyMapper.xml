@@ -8,11 +8,15 @@
             resultType="studyDto">
         SELECT * FROM (
         SELECT
-        s.id, s.classify, s.content, s.cover_plan_url, s.create_at, s.create_by, s.grade,
-        s.introduce, s.status, s.study_type, s.subject, s.title, s.update_at, s.update_by,
+        s.id, s.classify, s.content, s.cover_plan_url, s.create_at, s.create_by,
+        s.grade,
+        s.introduce, s.status, s.study_type, s.subject, s.title, s.update_at,
+        s.update_by,
         s.video_time, s.video_url, s.author,
-        (SELECT COUNT(id) FROM study_user WHERE type = 1 AND study_id = s.id) AS praise,
-        (SELECT COUNT(id) FROM study_user WHERE type = 2 AND study_id = s.id)  AS collect,
+        (SELECT COUNT(id) FROM study_user WHERE type = 1 AND study_id = s.id) AS
+        praise,
+        (SELECT COUNT(id) FROM study_user WHERE type = 2 AND study_id = s.id) AS
+        collect,
         au.author_name, au.author_img
         FROM
         study s INNER JOIN author au ON s.author = au.id ) temp
@@ -40,7 +44,7 @@
             <if test="subject!=0 and subject!=null">
                 AND subject = #{subject}
             </if>
-            <if test="praise!=null" >
+            <if test="praise!=null">
                 <if test="praise[0]!=0 and praise[0]!=null">
                     AND praise >= ${praise[0]}
                 </if>
@@ -70,10 +74,14 @@
             resultType="homeVideoListDto">
         SELECT
         sd.id, sd.title, sd.`status`,
-        (SELECT COUNT(id) FROM study_user WHERE type = 1 AND study_id = sd.id) AS praise,
-        (SELECT COUNT(id) FROM study_user WHERE type = 1 AND study_id = sd.id AND user_id = #{stu_id}) AS praise_status,
-        (SELECT COUNT(id) FROM study_user WHERE type = 2 AND study_id = sd.id) AS collect,
-        (SELECT COUNT(id) FROM study_user WHERE type = 2 AND study_id = sd.id AND user_id = #{stu_id}) AS collect_status,
+        (SELECT COUNT(id) FROM study_user WHERE type = 1 AND study_id = sd.id)
+        AS praise,
+        (SELECT COUNT(id) FROM study_user WHERE type = 1 AND study_id = sd.id
+        AND user_id = #{stu_id}) AS praise_status,
+        (SELECT COUNT(id) FROM study_user WHERE type = 2 AND study_id = sd.id)
+        AS collect,
+        (SELECT COUNT(id) FROM study_user WHERE type = 2 AND study_id = sd.id
+        AND user_id = #{stu_id}) AS collect_status,
         sd.create_at, sd.introduce,
         sd.cover_plan_url, sd.video_time AS video_time,
         au.author_img, au.author_name
@@ -105,7 +113,8 @@
         SELECT * FROM (
         SELECT
         sd.id, sd.cover_plan_url, sd.title, sd.study_type, sd.`status`,
-        (SELECT COUNT(id) FROM study_user WHERE type = 1 AND study_id = sd.id) AS praise
+        (SELECT COUNT(id) FROM study_user WHERE type = 1 AND study_id = sd.id)
+        AS praise
         FROM
         study sd ) temp
         <!-- 只显示上架的 -->
@@ -144,26 +153,21 @@
             st.content,
             (SELECT COUNT(id) FROM study_user WHERE type = 1 AND study_id = st.id) AS praise,
             (SELECT COUNT(id) FROM study_user WHERE type = 2 AND study_id = st.id) AS collect,
-            IF (
-                COUNT(spraise_s.study_id) > 0,
-                1,
-                0
-            ) AS praise_status,
-
-            IF (
-                COUNT(scollect_s.study_id) > 0,
-                1,
-                0
-            ) AS collect_status
-        FROM
-            study st
+            IF (spraise_s.id != 0, 1, 0) AS praise_status,
+            IF (scollect_s.id != 0, 1, 0) AS collect_status
+            FROM
+                study st
             LEFT OUTER JOIN author au ON au.id = st.author
             LEFT OUTER JOIN study_user spraise_s ON spraise_s.type = 1
-            AND spraise_s.user_id = #{userId}
+                AND spraise_s.study_id = st.id
+                AND spraise_s.user_id = #{userId}
             LEFT OUTER JOIN study_user scollect_s ON scollect_s.type = 2
-            AND scollect_s.user_id = #{userId}
+                AND scollect_s.user_id = #{userId}
+                AND scollect_s.study_id = st.id
         WHERE
           st.id = #{studyId} AND st.`status` = 1 AND st.study_type = #{studyType}
+          GROUP BY
+          st.id
     </select>
 
     <!-- 查询点赞记录 -->
@@ -185,8 +189,8 @@
     <delete id="deletePraiseCollectStatus">
         DELETE FROM study_user WHERE study_id = #{studyId} AND user_id = #{userId} AND type = #{type}
     </delete>
-
-    <select id="findBannerArticleByQuery"  resultType="HomeBannerListDto">
+    <!--查询banner文章列表-->
+    <select id="findBannerArticleByQuery" resultType="HomeBannerListDto">
  SELECT * FROM (
         SELECT
         sd.id, sd.cover_plan_url, sd.title, sd.study_type, sd.`status`,
@@ -211,12 +215,90 @@
         WHERE study_type = 1 order by update_at DESC
     </select>
 
-    <select id="findCollectArticle" resultType="com.ptteng.academy.business.dto.StudentCollectArticleDto" >
-        SELECT study_user.create_at as create_time,study.* FROM study,study_user  WHERE study.id =study_user.study_id AND  study_user.user_id = #{id}
-        AND study.study_type = 1 AND type = 2 ORDER BY create_time DESC
+    <select id="findCollectArticle"
+            resultType="com.ptteng.academy.business.dto.StudentCollectArticleDto">
+                       SELECT temp.*,study_user.user_id,study_user.study_id,study_user.type,study_user.create_at AS create_time FROM (SELECT
+            st.id,
+            st.title,
+            st.create_at,
+            st.introduce,
+            au.author_name,
+            st.cover_plan_url,
+            (SELECT COUNT(id) FROM study_user WHERE type = 1 AND study_id = st.id) AS praise,
+            (SELECT COUNT(id) FROM study_user WHERE type = 2 AND study_id = st.id) AS collect,
+            IF (spraise_s.id != 0, 1, 0) AS praise_status,
+            IF (scollect_s.id != 0, 1, 0) AS collect_status
+            FROM
+                study st
+            LEFT OUTER JOIN author au ON au.id = st.author
+            LEFT OUTER JOIN study_user spraise_s ON spraise_s.type = 1
+                AND spraise_s.study_id = st.id
+                AND spraise_s.user_id = #{id}
+            LEFT OUTER JOIN study_user scollect_s ON scollect_s.type = 2
+                AND scollect_s.user_id = #{id}
+                AND scollect_s.study_id = st.id
+        WHERE
+           st.`status` = 1 AND st.study_type = 1
+          GROUP BY
+          st.id) temp,study_user WHERE temp.id = study_user.study_id AND study_user.user_id = #{id} AND study_user.type = 2 ORDER BY temp.create_at
+			DESC
     </select>
-    <select id="findCollectVideo" resultType="com.ptteng.academy.business.dto.HomeVideoDto" >
-        SELECT study_user.create_at as create_time,study.* FROM study,study_user  WHERE study.id =study_user.study_id AND  study_user.user_id = #{id}
-        AND study.study_type = 2 AND type = 2 ORDER BY create_time DESC
+    <select id="findCollectVideo"
+            resultType="com.ptteng.academy.business.dto.HomeVideoDto">
+ SELECT temp.*,study_user.user_id,study_user.study_id,study_user.type,study_user.create_at AS create_time FROM (SELECT
+            st.id,
+            st.title,
+            st.create_at,
+            au.author_name,
+            au.author_img,
+            st.introduce,
+            st.video_url,
+            st.video_time,
+            st.cover_plan_url,
+            (SELECT COUNT(id) FROM study_user WHERE type = 1 AND study_id = st.id) AS praise,
+            (SELECT COUNT(id) FROM study_user WHERE type = 2 AND study_id = st.id) AS collect,
+            IF (spraise_s.id != 0, 1, 0) AS praise_status,
+            IF (scollect_s.id != 0, 1, 0) AS collect_status
+            FROM
+                study st
+            LEFT OUTER JOIN author au ON au.id = st.author
+            LEFT OUTER JOIN study_user spraise_s ON spraise_s.type = 1
+                AND spraise_s.study_id = st.id
+                AND spraise_s.user_id = #{id}
+            LEFT OUTER JOIN study_user scollect_s ON scollect_s.type = 2
+                AND scollect_s.user_id = #{id}
+                AND scollect_s.study_id = st.id
+        WHERE
+           st.`status` = 1 AND st.study_type = 2
+          GROUP BY
+          st.id) temp,study_user WHERE temp.id = study_user.study_id AND study_user.user_id = #{id} AND study_user.type = 2 ORDER BY temp.create_at
+			DESC
+    </select>
+
+    <select id="findCardArticleByQuery"
+            resultType="com.ptteng.academy.business.dto.ArticleDetailsDto">
+         SELECT
+            st.id,
+            st.title,
+            st.create_at,
+            au.author_name,
+            st.content,
+            (SELECT COUNT(id) FROM study_user WHERE type = 1 AND study_id = st.id) AS praise,
+            (SELECT COUNT(id) FROM study_user WHERE type = 2 AND study_id = st.id) AS collect,
+            IF (spraise_s.id != 0, 1, 0) AS praise_status,
+            IF (scollect_s.id != 0, 1, 0) AS collect_status
+            FROM
+                study st
+            LEFT OUTER JOIN author au ON au.id = st.author
+            LEFT OUTER JOIN study_user spraise_s ON spraise_s.type = 1
+                AND spraise_s.study_id = st.id
+                AND spraise_s.user_id = #{userId}
+            LEFT OUTER JOIN study_user scollect_s ON scollect_s.type = 2
+                AND scollect_s.user_id = #{userId}
+                AND scollect_s.study_id = st.id
+        WHERE
+          st.id = #{studyId} AND st.`status` = 1 AND st.study_type = 1
+          GROUP BY
+          st.id
     </select>
 </mapper>

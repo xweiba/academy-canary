@@ -38,11 +38,14 @@ public class SiginServiceImpl implements SiginService {
     @Override
     public UserDto selectSiginById(Long id){
         UserDto userDto =  loginMapper.findUserById(id);
+        String siginHistory1 = userDto.getSigninHistory();
+        long siginHistory = Long.parseLong(siginHistory1);
+        logger.info("签到历史："+siginHistory);
         //将数据库签到历史long转成字符串
         final int size = 31;
         char[] chs = new char[size];
         for (int i = 0; i < size; i++) {
-            chs[size - 1 - i] = (char) (((20701L >> i) & 1) + '0');
+            chs[size - 1 - i] = (char) (((siginHistory>> i) & 1) + '0');
         }
         userDto.setSigninHistory(new String(chs));
         return userDto;
@@ -57,6 +60,7 @@ public class SiginServiceImpl implements SiginService {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
         String stringNowTime = format.format(date);
         //获取签到资料
+
         Signin userDto = loginMapper.findSiginById(id);
         logger.info("签到信息: "+ userDto);
         //返回值的对象
@@ -123,13 +127,19 @@ public class SiginServiceImpl implements SiginService {
                 return ResultUtil.error("今日已签到请勿重复签到");
             }
         }else {
-            userDto.setId(id);
-            userDto.setLastSigninTime(new Date().getTime());
-            userDto.setCreate_at(new Timestamp(System.currentTimeMillis()));
-            userDto.setCreate_by(id.toString());
-            loginMapper.insert(userDto);
+            Signin signin = new Signin();
+            signin.setId(id);
+            signin.setLastSigninTime(new Date().getTime());
+            signin.setSigninCount(1);
+            signin.setTopContinuouSignin(1);
+            signin.setSigninHistory(1L);
+            signin.setCreate_at(new Timestamp(System.currentTimeMillis()));
+            signin.setCreate_by("admin");
+            loginMapper.insert( signin);
+            signingDto.setState(true);
+            signingDto.setGainBean(1);
             //错误501
-            return ResultUtil.error(ResponseCodeEnum.USER_UNEXIST);
+            return ResultUtil.success("签到成功", signingDto);
         }
     }
 

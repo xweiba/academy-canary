@@ -47,7 +47,7 @@ public class ResultUtil {
     }
 
     public static ResponseRowsVO success(String message, List<?> data) {
-        return vo(CommonConst.DEFAULT_SUCCESS_CODE, message, 123L, data);
+        return vo(CommonConst.DEFAULT_SUCCESS_CODE, message, Long.valueOf(data.size()), data);
     }
     public static ResponseRowsVO success(String message, Long total, List<?> data) {
         return vo(CommonConst.DEFAULT_SUCCESS_CODE, message, total, data);

@@ -2,6 +2,7 @@ package com.ptteng.academy.controller;
 
 import com.ptteng.academy.business.dto.StudentCardDto;
 import com.ptteng.academy.business.dto.StudentCollectDto;
+import com.ptteng.academy.business.enums.GradeEnum;
 import com.ptteng.academy.business.enums.ResponseCodeEnum;
 import com.ptteng.academy.business.query.StudentCardQuery;
 import com.ptteng.academy.business.vo.*;
@@ -13,6 +14,7 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -59,9 +61,9 @@ public class StudentController {
     public ResponseVO studentCard(@PathVariable("id") Long id) {
         try {
             StudentCardDto studentCardDto = studentCardService.selectAll(id);
-            return ResultUtil.success("查询成功");
-        } catch (NullPointerException e) {
-            return ResultUtil.error(ResponseCodeEnum.USER_UNEXIST);
+            return ResultUtil.success("查询成功", studentCardDto);
+        } catch (Exception e) {
+            return ResultUtil.error("用户不存在");
         }
     }
 

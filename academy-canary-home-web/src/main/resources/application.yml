@@ -17,3 +17,6 @@ server:
 mybatis:
   configuration:
     map-underscore-to-camel-case: true
+logging:
+  level:
+    com.ptteng.academy: DEBUG

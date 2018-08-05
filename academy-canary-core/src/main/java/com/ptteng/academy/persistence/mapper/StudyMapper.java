@@ -48,4 +48,6 @@ public interface StudyMapper extends BaseMapper<Study>{
     List<StudentCollectArticleDto> findCollectArticle(@Param("id")Long id);
     //获取用户收藏视频集合
     List<HomeVideoDto> findCollectVideo(@Param("id")Long id);
+    //获取文章详情
+    ArticleDetailsDto findCardArticleByQuery(@Param("studyId")Long studyId,@Param("userId")Long userId);
 }

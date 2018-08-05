@@ -7,6 +7,7 @@ import com.ptteng.academy.business.dto.RoleDto;
 import com.ptteng.academy.business.query.AccountQuery;
 import com.ptteng.academy.business.query.ModuleQuery;
 import com.ptteng.academy.business.query.RoleQuery;
+import com.ptteng.academy.persistence.beans.Account;
 
 import java.util.List;
 
@@ -33,12 +34,15 @@ public interface ManageService {
     /* 插入模块 */
     Boolean insertModule(ModuleDto moduleDto);
 
+    /* 获取角色所有模块 */
+    List<ModuleDto> findAccountModules();
 
     /* 角色模块 */
     PageInfo<RoleDto> findRoleByQuery(RoleQuery roleQuery);
     List<RoleDto> findRoleNames();
     /*  根据id查询模块 */
     RoleDto findRoleById(Long id);
+
     /* 删除角色 */
     Boolean deleteRoleById(Long id) throws Exception;
     /* 新增模块 */
@@ -60,6 +64,7 @@ public interface ManageService {
     Boolean updateAccount(AccountDto accountDto) throws Exception;
     Boolean deleteAccountById(Long id);
     Boolean insertAccount(AccountDto accountDto) throws Exception;
+    Account findAccountAllById(Long id);
 
 
     // 通过SecurityUtils获取存储的账号信息

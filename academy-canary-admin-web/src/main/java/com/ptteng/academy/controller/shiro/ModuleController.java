@@ -32,12 +32,18 @@ public class ModuleController {
     ManageService manageService;
 
     /* 这里不能加权限 所有登陆用户都需要获取模块列表 */
+    @RequiresPermissions(".module")
     @ApiOperation(value = "获取模块信息列表", notes = "按id排序")
     @PostMapping("/modules")
     public ResponseRowsVO getModules(ModuleQuery moduleQuery) {
         return ResultUtil.success("getModules 已执行", manageService.findModuleByQuery(moduleQuery));
     }
-
+    /* 这里不能加权限 所有登陆用户都需要获取模块列表 */
+    @ApiOperation(value = "获取角色所有模块信息", notes = "按id排序")
+    @PostMapping("/accountmodules")
+    public ResponseRowsVO getAccountModules() {
+        return ResultUtil.success("成功获取用户模块", manageService.findAccountModules());
+    }
     @RequiresPermissions(".module")
     @ApiOperation(value = "根据id获取模块信息", notes = "返回模块信息")
     @ApiImplicitParam(name = "id", value = "模块Id", required = true, paramType = "path", dataType = "Long", defaultValue = "1")

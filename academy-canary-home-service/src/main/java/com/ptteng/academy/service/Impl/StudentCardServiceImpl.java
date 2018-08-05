@@ -4,12 +4,15 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ptteng.academy.business.Converfor;
 import com.ptteng.academy.business.dto.*;
+import com.ptteng.academy.business.enums.GradeEnum;
 import com.ptteng.academy.business.query.StudentCardQuery;
 import com.ptteng.academy.persistence.beans.User;
 import com.ptteng.academy.persistence.mapper.StudyMapper;
 import com.ptteng.academy.persistence.mapper.UserMapper;
 import com.ptteng.academy.service.StudentCardService;
 import com.ptteng.academy.util.WechatDoloadImgUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,6 +25,7 @@ import java.util.List;
  * Date:2018/7/29
  * Time:15:20
  */
+@Slf4j
 @Service
 public class StudentCardServiceImpl implements StudentCardService {
     @Autowired
@@ -35,7 +39,8 @@ public class StudentCardServiceImpl implements StudentCardService {
         StudentCardDto studentCardDto = new StudentCardDto();
         User user = userMapper.selectByPrimaryKey(id);
         if (user != null) {
-            return Converfor.UserDoToStudentCartDtoConvert(user);
+            BeanUtils.copyProperties(user, studentCardDto);
+            return studentCardDto;
         } else {
             return studentCardDto;
         }

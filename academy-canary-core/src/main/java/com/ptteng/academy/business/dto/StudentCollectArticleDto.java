@@ -19,13 +19,16 @@ public class StudentCollectArticleDto {
     //标题
     private String title;
     //作者
-    private String author;
+    private String authorName;
     //点赞数
     private long praise;
     //摘要
-    private String digest;
+    private String introduce;
     //收藏数
     private long collect;
     //收藏时间
     private Date createTime;
+
+    private Boolean praiseStatus; // 点赞状态
+    private Boolean collectStatus; // 收藏状态
 }

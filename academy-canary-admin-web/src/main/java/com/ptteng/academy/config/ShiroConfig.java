@@ -34,19 +34,12 @@ import java.util.Properties;
 @Order(-1)
 @Configuration
 public class ShiroConfig {
-
-    // Shiro生命周期处理器 必须注入该对象, 下面会调用, 否则 @RequiresPermissions 注解无效
-    @Bean(name = "lifecycleBeanPostProcessor")
-    public static LifecycleBeanPostProcessor getLifecycleBeanPostProcessor() {
-        return new LifecycleBeanPostProcessor();
-    }
-
     /**
      * @description 配置Shiro过滤器, Shiro启动的核心
      */
     @Bean
     public ShiroFilterFactoryBean shiroFilter(SecurityManager securityManager) {
-        System.out.println("ShiroConfig>shiroFilter() 执行了");
+        log.debug("ShiroConfig>shiroFilter() 执行了");
 
         // 实例化过滤器
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
@@ -61,7 +54,7 @@ public class ShiroConfig {
         // filterChainDefinitionMap.put("/static/**", "anon"); // anon-无需权限即可访问 配置不会拦截的链接
         // filterChainDefinitionMap.put("/logout", "logout"); // 配置退出的链接, 只要调用/logout 就会自动退出
         filterChainDefinitionMap.put("/login", "anon"); // 登陆验证调用url, 会自动调用MyShiroRealm.doGetAuthenticationInfo() 去做登陆验证.
-        filterChainDefinitionMap.put("/**", "authc"); // 认证过滤, 给所有url加权限, authc-所有url都必须认证通过才可以访问, 这里是认证过滤链
+        filterChainDefinitionMap.put("/**", "user"); // 认证过滤, 给所有url加权限, authc-所有url都必须认证通过才可以访问, 这里是认证过滤链, 注意使用authc会使记住我失效
         /* 登陆状态下的过滤 */
         shiroFilterFactoryBean.setUnauthorizedUrl("/403"); // 注意由于("/**", "authc") 过滤的是认证过滤链, 而不是授权过滤链. 所以无法捕获到未授权的. 只能拦截认证过滤链. 这是使用 SimpleMappingExceptionResolver 异常处理去处理未授权的
 
@@ -87,7 +80,7 @@ public class ShiroConfig {
      */
     @Bean(name = "myShiroRealm")
     public MyShiroRealm myShiroRealm(@Qualifier("credentialsMatcher") RetryLimitCredentialsMatcher matcher) {
-        System.out.println("myShiroRealm() 执行了");
+        log.debug("myShiroRealm() 执行了");
         MyShiroRealm myShiroRealm = new MyShiroRealm();
         // 设置凭证匹配器
         myShiroRealm.setCredentialsMatcher(credentialsMatcher());
@@ -99,18 +92,34 @@ public class ShiroConfig {
      */
     @Bean
     public SecurityManager securityManager(@Qualifier("myShiroRealm") MyShiroRealm myShiroRealm) {
-        System.out.println("securityManager() 执行了");
+        log.debug("securityManager() 执行了");
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
         securityManager.setRealm(myShiroRealm);
 
-        /*securityManager.setCacheManager(redisCacheManager());
+        // securityManager.setCacheManager(getEhCacheManager());
         // 自定义session管理 使用redis
-        securityManager.setSessionManager(sessionManager());
-        // 注入记住我管理器*/
+        // securityManager.setSessionManager(sessionManager());
+        // 注入记住我管理器
         securityManager.setRememberMeManager(rememberMeManager());
         return securityManager;
     }
 
+
+    // Shiro生命周期处理器 必须注入该对象, 下面会调用, 否则 @RequiresPermissions 注解无效
+    @Bean(name = "lifecycleBeanPostProcessor")
+    public static LifecycleBeanPostProcessor getLifecycleBeanPostProcessor() {
+        return new LifecycleBeanPostProcessor();
+    }
+    /**
+     * @description 开启shiro注解, 不开启@RequiresPermissions注解无效
+     */
+    @Bean
+    @DependsOn("lifecycleBeanPostProcessor")
+    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
+        DefaultAdvisorAutoProxyCreator creator = new DefaultAdvisorAutoProxyCreator();
+        creator.setProxyTargetClass(true);
+        return creator;
+    }
     /**
      * @description 因为 securityManager 是代理方式执行的, 所以需要开启Shirro AOP支持
      * @param: [securityManager]
@@ -123,16 +132,7 @@ public class ShiroConfig {
         return authorizationAttributeSourceAdvisor;
     }
 
-    /**
-     * @description 开启shiro注解, 不开启@RequiresPermissions注解无效
-     */
-    @Bean
-    @DependsOn("lifecycleBeanPostProcessor")
-    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
-        DefaultAdvisorAutoProxyCreator creator = new DefaultAdvisorAutoProxyCreator();
-        creator.setProxyTargetClass(true);
-        return creator;
-    }
+
 
     /**
      * @description 异常处理
@@ -151,26 +151,25 @@ public class ShiroConfig {
         return simpleMappingExceptionResolver;
     }
 
-    /**
-     * @description Cookie 对象
-     */
-    public SimpleCookie rememberMeCookie() {
-        // 这个参数是cookie的名称，对应前端的checkbox的name = rememberMe
-        SimpleCookie simpleCookie = new SimpleCookie("rememberMeCanary");
-        // 记住我cookie生效时间30天 ,单位秒。 注释掉，默认会话关闭过期
-        // simpleCookie.setMaxAge(redisProperties.getExpire());
-        simpleCookie.setMaxAge(60*60*24*7);
+    @Bean
+    public SimpleCookie rememberMeCookie(){
+        //System.out.println("ShiroConfiguration.rememberMeCookie()");
+        //这个参数是cookie的名称，对应前端的checkbox的name = rememberMe
+        SimpleCookie simpleCookie = new SimpleCookie("rememberMe");
+        //<!-- 记住我cookie生效时间30天 ,单位秒;-->
+        simpleCookie.setMaxAge(259200);
         return simpleCookie;
     }
 
-    /**
-     * cookie管理对象;记住我功能, 添加到 securityManager
-     */
-    public CookieRememberMeManager rememberMeManager() {
+
+    @Bean
+    public CookieRememberMeManager rememberMeManager(){
+        //System.out.println("ShiroConfiguration.rememberMeManager()");
         CookieRememberMeManager cookieRememberMeManager = new CookieRememberMeManager();
         cookieRememberMeManager.setCookie(rememberMeCookie());
         //rememberMe cookie加密的密钥 建议每个项目都不一样 默认AES算法 密钥长度(128 256 512 位)
-        cookieRememberMeManager.setCipherKey(Base64.decode("9QWLxg+NYmxraMoxAXu/Iw=="));
+        cookieRememberMeManager.setCipherKey(Base64.decode("2AvVhdsgUs0FSA3SDFAdag=="));
         return cookieRememberMeManager;
     }
+
 }

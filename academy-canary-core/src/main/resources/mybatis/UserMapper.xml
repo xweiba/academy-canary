@@ -37,11 +37,11 @@
         <if test="prefecture != null">
             AND prefecture = #{prefecture}
         </if>
-        <if test="grade !=null">
+        <if test="grade!=null and grade!=0 ">
             AND grade = #{grade}
         </if>
         <if test="status != null">
-            AND status = #{grade}
+            AND status = #{status}
         </if>
     </select>
 </mapper>

@@ -11,6 +11,8 @@
 
     <artifactId>academy-canary-admin-web</artifactId>
 
+
+
     <dependencies>
         <dependency>
             <groupId>com.ptteng.academy.cannary</groupId>

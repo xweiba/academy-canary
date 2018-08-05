@@ -1,5 +1,6 @@
 package com.ptteng.academy.controller.shiro;
 
+import com.alibaba.fastjson.JSONObject;
 import com.ptteng.academy.business.dto.AccountDto;
 import com.ptteng.academy.business.vo.ResponseVO;
 import com.ptteng.academy.business.dto.LoginDto;
@@ -13,6 +14,7 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AccountException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.springframework.web.bind.annotation.*;
 
@@ -42,9 +44,8 @@ public class PassportController {
     @PostMapping("/login")
     public ResponseVO Login(@RequestBody LoginDto loginDto) {
         log.info("登陆信息:" + loginDto.toString());
-        System.out.println("HomeController.login()");
         try {
-            System.out.println("加密后的密码: " + PasswordUtil.encrypt(loginDto.getPassWord(),loginDto.getAccountName()));
+            log.debug("加密后的密码: " + PasswordUtil.encrypt(loginDto.getPassWord(),loginDto.getAccountName()));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -54,7 +55,6 @@ public class PassportController {
 
             // 获取当前的Subject
             Subject currentUser = SecurityUtils.getSubject();
-
             // 登录失败从request中获取shiro处理的异常信息。
             // shiroLoginFailure:就是shiro异常类的全类名.
             //获取当前的Subject
@@ -64,8 +64,8 @@ public class PassportController {
                 // 所以这一步在调用login(token)方法时,它会走到xxRealm.doGetAuthenticationInfo()方法中,具体验证方式详见此方法
                 currentUser.login(token);
                 AccountDto accountDto = manageService.findAccountLoginById(loginDto.getAccountName());
-                // 登陆成功后设置session过期时间
-                currentUser.getSession().setTimeout(60*60*24*7);
+
+                log.debug("currentUser.getSession(): " + currentUser.getSession().getTimeout() + "-" + currentUser.getSession().getHost() + JSONObject.toJSONString(currentUser.getSession()));
                 return ResultUtil.success("登陆成功", accountDto);
             }
             catch (Exception e) {

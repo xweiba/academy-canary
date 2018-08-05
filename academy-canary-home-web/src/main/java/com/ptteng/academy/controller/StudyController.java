@@ -103,7 +103,7 @@ public class StudyController {
     })
     @PutMapping("/study/article/{id}/praise")
     public ResponseVO articlePraise(@PathVariable("id") Long id,@RequestBody Map<String,Long> stuId) {
-        return ResultUtil.success("videoPraise 已执行", studyService.updatePraiseCollectStatus(id, stuId.get("stuId"), 1));
+        return ResultUtil.success("点赞操作成功", studyService.updatePraiseCollectStatus(id, stuId.get("stuId"), 1));
     }
 
     @ApiOperation(value = "文章收藏操作", notes = "传入视频id和用户id-stuId收藏操作")
@@ -113,6 +113,6 @@ public class StudyController {
     @PutMapping("/study/article/{id}/collect")
     public ResponseVO articleCollect(@PathVariable("id") Long id,@RequestBody Map<String,Long> stuId) {
         log.info("videoCollect传入参数: " + id + stuId);
-        return ResultUtil.success("videoPraise 已执行", studyService.updatePraiseCollectStatus(id,stuId.get("stuId") , 2));
+        return ResultUtil.success("收藏操作成功", studyService.updatePraiseCollectStatus(id,stuId.get("stuId") , 2));
     }
 }

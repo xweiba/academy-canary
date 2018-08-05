@@ -27,6 +27,8 @@ spring:
                   paths: /**
 
 server:
+  session:
+    timeout: 7200
   context-path: /a
   # HTTP请求和响应头的最大量, 以字节为单位, 默认值为4096, 超过此长度的部分不予处理, 一般为8k. 解决java.io.EOFException: null问题
   max-http-header-size: 8192
@@ -91,7 +93,24 @@ canary:
     # 地区
     endpoint: zone0
     file_url: http://p9kpdscob.bkt.clouddn.com/
+  alySMS:
+    accessKeyId: LTAIiuyUHBMseaz5
+    accessKeySecret: AotLoNPCSXfV6Dz7cCp5Do9exxKi7X
+    signName: 石奥林
+    templateCode: SMS_141605599
+    product: Dysmsapi
+    domain: dysmsapi.aliyuncs.com
+    regionId: cn-hangzhou
+    dateFormat: yyyyMMdd
+    endpointName: cn-hangzhou
+
 # 开启mysql sql 日志
 logging:
   level:
     com.ptteng.academy.persistence.mapper: DEBUG
+
+mail.apiUser: freak_lin_test_i0YI6o
+mail.apiKey: 3B5fKXsatLvVSbcu
+mail.sbject: 求学大作战
+
+

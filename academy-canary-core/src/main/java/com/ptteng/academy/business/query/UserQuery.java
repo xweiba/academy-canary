@@ -31,7 +31,7 @@ public class UserQuery extends IQuery{
     @ApiModelProperty(notes = "所在地区", required = false)
     private String prefecture;  // 所在地区
     @ApiModelProperty(notes = "年级, 1-6对应不同年级, 0代表查询全部", required = false)
-    private Long grade;
+    private Integer grade;
     @ApiModelProperty(notes = "冻结状态", required = false)
     private Boolean status;
     @ApiModelProperty(notes = "需要显示的页数（仅用户管理需要）", required = false)

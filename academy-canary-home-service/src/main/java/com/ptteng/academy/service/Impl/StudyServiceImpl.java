@@ -79,7 +79,8 @@ public class StudyServiceImpl implements StudyService{
         log.info("传入参数: " + studyId + userId + type);
         // 1. 判断是否有点赞过, 有直接删除点赞记录
         if (studyMapper.findPraiseCollectStatus(studyId,userId,type)) {
-            return studyMapper.deletePraiseCollectStatus(studyId,userId,type);
+             studyMapper.deletePraiseCollectStatus(studyId,userId,type);
+            return false;
         }
         // 2. 不存在插入记录.
         return studyMapper.insertPraiseCollectStatus(studyId,userId,type,new Date());
@@ -109,13 +110,7 @@ public class StudyServiceImpl implements StudyService{
     //查看文章详情
     @Override
     public ArticleDetailsDto findArticleById(Long id,Long stu) {
-        Study studyQuery = new Study();
-        studyQuery.setStudy_type(1);
-        studyQuery.setId(id);
-        Study study = studyMapper.selectOne(studyQuery);
-        ArticleDetailsDto articleDetailsDto = Converfor.StudytorticleDetailsDto(study);
-        articleDetailsDto.setPraisestu(studyMapper.findPraiseCollectStatus(id,stu,1));
-        articleDetailsDto.setCollectstu(studyMapper.findPraiseCollectStatus(id,stu,2));
-        return articleDetailsDto;
+        ArticleDetailsDto study = studyMapper.findCardArticleByQuery(id, stu);
+        return study;
     }
 }

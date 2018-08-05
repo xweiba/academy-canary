@@ -1,5 +1,6 @@
 package com.ptteng.academy.service.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.ptteng.academy.business.dto.AccountDto;
@@ -50,13 +51,14 @@ public class ManageServiceImpl implements ManageService {
 
     @Override
     public PageInfo<ModuleDto> findModuleByQuery(ModuleQuery moduleQuery) {
-        PageHelper.startPage(10, 10);
+        PageHelper.startPage(moduleQuery.getPageNum(), moduleQuery.getPageSize());
         try {
             moduleQuery.setRole_id(getOnlineAccount().getRole_id());
         } catch (Exception e) {
             e.printStackTrace();
         }
         List<ModuleDto> moduleDtoList = moduleMapper.findModuleByName(moduleQuery);
+        log.debug(JSONObject.toJSONString(moduleDtoList));
         return new PageInfo<ModuleDto>(moduleDtoList);
     }
 
@@ -115,6 +117,14 @@ public class ManageServiceImpl implements ManageService {
             log.debug("添加失败");
         }
         return false;
+    }
+
+    @Override
+    public List<ModuleDto> findAccountModules() {
+        ModuleQuery moduleQuery = new ModuleQuery();
+        moduleQuery.setPageSize(9999);
+        moduleQuery.setRole_id(getOnlineAccount().getRole_id());
+        return moduleMapper.findModuleByName(moduleQuery);
     }
 
     @Override
@@ -185,7 +195,7 @@ public class ManageServiceImpl implements ManageService {
         roleMapper.updateByPrimaryKeySelective(role);
         Long roleId = role.getId();
         // 2. 关联模块, 先删除原有的, 然后遍历插入
-        // roleMapper.deleteRoleModulesByRoleId(roleId);
+        roleMapper.deleteRoleModulesByRoleId(roleId);
         for (Long ModuleId :
                 roleDto.getModuleIds()) {
             try {
@@ -219,6 +229,11 @@ public class ManageServiceImpl implements ManageService {
     }
 
     @Override
+    public Account findAccountAllById(Long id) {
+        return accountMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
     public AccountDto findAccountLoginById(String accountName) {
         return accountMapper.findAccountLoginById(accountName);
     }
@@ -229,13 +244,14 @@ public class ManageServiceImpl implements ManageService {
     }
 
     @Override
-    public Boolean updateAccount(AccountDto accountDto) throws Exception{
+    public Boolean updateAccount(AccountDto accountDto) throws Exception {
         Account account = new Account();
         BeanUtils.copyProperties(accountDto, account);
-        account.setPassword(PasswordUtil.encrypt(accountDto.getPassword(), accountDto.getUsername()));
+        if (accountDto.getPassword() != null && !accountDto.getPassword().equals("")) {
+            account.setPassword(PasswordUtil.encrypt(accountDto.getPassword(), accountDto.getUsername()));
+        }
         account.setUpdate_by(getOnlineAccount().getUsername());
         account.setUpdate_at(new Date());
-        account.setId(getOnlineAccount().getId());
         log.debug("更新账号:" + account.toString());
         return accountMapper.updateByPrimaryKeySelective(account) > 0;
     }
@@ -246,7 +262,7 @@ public class ManageServiceImpl implements ManageService {
     }
 
     @Override
-    public Boolean insertAccount(AccountDto accountDto) throws Exception{
+    public Boolean insertAccount(AccountDto accountDto) throws Exception {
         Account account = new Account();
         BeanUtils.copyProperties(accountDto, account);
         account.setPassword(PasswordUtil.encrypt(accountDto.getPassword(), accountDto.getUsername()));

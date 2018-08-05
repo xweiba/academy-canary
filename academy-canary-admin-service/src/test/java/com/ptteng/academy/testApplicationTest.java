@@ -1,12 +1,11 @@
 package com.ptteng.academy;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
-import com.github.pagehelper.PageInfo;
 import com.ptteng.academy.business.dto.StudyDto;
 import com.ptteng.academy.business.query.*;
 import com.ptteng.academy.framework.config.TaskConfig;
 import com.ptteng.academy.framework.config.QiNiuYun;
+import com.ptteng.academy.framework.property.AliyunSMSProperties;
 import com.ptteng.academy.persistence.mapper.ModuleMapper;
 import com.ptteng.academy.persistence.mapper.RoleMapper;
 import com.ptteng.academy.persistence.mapper.StudyMapper;
@@ -15,7 +14,6 @@ import com.ptteng.academy.service.StudyService;
 import com.ptteng.academy.util.RandNumUtil;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.BeanUtils;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -158,4 +156,16 @@ public class testApplicationTest {
     public void findRoleModules() {
         System.out.println(JSONObject.toJSONString(manageService.findRoleById(1L)));
     }
+
+    @Resource
+    AliyunSMSProperties aliyunSMSProperties;
+
+    @Test
+    public void smstest() {
+        System.out.println(aliyunSMSProperties.getAccessKeyId());
+        System.out.println(aliyunSMSProperties.getAccessKeySecret());
+        System.out.println(aliyunSMSProperties.getTemplateCode());
+        System.out.println(aliyunSMSProperties.getSignName());
+    }
+
 }
