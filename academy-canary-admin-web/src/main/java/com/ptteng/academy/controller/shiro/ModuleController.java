@@ -35,20 +35,22 @@ public class ModuleController {
     @RequiresPermissions(".module")
     @ApiOperation(value = "获取模块信息列表", notes = "按id排序")
     @PostMapping("/modules")
-    public ResponseRowsVO getModules(ModuleQuery moduleQuery) {
+    public ResponseRowsVO getModules(ModuleQuery moduleQuery) throws Exception {
         return ResultUtil.success("getModules 已执行", manageService.findModuleByQuery(moduleQuery));
     }
+
     /* 这里不能加权限 所有登陆用户都需要获取模块列表 */
     @ApiOperation(value = "获取角色所有模块信息", notes = "按id排序")
     @PostMapping("/accountmodules")
-    public ResponseRowsVO getAccountModules() {
+    public ResponseRowsVO getAccountModules() throws Exception {
         return ResultUtil.success("成功获取用户模块", manageService.findAccountModules());
     }
+
     @RequiresPermissions(".module")
     @ApiOperation(value = "根据id获取模块信息", notes = "返回模块信息")
     @ApiImplicitParam(name = "id", value = "模块Id", required = true, paramType = "path", dataType = "Long", defaultValue = "1")
     @GetMapping("/module/{id}")
-    public ResponseVO getModule(@PathVariable("id") Long id){
+    public ResponseVO getModule(@PathVariable("id") Long id) throws Exception {
         return ResultUtil.success("获取模块信息成功", manageService.findModuleById(id));
     }
 
@@ -56,26 +58,23 @@ public class ModuleController {
     @ApiOperation(value = "根据id删除", notes = "执行成功返回true")
     @ApiImplicitParam(name = "id", value = "模块Id", required = true, paramType = "path", dataType = "Long", defaultValue = "1")
     @DeleteMapping("/module/{id}")
-    public ResponseVO deleteModule(@PathVariable("id") Long id) {
-        try {
-            Boolean module = manageService.deleteModule(id);
-            return ResultUtil.success("删除模块成功", module);
-        } catch (Exception e){
-            return ResultUtil.error("删除模块失败, 该模块不存在!");
-        }
+    public ResponseVO deleteModule(@PathVariable("id") Long id) throws Exception {
+        Boolean module = manageService.deleteModule(id);
+        return ResultUtil.success("删除模块成功", module);
     }
 
     @ApiOperation(value = "根据 id 更新模块信息", notes = "执行成功返回true")
     @ApiImplicitParam(name = "id", value = "模块Id", required = true, paramType = "path", dataType = "Long", defaultValue = "1")
     @PutMapping("/module/{id}")
-    public ResponseVO updateModule(@PathVariable("id") Long id, @RequestBody ModuleDto moduleDto) {
+    public ResponseVO updateModule(@PathVariable("id") Long id, @RequestBody ModuleDto moduleDto) throws Exception {
         moduleDto.setId(id);
         log.info("updateModule:", moduleDto.toString());
         return ResultUtil.success("updateModule 已执行", manageService.updateModule(moduleDto));
     }
+
     @ApiOperation(value = "创建新模块", notes = "执行成功返回true")
     @PostMapping("/module")
-    public ResponseVO createModule(@RequestBody ModuleDto moduleDto) {
+    public ResponseVO createModule(@RequestBody ModuleDto moduleDto) throws Exception {
         return ResultUtil.success("createModule 已执行", manageService.insertModule(moduleDto));
     }
 }

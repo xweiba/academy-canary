@@ -20,53 +20,60 @@ import java.util.List;
 
 public interface ManageService {
     /* 根据条件查询模块 */
-    PageInfo<ModuleDto> findModuleByQuery(ModuleQuery moduleQuery);
+    PageInfo<ModuleDto> findModuleByQuery(ModuleQuery moduleQuery) throws Exception;
 
     /* 根据id查询模块*/
-    ModuleDto findModuleById(Long id);
+    ModuleDto findModuleById(Long id) throws Exception;
 
     /* 删除模块 */
-    Boolean deleteModule(Long id);
+    Boolean deleteModule(Long id) throws Exception;
 
     /* 更新模块 */
-    Boolean updateModule(ModuleDto moduleDto);
+    Boolean updateModule(ModuleDto moduleDto) throws Exception;
 
     /* 插入模块 */
-    Boolean insertModule(ModuleDto moduleDto);
+    Boolean insertModule(ModuleDto moduleDto) throws Exception;
 
     /* 获取角色所有模块 */
-    List<ModuleDto> findAccountModules();
+    List<ModuleDto> findAccountModules() throws Exception;
 
     /* 角色模块 */
-    PageInfo<RoleDto> findRoleByQuery(RoleQuery roleQuery);
-    List<RoleDto> findRoleNames();
+    PageInfo<RoleDto> findRoleByQuery(RoleQuery roleQuery) throws Exception;
+
+    List<RoleDto> findRoleNames() throws Exception;
+
     /*  根据id查询模块 */
-    RoleDto findRoleById(Long id);
+    RoleDto findRoleById(Long id) throws Exception;
 
     /* 删除角色 */
     Boolean deleteRoleById(Long id) throws Exception;
+
     /* 新增模块 */
     RoleDto insertRole(RoleDto roleDto) throws Exception;
+
     /* 更新模块 */
     RoleDto updateRole(RoleDto roleDto) throws Exception;
 
     /* 账号模块 */
-    PageInfo<AccountDto> findAccountByQuery(AccountQuery accountQuery);
+    PageInfo<AccountDto> findAccountByQuery(AccountQuery accountQuery) throws Exception;
 
     // 验证账号密码
-    Boolean findAccountByPassword(String passWord);
+    Boolean findAccountByPassword(String passWord) throws Exception;
 
-    AccountDto findAccountById(Long id);
+    AccountDto findAccountById(Long id) throws Exception;
 
-    AccountDto findAccountLoginById(String accountName);
+    AccountDto findAccountLoginById(String accountName) throws Exception;
 
-    AccountDto findAccountByUsername(String name);
+    AccountDto findAccountByUsername(String name) throws Exception;
+
     Boolean updateAccount(AccountDto accountDto) throws Exception;
-    Boolean deleteAccountById(Long id);
-    Boolean insertAccount(AccountDto accountDto) throws Exception;
-    Account findAccountAllById(Long id);
 
+    Boolean deleteAccountById(Long id) throws Exception;
+
+    Boolean insertAccount(AccountDto accountDto) throws Exception;
+
+    Account findAccountAllById(Long id) throws Exception;
 
     // 通过SecurityUtils获取存储的账号信息
-    AccountDto getOnlineAccount();
+    AccountDto getOnlineAccount() throws Exception;
 }

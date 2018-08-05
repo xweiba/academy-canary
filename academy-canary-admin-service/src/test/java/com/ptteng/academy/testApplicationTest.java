@@ -121,7 +121,7 @@ public class testApplicationTest {
     ManageService manageService;
 
     @Test
-    public void findMould() {
+    public void findMould() throws Exception {
         ModuleQuery moduleQuery = new ModuleQuery();
         moduleQuery.setModuleName("用户");
         System.out.println(JSONObject.toJSONString(moduleMapper.findModuleByName(moduleQuery)));
@@ -129,31 +129,31 @@ public class testApplicationTest {
     }
 
     @Test
-    public void findMouldById() {
+    public void findMouldById() throws Exception {
         System.out.println(JSONObject.toJSONString(manageService.findModuleById(1L)));
     }
 
     @Test
-    public void findRole() {
+    public void findRole() throws Exception {
         RoleQuery roleQuery = new RoleQuery();
         roleQuery.setId(1L);
         System.out.println(JSONObject.toJSONString(manageService.findRoleByQuery(roleQuery)));
     }
 
     @Test
-    public void findAccount() {
+    public void findAccount() throws Exception {
         AccountQuery accountQuery = new AccountQuery();
         accountQuery.setUsername("admin");
         System.out.println(JSONObject.toJSONString(manageService.findAccountByQuery(accountQuery)));
     }
     @Test
-    public void findAccountById() {
+    public void findAccountById() throws Exception {
         System.out.println(JSONObject.toJSONString(manageService.findAccountById(1L)));
     }
 
 
     @Test
-    public void findRoleModules() {
+    public void findRoleModules() throws Exception {
         System.out.println(JSONObject.toJSONString(manageService.findRoleById(1L)));
     }
 

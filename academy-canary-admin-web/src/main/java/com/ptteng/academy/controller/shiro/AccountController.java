@@ -37,7 +37,7 @@ public class AccountController {
     @RequiresPermissions(".account")
     @ApiOperation(value = "根据条件获取账号信息", notes = "执行成功返回账号列表")
     @PostMapping("/accounts")
-    public ResponseRowsVO getAccounts(@RequestBody AccountQuery accountQuery) {
+    public ResponseRowsVO getAccounts(@RequestBody AccountQuery accountQuery) throws Exception {
         return ResultUtil.success("获取账号列表成功", manageService.findAccountByQuery(accountQuery));
     }
 
@@ -49,7 +49,7 @@ public class AccountController {
     @ApiOperation(value = "根据条件获取账号信息", notes = "执行成功返回账号列表信息")
     @ApiImplicitParam(name = "id", value = "账号id", required = true, paramType = "path", dataType = "Long", defaultValue = "1")
     @GetMapping("/account/{id}")
-    public ResponseVO getAccount(@PathVariable("id") Long id) {
+    public ResponseVO getAccount(@PathVariable("id") Long id) throws Exception {
         return ResultUtil.success("获取账号信息成功", manageService.findAccountById(id));
     }
 
@@ -60,14 +60,9 @@ public class AccountController {
     @RequiresPermissions(".account")
     @ApiOperation(value = "创建账号信息", notes = "执行成功返回true")
     @PostMapping("/account")
-    public ResponseVO createAccount(@RequestBody AccountDto accountDto) {
+    public ResponseVO createAccount(@RequestBody AccountDto accountDto) throws Exception {
         log.debug("accountDto.toString(): " + accountDto.toString());
-        try {
-            return ResultUtil.success("账号创建成功", manageService.insertAccount(accountDto));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResultUtil.error("账号创建失败");
-        }
+        return ResultUtil.success("账号创建成功", manageService.insertAccount(accountDto));
     }
 
     /**
@@ -78,21 +73,16 @@ public class AccountController {
     @ApiOperation(value = "根据 id 更新账号信息", notes = "执行成功返回true")
     @ApiImplicitParam(name = "id", value = "账号id", required = true, paramType = "path", dataType = "Long", defaultValue = "1")
     @PutMapping("/account/{id}")
-    public ResponseVO updateAccount(@PathVariable("id") Long id, @RequestBody AccountDto accountDto) {
+    public ResponseVO updateAccount(@PathVariable("id") Long id, @RequestBody AccountDto accountDto) throws Exception {
         accountDto.setId(id);
-        try {
-            return ResultUtil.success("更新成功", manageService.updateAccount(accountDto));
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResultUtil.error("更新失败");
-        }
+        return ResultUtil.success("更新成功", manageService.updateAccount(accountDto));
     }
 
     @RequiresPermissions(".account")
     @ApiOperation(value = "根据 id 删除账号信息", notes = "执行成功返回true")
     @ApiImplicitParam(name = "id", value = "账号id", required = true, paramType = "path", dataType = "Long", defaultValue = "1")
     @DeleteMapping("/account/{id}")
-    public ResponseVO deleteAccount(@PathVariable("id") Long id) {
+    public ResponseVO deleteAccount(@PathVariable("id") Long id) throws Exception {
         return ResultUtil.success("删除成功", manageService.deleteAccountById(id));
     }
 }

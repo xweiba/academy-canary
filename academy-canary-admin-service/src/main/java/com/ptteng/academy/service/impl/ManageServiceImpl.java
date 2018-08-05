@@ -50,35 +50,36 @@ public class ManageServiceImpl implements ManageService {
     private AccountMapper accountMapper;
 
     @Override
-    public PageInfo<ModuleDto> findModuleByQuery(ModuleQuery moduleQuery) {
+    public PageInfo<ModuleDto> findModuleByQuery(ModuleQuery moduleQuery) throws Exception {
         PageHelper.startPage(moduleQuery.getPageNum(), moduleQuery.getPageSize());
-        try {
-            moduleQuery.setRole_id(getOnlineAccount().getRole_id());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        moduleQuery.setRole_id(getOnlineAccount().getRole_id());
         List<ModuleDto> moduleDtoList = moduleMapper.findModuleByName(moduleQuery);
         log.debug(JSONObject.toJSONString(moduleDtoList));
         return new PageInfo<ModuleDto>(moduleDtoList);
     }
 
     @Override
-    public ModuleDto findModuleById(Long id) {
+    public ModuleDto findModuleById(Long id) throws Exception {
         ModuleDto moduleDto = new ModuleDto();
         BeanUtils.copyProperties(moduleMapper.selectByPrimaryKey(id), moduleDto);
         return moduleDto;
     }
 
-    // 添加事务
     @Override
-    public Boolean deleteModule(Long id) {
+    public Boolean deleteModule(Long id) throws Exception {
         // 先删除关系表
         moduleMapper.deleteRoleModulesByModuleId(id);
-        return moduleMapper.deleteByPrimaryKey(id) > 0;
+        Boolean deleteStatus = false;
+        try {
+            deleteStatus = moduleMapper.deleteByPrimaryKey(id) > 0;
+        } catch (Exception e) {
+            throw new Exception("删除模块失败, 该模块不存在!");
+        }
+        return deleteStatus;
     }
 
     @Override
-    public Boolean updateModule(ModuleDto moduleDto) {
+    public Boolean updateModule(ModuleDto moduleDto) throws Exception {
         Module module = new Module();
         BeanUtils.copyProperties(moduleDto, module);
         module.setUpdate_at(new Date());
@@ -91,7 +92,7 @@ public class ManageServiceImpl implements ManageService {
      * @param: [moduleDto]
      */
     @Override
-    public Boolean insertModule(ModuleDto moduleDto) {
+    public Boolean insertModule(ModuleDto moduleDto) throws Exception {
         Module module = new Module();
         BeanUtils.copyProperties(moduleDto, module);
         module.setUpdate_at(new Date());
@@ -120,7 +121,7 @@ public class ManageServiceImpl implements ManageService {
     }
 
     @Override
-    public List<ModuleDto> findAccountModules() {
+    public List<ModuleDto> findAccountModules() throws Exception {
         ModuleQuery moduleQuery = new ModuleQuery();
         moduleQuery.setPageSize(9999);
         moduleQuery.setRole_id(getOnlineAccount().getRole_id());
@@ -128,7 +129,7 @@ public class ManageServiceImpl implements ManageService {
     }
 
     @Override
-    public PageInfo<RoleDto> findRoleByQuery(RoleQuery roleQuery) {
+    public PageInfo<RoleDto> findRoleByQuery(RoleQuery roleQuery) throws Exception {
         PageHelper.startPage(roleQuery.getPageNum(), roleQuery.getPageSize());
         List<RoleDto> roleList = roleMapper.findRoleByQuery(roleQuery);
         PageInfo bean = new PageInfo<RoleDto>(roleList);
@@ -136,13 +137,13 @@ public class ManageServiceImpl implements ManageService {
     }
 
     @Override
-    public List<RoleDto> findRoleNames() {
+    public List<RoleDto> findRoleNames() throws Exception {
         List<RoleDto> roleDtoList = roleMapper.findRoleNames();
         return roleDtoList;
     }
 
     @Override
-    public RoleDto findRoleById(Long id) {
+    public RoleDto findRoleById(Long id) throws Exception {
         List<Long> modules = roleMapper.findRoleModuleById(id);
         RoleDto roleDto = roleMapper.findRoleById(id);
         roleDto.setModuleIds(modules);
@@ -158,7 +159,7 @@ public class ManageServiceImpl implements ManageService {
     }
 
     @Override
-    public RoleDto insertRole(RoleDto roleDto) {
+    public RoleDto insertRole(RoleDto roleDto) throws Exception {
         // 1. 插入角色
         Role role = new Role();
         BeanUtils.copyProperties(roleDto, role);
@@ -187,7 +188,7 @@ public class ManageServiceImpl implements ManageService {
     }
 
     @Override
-    public RoleDto updateRole(RoleDto roleDto) {
+    public RoleDto updateRole(RoleDto roleDto) throws Exception {
         Role role = new Role();
         BeanUtils.copyProperties(roleDto, role);
         role.setUpdate_at(new Date());
@@ -210,7 +211,7 @@ public class ManageServiceImpl implements ManageService {
 
     /* 账号模块 */
     @Override
-    public PageInfo<AccountDto> findAccountByQuery(AccountQuery accountQuery) {
+    public PageInfo<AccountDto> findAccountByQuery(AccountQuery accountQuery) throws Exception {
         PageHelper.startPage(accountQuery.getPageNum(), accountQuery.getPageSize());
         List<AccountDto> accountDtoList = accountMapper.findAccountByQuery(accountQuery);
         PageInfo<AccountDto> pageInfo = new PageInfo<AccountDto>(accountDtoList);
@@ -219,27 +220,27 @@ public class ManageServiceImpl implements ManageService {
 
     // 验证账号密码
     @Override
-    public Boolean findAccountByPassword(String passWord) {
+    public Boolean findAccountByPassword(String passWord) throws Exception {
         return accountMapper.findAccountByPassword(getOnlineAccount().getId(), passWord);
     }
 
     @Override
-    public AccountDto findAccountById(Long id) {
+    public AccountDto findAccountById(Long id) throws Exception {
         return accountMapper.findAccountById(id);
     }
 
     @Override
-    public Account findAccountAllById(Long id) {
+    public Account findAccountAllById(Long id) throws Exception {
         return accountMapper.selectByPrimaryKey(id);
     }
 
     @Override
-    public AccountDto findAccountLoginById(String accountName) {
+    public AccountDto findAccountLoginById(String accountName) throws Exception {
         return accountMapper.findAccountLoginById(accountName);
     }
 
     @Override
-    public AccountDto findAccountByUsername(String name) {
+    public AccountDto findAccountByUsername(String name) throws Exception {
         return accountMapper.findAccountByName(name);
     }
 
@@ -247,17 +248,24 @@ public class ManageServiceImpl implements ManageService {
     public Boolean updateAccount(AccountDto accountDto) throws Exception {
         Account account = new Account();
         BeanUtils.copyProperties(accountDto, account);
+        // 判断是否更新密码
         if (accountDto.getPassword() != null && !accountDto.getPassword().equals("")) {
             account.setPassword(PasswordUtil.encrypt(accountDto.getPassword(), accountDto.getUsername()));
         }
         account.setUpdate_by(getOnlineAccount().getUsername());
         account.setUpdate_at(new Date());
         log.debug("更新账号:" + account.toString());
-        return accountMapper.updateByPrimaryKeySelective(account) > 0;
+
+        try {
+            Boolean updateStatus = accountMapper.updateByPrimaryKeySelective(account) > 0;
+        } catch (Exception e) {
+            throw new Exception("更新失败");
+        }
+        return true;
     }
 
     @Override
-    public Boolean deleteAccountById(Long id) {
+    public Boolean deleteAccountById(Long id) throws Exception {
         return accountMapper.deleteByPrimaryKey(id) > 0;
     }
 
@@ -271,12 +279,17 @@ public class ManageServiceImpl implements ManageService {
         account.setCreate_by(getOnlineAccount().getUsername());
         account.setUpdate_by(getOnlineAccount().getUsername());
         log.debug("新增账号account: " + account.toString());
-        return accountMapper.insert(account) > 0;
+        try {
+            Boolean insertStatus = accountMapper.insert(account) > 0;
+        } catch (Exception e) {
+            throw new Exception("账号创建失败");
+        }
+        return true;
     }
 
     // 通过SecurityUtils获取当前登陆的账号信息
     @Override
-    public AccountDto getOnlineAccount() {
+    public AccountDto getOnlineAccount() throws Exception {
         Subject subject = SecurityUtils.getSubject();
         return (AccountDto) subject.getPrincipal();
     }

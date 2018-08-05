@@ -40,14 +40,14 @@ public class RoleController {
     @RequiresPermissions(".role")
     @ApiOperation(value = "获取角色列表", notes = "所有角色")
     @GetMapping("/rolenames")
-    public ResponseRowsVO roleNames() {
+    public ResponseRowsVO roleNames() throws Exception {
         return ResultUtil.success("roleNames 已执行", manageService.findRoleNames());
     }
 
     @RequiresPermissions(".role")
     @ApiOperation(value = "分页查询角色信息", notes = "所有角色")
     @PostMapping("/roles")
-    public ResponseRowsVO getRoles(@RequestBody RoleQuery roleQuery) {
+    public ResponseRowsVO getRoles(@RequestBody RoleQuery roleQuery) throws Exception {
         log.info("roleQuery.toString():" + roleQuery.toString());
         return ResultUtil.success("getRoles 已执行", manageService.findRoleByQuery(roleQuery));
     }
@@ -56,7 +56,7 @@ public class RoleController {
     @ApiOperation(value = "通过id获取角色详细信息", notes = "所有角色")
     @ApiImplicitParam(name = "id", value = "角色id", required = true, paramType = "path", dataType = "Long", defaultValue = "1")
     @GetMapping("/role/{id}")
-    public ResponseVO getRole(@PathVariable("id") Long id) {
+    public ResponseVO getRole(@PathVariable("id") Long id) throws Exception {
         return ResultUtil.success("获取角色详细信息成功", manageService.findRoleById(id));
     }
 

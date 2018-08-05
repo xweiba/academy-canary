@@ -1,5 +1,7 @@
 package com.ptteng.academy.business.enums;
 
+import org.apache.ibatis.jdbc.SQL;
+
 /**
  * @program: canary
  * @description: 枚举返回状态码
@@ -9,7 +11,9 @@ package com.ptteng.academy.business.enums;
 
 public enum ResponseCodeEnum {
     SUCCESS(200, "操作成功！"),
+    FIND_NULL_SUCCESS(200,"未查询到数据"),
     ERROR(500, "服务器未知错误！"),
+    NULL_POINTER_ERROR(500,"资源属性未正常初始化"),
     UNAUTHORIZED(500, "尚未登录！"),
     FORBIDDEN(500, "您没有操作权限！"),
     LOGIN_ERROR(500, "账号或密码错误！"),
@@ -18,7 +22,14 @@ public enum ResponseCodeEnum {
     INVALID_TOKEN(500, "无效的TOKEN，您没有操作权限！"),
     INVALID_ACCESS(500, "无效的请求，该请求已过期！"),
     DELETE_ERROR(500, "删除失败！"),
-    USER_UNEXIST(501,"用户或请求资源不存在！");
+    USER_UNEXIST(501,"用户或请求资源不存在！"),
+    BEAN_UTIL_ERROR(200,"BeanUtils 数据源为空"),
+    CAST_TO_ERROR(500, "类型转换失败!"),
+    IO_EXCEPTION_ERROR(500,"文件路径设置失败"),
+    FILE_NOT_FOUND_ERROR(500,"File转换InputStream失败"),
+    SQL_PARAMETER_ERROR(500, "属性值不能与已有数据重复或为空"),
+    SQL_RESOURCE_ERROR(500,"资源不存在"),
+    SQL_PARAM_ERROR(500,"查询参数错误");
 
     private Integer code;
     private String message;

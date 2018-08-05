@@ -1,0 +1,25 @@
+# 1984组 求学大作战后台服务 academy_canary_admin_web
+# 开发环境配置
+# Spring 设置
+spring:
+  profiles:
+    # 引入核心配置
+    include: core
+    active: test
+  datasource:
+    # 连接池
+    type: com.alibaba.druid.pool.DruidDataSource
+    # 数据库驱动
+    driver-class-name: com.mysql.jdbc.Driver
+    # 数据库url
+    url: jdbc:mysql://localhost:3306/canarytest?useUnicode=true&characterEncoding=utf-8&autoReconnect=true&zeroDateTimeBehavior=convertToNull&allowMultiQueries=true&useSSL=false
+    username: root
+    password: 123456
+server:
+  port: 20475
+  tomcat:
+    # 环境变量
+    basedir: /data/services/academy-canary-server/admin/temp
+logging:
+  level:
+    com.ptteng.academy: DEBUG

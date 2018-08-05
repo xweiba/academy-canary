@@ -6,6 +6,7 @@ import com.ptteng.academy.persistence.beans.Author;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
+import org.hibernate.validator.constraints.NotBlank;
 
 /**
  * @program: canary
@@ -19,6 +20,7 @@ import lombok.Data;
 public class AuthorDto {
     @ApiModelProperty(notes = "id", required = false)
     private Long id;
+    @NotBlank
     @ApiModelProperty(notes = "名称", required = false)
     private String author_name;
     @ApiModelProperty(notes = "头像地址", required = false)

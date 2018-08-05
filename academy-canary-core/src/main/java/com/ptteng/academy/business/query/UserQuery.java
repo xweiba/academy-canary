@@ -18,8 +18,6 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class UserQuery extends IQuery{
-    @ApiModelProperty(notes = "用户id", required = false)
-    private Long id;    // id
     @ApiModelProperty(notes = "昵称", required = false)
     private String nickName;    // 昵称
     @ApiModelProperty(notes = "email", required = false)
@@ -34,8 +32,4 @@ public class UserQuery extends IQuery{
     private Integer grade;
     @ApiModelProperty(notes = "冻结状态", required = false)
     private Boolean status;
-    @ApiModelProperty(notes = "需要显示的页数（仅用户管理需要）", required = false)
-    private Integer pageNum;
-    @ApiModelProperty(notes = "每一页显示的条数（仅用户管理需要）", required = false)
-    private Integer pageSize;
 }

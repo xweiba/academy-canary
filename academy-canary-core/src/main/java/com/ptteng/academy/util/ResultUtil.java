@@ -38,6 +38,9 @@ public class ResultUtil {
     public static ResponseVO success(ResponseCodeEnum code) {
         return vo(code.getCode(), code.getMessage());
     }
+    public static ResponseVO success(ResponseCodeEnum code, Object data) {
+        return vo(code.getCode(), code.getMessage(), data);
+    }
     public static ResponseVO success(String message, Object data) {
         return vo(CommonConst.DEFAULT_SUCCESS_CODE, message, data);
     }

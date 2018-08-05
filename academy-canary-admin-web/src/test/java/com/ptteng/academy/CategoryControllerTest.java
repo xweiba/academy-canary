@@ -35,7 +35,7 @@ public class CategoryControllerTest {
         }
     }
     @Test
-    public void findById() {
+    public void findById() throws Exception {
         System.out.println(consumeService.getByPrimaryKey(1L));
     }
 
@@ -51,7 +51,7 @@ public class CategoryControllerTest {
         Assert.assertEquals(true, consumeService.removeByPrimaryKey(4L));
     }
     @Test
-    public void update() throws FileNotFoundException {
+    public void update() throws Exception {
         AuthorDto authorDto = new AuthorDto();
         authorDto.setId(7L);
         authorDto.setAuthor_img("7777");

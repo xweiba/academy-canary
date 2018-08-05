@@ -45,34 +45,33 @@ public class PassportController {
     public ResponseVO Login(@RequestBody LoginDto loginDto) {
         log.info("登陆信息:" + loginDto.toString());
         try {
-            log.debug("加密后的密码: " + PasswordUtil.encrypt(loginDto.getPassWord(),loginDto.getAccountName()));
+            log.debug("加密后的密码: " + PasswordUtil.encrypt(loginDto.getPassWord(), loginDto.getAccountName()));
         } catch (Exception e) {
             e.printStackTrace();
         }
-        // 设置Shiro用户Token  测试, true
-            UsernamePasswordToken token = new UsernamePasswordToken(loginDto.getAccountName(), loginDto.getPassWord(), true);
-            // UsernamePasswordToken token = new UsernamePasswordToken(username, password, rememberMe); 记住我
+        // 设置Shiro用户Token测试, true
+        UsernamePasswordToken token = new UsernamePasswordToken(loginDto.getAccountName(), loginDto.getPassWord(), true);
+        // UsernamePasswordToken token = new UsernamePasswordToken(username, password, rememberMe); 记住我
 
-            // 获取当前的Subject
-            Subject currentUser = SecurityUtils.getSubject();
-            // 登录失败从request中获取shiro处理的异常信息。
-            // shiroLoginFailure:就是shiro异常类的全类名.
-            //获取当前的Subject
-            try {
-                // 在调用了login方法后,SecurityManager会收到AuthenticationToken,并将其发送给已配置的Realm执行必须的认证检查
-                // 每个Realm都能在必要时对提交的AuthenticationTokens作出反应
-                // 所以这一步在调用login(token)方法时,它会走到xxRealm.doGetAuthenticationInfo()方法中,具体验证方式详见此方法
-                currentUser.login(token);
-                AccountDto accountDto = manageService.findAccountLoginById(loginDto.getAccountName());
+        // 获取当前的Subject
+        Subject currentUser = SecurityUtils.getSubject();
+        // 登录失败从request中获取shiro处理的异常信息。
+        // shiroLoginFailure:就是shiro异常类的全类名.
+        //获取当前的Subject
+        try {
+            // 在调用了login方法后,SecurityManager会收到AuthenticationToken,并将其发送给已配置的Realm执行必须的认证检查
+            // 每个Realm都能在必要时对提交的AuthenticationTokens作出反应
+            // 所以这一步在调用login(token)方法时,它会走到xxRealm.doGetAuthenticationInfo()方法中,具体验证方式详见此方法
+            currentUser.login(token);
+            AccountDto accountDto = manageService.findAccountLoginById(loginDto.getAccountName());
 
-                log.debug("currentUser.getSession(): " + currentUser.getSession().getTimeout() + "-" + currentUser.getSession().getHost() + JSONObject.toJSONString(currentUser.getSession()));
-                return ResultUtil.success("登陆成功", accountDto);
-            }
-            catch (Exception e) {
-                token.clear();
-                log.debug("登录失败，用户名[{}]", loginDto.getAccountName(), e);
-                return ResultUtil.error(e.getMessage());
-            }
+            log.debug("currentUser.getSession(): " + currentUser.getSession().getTimeout() + "-" + currentUser.getSession().getHost() + JSONObject.toJSONString(currentUser.getSession()));
+            return ResultUtil.success("登陆成功", accountDto);
+        } catch (Exception e) {
+            token.clear();
+            log.debug("登录失败，用户名[{}]", loginDto.getAccountName(), e);
+            return ResultUtil.error(e.getMessage());
+        }
     }
 
     @ApiOperation(value = "退出登陆", notes = "执行成功直接返回无权限")
@@ -99,8 +98,8 @@ public class PassportController {
         log.info("restAccount: " + accountDto);
         try {
             // 使用用户名为盐值对密码加密得到加密后的数据
-            String oldPassWord = PasswordUtil.encrypt(accountDto.getOldPassword(),accountDto.getUsername());
-            if(manageService.findAccountByPassword(oldPassWord)) {
+            String oldPassWord = PasswordUtil.encrypt(accountDto.getOldPassword(), accountDto.getUsername());
+            if (manageService.findAccountByPassword(oldPassWord)) {
                 manageService.updateAccount(accountDto);
                 return ResultUtil.success("密码修改成功");
             }

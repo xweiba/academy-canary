@@ -39,7 +39,7 @@ public class ConsumerController {
 
     @ApiOperation(value = "获取作者信息", notes = "返回所有作者信息")
     @GetMapping("/authors")
-    public ResponseRowsVO getAuthors() {
+    public ResponseRowsVO getAuthors() throws Exception {
         List<AuthorDto> authorDtoList = consumeService.listAll();
         return ResultUtil.success("作者信息获取成功", authorDtoList);
     }
@@ -47,7 +47,7 @@ public class ConsumerController {
     @ApiOperation(value = "获取作者详细信息", notes = "根据作者id获取其详细信息")
     @ApiImplicitParam(name = "id", value = "作者id", required = true, paramType = "path", dataType = "Long", defaultValue = "1")
     @GetMapping("/author/{id}")
-    public ResponseVO getAuthor(@PathVariable("id") Long id) {
+    public ResponseVO getAuthor(@PathVariable("id") Long id) throws Exception {
         return ResultUtil.success("作者信息获取成功", consumeService.getByPrimaryKey(id));
     }
 
@@ -56,7 +56,7 @@ public class ConsumerController {
     @ApiOperation(value = "删除作者", notes = "根据作者id删除")
     @ApiImplicitParam(name = "id", value = "作者id", required = true, paramType = "path", dataType = "Long", defaultValue = "1")
     @DeleteMapping("/author/{id}")
-    public ResponseVO deleteAuthor(@PathVariable("id") Long id) {
+    public ResponseVO deleteAuthor(@PathVariable("id") Long id) throws Exception {
         consumeService.removeByPrimaryKey(id);
         return ResultUtil.success("删除作者成功");
     }
@@ -64,39 +64,32 @@ public class ConsumerController {
     @RequiresPermissions(".videos")
     @ApiOperation(value = "创建作者信息", notes = "创建作者")
     @PostMapping("/author")
-    public ResponseVO createAuthor(@RequestBody AuthorDto authorDto) {
-        try {
-            AuthorDto result = consumeService.insert(authorDto);
-            return ResultUtil.success("创建作者成功", result);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResultUtil.error("创建作者失败, 作者姓名不能为空");
-        }
+    public ResponseVO createAuthor(@RequestBody AuthorDto authorDto) throws Exception {
+        AuthorDto result = consumeService.insert(authorDto);
+        return ResultUtil.success("创建作者成功", result);
     }
 
     @RequiresPermissions(".user")
     @ApiOperation(value = "获取用户列表", notes = "获取用户列表")
     @PostMapping("/users")
-    public ResponseRowsVO queryUser(@RequestBody UserQuery userQuery) {
-        return ResultUtil.success("queryUser 调用成功", consumeService.findUser(userQuery));
+    public ResponseRowsVO queryUser(@RequestBody UserQuery userQuery) throws Exception {
+        return ResultUtil.success("获取用户列表成功", consumeService.findUser(userQuery));
     }
 
     @RequiresPermissions(".user")
     @ApiOperation(value = "改变用户状态", notes = "根据ID改变用户状态")
     @PutMapping("/user/{id}/status")
-    public ResponseVO setStatus(@PathVariable("id") Long id) {
-        User user = userMapper.selectByPrimaryKey(id);
+    public ResponseVO setStatus(@PathVariable("id") Long id) throws Exception {
+/*        User user = userMapper.selectByPrimaryKey(id);
         user.setStatus(!user.getStatus());
-        log.info("改变用户状态"+user);
-        return ResultUtil.success("status 调用成功", userMapper.updateByPrimaryKeySelective(user));
+        log.info("改变用户状态" + user);*/
+        return ResultUtil.success("用户冻结/解冻成功", consumeService.updateUserStatus(id));
     }
+
     @ApiOperation(value = "获取用户详情", notes = "根据ID获取用户详情")
     @RequiresPermissions(".user")
     @GetMapping("/user/{id}")
-    public ResponseVO getUser(@PathVariable("id") Long id) {
-        User user = userMapper.selectByPrimaryKey(id);
-        UserDto userDto = new UserDto();
-         BeanUtils.copyProperties(user,userDto);
-        return ResultUtil.success("getUser 调用成功", userDto);
+    public ResponseVO getUser(@PathVariable("id") Long id) throws Exception {
+        return ResultUtil.success("获取用户详情成功", consumeService.findUserById(id));
     }
 }

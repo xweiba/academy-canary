@@ -2,6 +2,7 @@ package com.ptteng.academy.business.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
+import org.hibernate.validator.constraints.NotBlank;
 
 /**
  * @program: canary
@@ -13,6 +14,7 @@ import lombok.Data;
 @Data
 public class LoginDto {
     // 用户do
+    @NotBlank
     private String accountName;
     private String passWord;
     private String roleName;

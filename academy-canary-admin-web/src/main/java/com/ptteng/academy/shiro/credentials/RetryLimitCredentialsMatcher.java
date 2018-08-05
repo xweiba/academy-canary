@@ -44,7 +44,13 @@ public class RetryLimitCredentialsMatcher extends CredentialsMatcher {
         log.info("accountDto:" + accountDto.toString());
         Long accountId = accountDto.getId();
         log.info("accountId: " + accountId);
-        AccountDto account = manageService.findAccountById(accountId);
+        AccountDto account = null;
+        try {
+            account = manageService.findAccountById(accountId);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.debug("获取角色失败");
+        }
         log.info("account:" + account.toString());
         String username = account.getUsername();
        /* // 访问一次，计数一次

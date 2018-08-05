@@ -119,9 +119,6 @@ public class QiNiuYun {
 
     /* 上传文件 */
     public String updateMultipartFile(MultipartFile multfile, String fileName) throws IOException {
-        /*CommonsMultipartFile cf = (CommonsMultipartFile)multfile;
-        DiskFileItem fi = (DiskFileItem) cf.getFileItem();
-        File file = fi.getStoreLocation();*/
         return updateFileReal(multfile.getInputStream(), fileName);
     }
     public String updateFileName(String fileName) throws FileNotFoundException {
@@ -146,7 +143,6 @@ public class QiNiuYun {
                         // 解析上传结果
                         DefaultPutRet putRet = new Gson().fromJson(qresponse.bodyString(), DefaultPutRet.class);
                         log.debug("上传结果: fileName: " + putRet.key + " hash: " + putRet.hash);
-
                         // 注意 map中的值不能直接覆盖 这里直接删掉重写一个马上过期的值即可
                         taskConfig.getFileList().remove(file_name);
                         taskConfig.setFileList(file_name, new Date());

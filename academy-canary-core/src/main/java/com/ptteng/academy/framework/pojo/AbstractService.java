@@ -24,7 +24,7 @@ public interface AbstractService<T,PK> {
      *
      * @param entities
      */
-    void insertList(List<T> entities);
+    void insertList(List<T> entities) throws Exception;
 
     /**
      * 根据主键字段进行删除，方法参数必须包含完整的主键属性
@@ -32,7 +32,7 @@ public interface AbstractService<T,PK> {
      * @param primaryKey
      * @return
      */
-    boolean removeByPrimaryKey(PK primaryKey);
+    boolean removeByPrimaryKey(PK primaryKey) throws Exception;
 
     /**
      * 根据主键更新实体全部字段，null值会被更新
@@ -40,7 +40,7 @@ public interface AbstractService<T,PK> {
      * @param entity
      * @return
      */
-    boolean update(T entity) throws FileNotFoundException;
+    boolean update(T entity) throws Exception;
     /**
      * 根据主键更新属性不为null的值
      *
@@ -56,7 +56,7 @@ public interface AbstractService<T,PK> {
      * @param primaryKey
      * @return
      */
-    T getByPrimaryKey(PK primaryKey);
+    T getByPrimaryKey(PK primaryKey) throws Exception;
 
     /**
      * 根据实体中的属性进行查询，只能有一个返回值，有多个结果时抛出异常，查询条件使用等号
@@ -64,14 +64,14 @@ public interface AbstractService<T,PK> {
      * @param entity
      * @return
      */
-    T getOneByEntity(T entity);
+    T getOneByEntity(T entity) throws Exception;
 
     /**
      * 查询全部结果，listByEntity(null)方法能达到同样的效果
      *
      * @return
      */
-    List<T> listAll();
+    List<T> listAll() throws Exception;
 
     /**
      * 根据实体中的属性值进行查询，查询条件使用等号
@@ -79,5 +79,5 @@ public interface AbstractService<T,PK> {
      * @param entity
      * @return
      */
-    List<T> listByEntity(T entity);
+    List<T> listByEntity(T entity) throws Exception;
 }

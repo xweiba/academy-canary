@@ -16,17 +16,20 @@ import java.io.FileNotFoundException;
  * @create: 2018-07-26 19:08
  **/
 
-public interface StudyService extends AbstractService<StudyDto, Long>{
+public interface StudyService extends AbstractService<StudyDto, Long> {
     PageInfo<?> findPageBreakByCondition(Object objectQuery) throws Exception;
 
     Boolean updateStatusById(Long id) throws Exception;
+
     // 更新文章
-    Boolean updateByArticle(ArticleDto articleDto) throws FileNotFoundException;
+    Boolean updateByArticle(ArticleDto articleDto) throws Exception;
 
     ArticleDto findArticleById(Long id) throws Exception;
+
     VideoDto findVideoById(Long id) throws Exception;
 
     Long insertVideo(VideoDto videoDto) throws Exception;
+
     Long insertArticle(ArticleDto articleDto) throws Exception;
 
 }

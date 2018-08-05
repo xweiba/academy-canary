@@ -48,7 +48,12 @@ public class MyShiroRealm extends AuthorizingRealm {
         System.out.println("authenticationToken.getCredentials(): " + authenticationToken.getCredentials());
         // 通过username从数据库中查找账号对象，如果找到，没找到.
         // 实际项目中，这里可以根据实际情况做缓存，如果不做，Shiro自己也是有时间间隔机制，2分钟内不会重复执行该方法
-        AccountDto accountDto = manageService.findAccountByUsername(username);
+        AccountDto accountDto = null;
+        try {
+            accountDto = manageService.findAccountByUsername(username);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         System.out.println("----->>account=" + accountDto.toString());
 
         // 如果不存在
@@ -87,7 +92,13 @@ public class MyShiroRealm extends AuthorizingRealm {
         AccountDto accountDto = (AccountDto) principalCollection.getPrimaryPrincipal(); // 获取认证时存入authorizationInfo的Account信息
         log.debug("accountDto.getRole_id() " + accountDto.getRole_id());
         // 获取角色信息
-        RoleDto roleDto = manageService.findRoleById(accountDto.getRole_id());
+        RoleDto roleDto = null;
+        try {
+            roleDto = manageService.findRoleById(accountDto.getRole_id());
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.debug("角色查找失败");
+        }
         log.debug("roleDto.toString():" + roleDto.toString());
         // 赋予角色
         authorizationInfo.addRole(roleDto.getRole_tag());
@@ -96,7 +107,13 @@ public class MyShiroRealm extends AuthorizingRealm {
         for (Long moduleId :
                 roleDto.getModuleIds()) {
 
-            String moduleDto = manageService.findModuleById(moduleId).getModule_url();
+            String moduleDto = null;
+            try {
+                moduleDto = manageService.findModuleById(moduleId).getModule_url();
+            } catch (Exception e) {
+                e.printStackTrace();
+                log.debug("模块查询失败");
+            }
             // 注意 addStringPermission 不能添加为空得权限
             if (!StringUtil.isEmpty(moduleDto)) {
                 log.debug("Module_url: " + moduleDto);

@@ -7,6 +7,8 @@ import com.ptteng.academy.business.enums.ClassifyEnum;
 import com.ptteng.academy.business.enums.GradeEnum;
 import com.ptteng.academy.business.enums.SubjectEnum;
 import com.ptteng.academy.business.query.StudyQuery;
+import com.ptteng.academy.framework.exception.FindNullException;
+import com.ptteng.academy.framework.exception.ResourceIsNullException;
 import com.ptteng.academy.framework.service.OSSService;
 import com.ptteng.academy.persistence.beans.Study;
 import com.ptteng.academy.persistence.mapper.StudyMapper;
@@ -50,7 +52,7 @@ public class StudyServiceImpl implements StudyService {
     @Override
     public StudyDto insert(StudyDto entity) throws Exception {
         /* 上传图片到OSS */
-        if (!"".equals(entity.getCover_plan_url()) && entity.getCover_plan_url()!=null) {
+        if (!"".equals(entity.getCover_plan_url()) && entity.getCover_plan_url() != null) {
             entity.setCover_plan_url(ossService.updateFile(entity.getCover_plan_url()));
         }
         Study study = new Study();
@@ -64,28 +66,27 @@ public class StudyServiceImpl implements StudyService {
     }
 
     @Override
-    public void insertList(List<StudyDto> entities) {
+    public void insertList(List<StudyDto> entities) throws Exception {
 
     }
 
     @Override
-    public boolean removeByPrimaryKey(Long primaryKey) {
+    public boolean removeByPrimaryKey(Long primaryKey) throws Exception {
         return false;
     }
 
     @Override
-    public boolean update(StudyDto entity){
+    public boolean update(StudyDto entity) throws Exception {
         return false;
     }
-
 
 
     // 更新不为空的字段
     @Override
-    public boolean updateByPrimaryKeySelective(StudyDto entity) throws Exception{
+    public boolean updateByPrimaryKeySelective(StudyDto entity) throws Exception {
         log.debug("entity.toString()更新信息:" + entity.toString());
         /* 上传图片到OSS */
-        if (!"".equals(entity.getCover_plan_url()) && entity.getCover_plan_url()!=null) {
+        if (!"".equals(entity.getCover_plan_url()) && entity.getCover_plan_url() != null) {
             log.debug("开始上传到OSS");
             entity.setCover_plan_url(ossService.updateFile(entity.getCover_plan_url()));
         }
@@ -94,41 +95,43 @@ public class StudyServiceImpl implements StudyService {
         // 更新时间
         study.setUpdate_at(new Date());
         study.setUpdate_by(manageService.getOnlineAccount().getUsername());
+        study.setStudy_type(2);
         return studyMapper.updateByPrimaryKeySelective(study) > 0;
     }
 
     @Override
-    public StudyDto getByPrimaryKey(Long primaryKey) {
+    public StudyDto getByPrimaryKey(Long primaryKey) throws Exception {
         return null;
     }
 
     @Override
-    public StudyDto getOneByEntity(StudyDto entity) {
+    public StudyDto getOneByEntity(StudyDto entity) throws Exception {
         return null;
     }
 
     @Override
-    public List<StudyDto> listAll() {
+    public List<StudyDto> listAll() throws Exception {
         return null;
     }
 
     @Override
-    public List<StudyDto> listByEntity(StudyDto entity) {
+    public List<StudyDto> listByEntity(StudyDto entity) throws Exception {
         return null;
     }
 
     // 分页查询
     @Override
-    public PageInfo<?> findPageBreakByCondition(Object objectQuery) throws NullPointerException {
+    public PageInfo<?> findPageBreakByCondition(Object objectQuery) throws Exception {
         StudyQuery studyQuery = new StudyQuery();
-        BeanUtils.copyProperties(objectQuery,studyQuery);
+        BeanUtils.copyProperties(objectQuery, studyQuery);
         PageHelper.startPage(studyQuery.getPageNum(), studyQuery.getPageSize());
         List<StudyDto> studyDtoList = studyMapper.findPageBreakByCondition(studyQuery);
         PageInfo bean = new PageInfo<StudyDto>(studyDtoList);
+        // 判断是否查询到数据
         if (CollectionUtils.isEmpty(studyDtoList)) {
-            return null;
+            throw new FindNullException();
         }
-        if (studyQuery.getStudy_type()==1){
+        if (studyQuery.getStudy_type() == 1) {
             List<ArticleListDto> articleListDtoList = new ArrayList<>();
             for (StudyDto s :
                     studyDtoList) {
@@ -171,15 +174,20 @@ public class StudyServiceImpl implements StudyService {
     }
 
     @Override
-    public Boolean updateStatusById(Long id) {
-        return studyMapper.updateStatusById(id);
+    public Boolean updateStatusById(Long id) throws Exception {
+        if (!studyMapper.updateStatusById(id)) {
+            throw new ResourceIsNullException();
+        }
+        return true;
     }
 
     @Override
-    public ArticleDto findArticleById(Long id) throws Exception{
+    public ArticleDto findArticleById(Long id) throws Exception {
+        Study study =  studyMapper.selectByPrimaryKey(id);
+        if (study == null) {
+            throw new FindNullException();
+        }
         ArticleDto articleDto = new ArticleDto();
-        Study study = new Study();
-        study = studyMapper.selectByPrimaryKey(id);
         BeanUtils.copyProperties(study, articleDto);
         articleDto.setAuthor(consumeService.findAuthorById(study.getAuthor()));
         return articleDto;
@@ -187,8 +195,12 @@ public class StudyServiceImpl implements StudyService {
 
     @Override
     public VideoDto findVideoById(Long id) throws Exception {
+        Study study = studyMapper.selectByPrimaryKey(id);
+        if (study == null) {
+            throw new FindNullException();
+        }
         VideoDto videoDto = new VideoDto();
-        BeanUtils.copyProperties(studyMapper.selectByPrimaryKey(id), videoDto);
+        BeanUtils.copyProperties(study, videoDto);
         log.debug("findVideoById: " + videoDto.toString());
         return videoDto;
     }
@@ -196,7 +208,7 @@ public class StudyServiceImpl implements StudyService {
     @Override
     public Long insertVideo(VideoDto videoDto) throws Exception {
         /* 上传图片到OSS */
-        if (!"".equals(videoDto.getCover_plan_url()) && videoDto.getCover_plan_url()!=null) {
+        if (!"".equals(videoDto.getCover_plan_url()) && videoDto.getCover_plan_url() != null) {
             videoDto.setCover_plan_url(ossService.updateFile(videoDto.getCover_plan_url()));
         }
         Study study = new Study();
@@ -216,7 +228,7 @@ public class StudyServiceImpl implements StudyService {
     @Override
     public Long insertArticle(ArticleDto articleDto) throws Exception {
         /* 上传图片到OSS */
-        if (!"".equals(articleDto.getCover_plan_url()) && articleDto.getCover_plan_url()!=null) {
+        if (!"".equals(articleDto.getCover_plan_url()) && articleDto.getCover_plan_url() != null) {
             articleDto.setCover_plan_url(ossService.updateFile(articleDto.getCover_plan_url()));
             log.debug("articleDto.getCover_plan_url():" + articleDto.getCover_plan_url());
         }
@@ -236,18 +248,18 @@ public class StudyServiceImpl implements StudyService {
 
     // 更新文章
     @Override
-    public Boolean updateByArticle(ArticleDto articleDto) throws FileNotFoundException {
+    public Boolean updateByArticle(ArticleDto articleDto) throws Exception {
         log.info("articleDto.toString(): " + articleDto.toString());
         Study study = new Study();
         BeanUtils.copyProperties(articleDto, study);
         /* 上传图片到OSS */
-        if (!"".equals(articleDto.getCover_plan_url()) && articleDto.getCover_plan_url()!=null) {
+        if (!"".equals(articleDto.getCover_plan_url()) && articleDto.getCover_plan_url() != null) {
             study.setCover_plan_url(ossService.updateFile(articleDto.getCover_plan_url()));
         }
+        study.setStudy_type(1);
         study.setAuthor(consumeService.findAuthorByName(articleDto.getAuthor()));
         study.setUpdate_at(new Date());
         study.setUpdate_by(manageService.getOnlineAccount().getUsername());
-        return studyMapper.updateByPrimaryKeySelective(study) > 0 ;
+        return studyMapper.updateByPrimaryKeySelective(study) > 0;
     }
-
 }
