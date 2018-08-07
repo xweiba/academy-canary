@@ -29,7 +29,7 @@ public class WeixingJsapiTicketTask {
                 WexinJsapiTicket.setJsapiTicket(WeChatUtil.getTicket(WeixinAccessToken.getAccessToken()));
                 logger.info("JsapiTicket定时器启动："+WexinJsapiTicket.getJsapiTicket());
             } catch (Exception e) {
-                logger.error("获取微信JsapiTicket出错，信息如下");
+                logger.error("获取微信JsapiTicket出错，可能是ip未在白名单, 信息如下");
                 e.printStackTrace();
                 // 此处可能陷入死循环
             }

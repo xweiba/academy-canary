@@ -1,5 +1,8 @@
 package com.ptteng.academy.service;
 
+import com.aliyuncs.exceptions.ClientException;
+import com.ptteng.academy.framework.exception.ResourceIsNullException;
+
 /**
  * @program: canary
  * @description: 工具类服务
@@ -8,5 +11,5 @@ package com.ptteng.academy.service;
  **/
 
 public interface UtilService {
-    Boolean sendSMS(Long id, String phoneId);
+    Boolean sendSMS(Long id, String phoneId) throws ClientException, ResourceIsNullException;
 }

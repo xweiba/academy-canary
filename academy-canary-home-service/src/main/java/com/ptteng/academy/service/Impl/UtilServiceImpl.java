@@ -1,6 +1,8 @@
 package com.ptteng.academy.service.Impl;
 
+import com.aliyuncs.exceptions.ClientException;
 import com.ptteng.academy.framework.config.AliyunConfig;
+import com.ptteng.academy.framework.exception.ResourceIsNullException;
 import com.ptteng.academy.service.UtilService;
 import com.ptteng.academy.util.RandNumUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +25,7 @@ public class UtilServiceImpl implements UtilService {
     private AliyunConfig aliyunConfig;
 
     @Override
-    public Boolean sendSMS(Long id, String phoneId) {
+    public Boolean sendSMS(Long id, String phoneId) throws ClientException, ResourceIsNullException {
         return aliyunConfig.sendSms(id, phoneId);
     }
 }

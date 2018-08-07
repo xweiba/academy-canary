@@ -1,7 +1,9 @@
 package com.ptteng.academy.service;
 
+import com.ptteng.academy.business.dto.SigningDto;
 import com.ptteng.academy.business.dto.UserDto;
 import com.ptteng.academy.business.vo.ResponseVO;
+import com.ptteng.academy.framework.exception.ResourceIsNullException;
 
 /**
  * description:
@@ -10,8 +12,8 @@ import com.ptteng.academy.business.vo.ResponseVO;
  * Time:20:25
  */
 public interface SiginService{
-    UserDto selectSiginById(Long id);
+    UserDto selectSiginById(Long id) throws ResourceIsNullException;
 
-    ResponseVO sigin(Long id);
+    SigningDto sigin(Long id) throws ResourceIsNullException;
 
 }

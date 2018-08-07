@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONException;
 import com.alibaba.fastjson.JSONObject;
 import com.ptteng.academy.business.dto.WeChatTokenDto;
 import com.ptteng.academy.business.dto.WeChatUserDto;
+import com.ptteng.academy.framework.exception.ResourceIsNullException;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,19 +33,20 @@ public class WeChatUtil {
     public final static String APPSECRET = "fe33aae20890da44fc14c709468b7a91";
     public final static String signTicketCreateUrl = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=ACCESS_TOKEN&type=jsapi";
     private static final Logger logger = LoggerFactory.getLogger(WeChatUtil.class);
+
     /**
      * 发送https请求
      *
-     * @param requestUrl 请求地址
+     * @param requestUrl    请求地址
      * @param requestMethod 请求方式（GET、POST）
-     * @param outputStr 提交的数据
-     * @return JSONObject(通过JSONObject.get(key)的方式获取json对象的属性值)
+     * @param outputStr     提交的数据
+     * @return JSONObject(通过JSONObject.get ( key)的方式获取json对象的属性值)
      */
     public static JSONObject httpsRequest(String requestUrl, String requestMethod, String outputStr) {
         JSONObject jsonObject = null;
         try {
             // 创建SSLContext对象，并使用我们指定的信任管理器初始化
-            TrustManager[] tm = { new MyX509TrustManager() };
+            TrustManager[] tm = {new MyX509TrustManager()};
             SSLContext sslContext = SSLContext.getInstance("SSL", "SunJSSE");
             sslContext.init(null, tm, new java.security.SecureRandom());
             // 从上述SSLContext对象中得到SSLSocketFactory对象
@@ -87,10 +89,11 @@ public class WeChatUtil {
         }
         return jsonObject;
     }
+
     /**
      * 获取接口访问凭证
      *
-     * @param appid 凭证
+     * @param appid     凭证
      * @param appsecret 密钥
      * @return
      */
@@ -112,6 +115,7 @@ public class WeChatUtil {
         }
         return WeChatTokenDto;
     }
+
     /**
      * URL编码（utf-8）
      *
@@ -127,7 +131,6 @@ public class WeChatUtil {
         }
         return result;
     }
-
 
 
     public static WeChatUserDto getUserInfo(String accessWeChatToken, String openId) {
@@ -173,38 +176,43 @@ public class WeChatUtil {
         return weChatUserDto;
     }
 
-    public static WeChatTokenDto getTokenBycode(String appid, String appsecret,String code) {
+    public static WeChatTokenDto getTokenBycode(String appid, String appsecret, String code) throws ResourceIsNullException {
         WeChatTokenDto WeChatTokenDto = null;
         String requestUrl = WeChatByCodeToken_url.replace("APPID", appid).replace("APPSECRET", appsecret).replace("CODE", code);
         // 发起GET请求获取凭证
         JSONObject jsonObject = httpsRequest(requestUrl, "GET", null);
-        System.out.println(jsonObject);
-        if (null != jsonObject) {
-            try {
-                WeChatTokenDto = new WeChatTokenDto();
-                WeChatTokenDto.setAccess_token(jsonObject.getString("access_token"));
-                WeChatTokenDto.setExpires_in(jsonObject.getIntValue("expires_in"));
-                WeChatTokenDto.setOpenid(jsonObject.getString("openid"));
-            } catch (JSONException e) {
-                WeChatTokenDto = null;
-                // 获取WeChatToken失败
-                log.error("获取WeChatToken失败 errcode:{} errmsg:{}", jsonObject.get("errcode"), jsonObject.getString("errmsg"));
-            }
+        log.debug("微信基本信息接口返回值:" + jsonObject);
+
+        if (jsonObject == null || jsonObject.getString("errcode") != null) {
+            throw new ResourceIsNullException("提醒: code值错误或已失效, 登陆失败!");
+        }
+
+        try {
+            WeChatTokenDto = new WeChatTokenDto();
+            WeChatTokenDto.setAccess_token(jsonObject.getString("access_token"));
+            WeChatTokenDto.setExpires_in(jsonObject.getIntValue("expires_in"));
+            WeChatTokenDto.setOpenid(jsonObject.getString("openid"));
+        } catch (JSONException e) {
+            // 获取WeChatToken失败
+            log.error("获取WeChatToken失败 errcode:{} errmsg:{}", jsonObject.get("errcode"), jsonObject.getString("errmsg"));
+            throw new ResourceIsNullException("提醒: 获取微信基本信息失败, 登陆失败!");
         }
         return WeChatTokenDto;
     }
+
     public static String getTicket(String accessToken) throws ParseException, IOException {
 
-        JSONObject postjson=new JSONObject();
-        String ticket =null;
-        String url = WeChatUtil.signTicketCreateUrl.replace("ACCESS_TOKEN",accessToken);
-        logger.info("获取签名的url="+url);
+        JSONObject postjson = new JSONObject();
+        String ticket = null;
+        String url = WeChatUtil.signTicketCreateUrl.replace("ACCESS_TOKEN", accessToken);
+        logger.info("获取签名的url=" + url);
         try {
-            JSONObject jsonObject = WeChatUtil.httpsRequest(url, "POST",postjson.toString());
-            ticket= jsonObject.getString("ticket");
-            System.out.println("ticket:"+ticket);
-        }catch (Exception e) {
+            JSONObject jsonObject = WeChatUtil.httpsRequest(url, "POST", postjson.toString());
+            ticket = jsonObject.getString("ticket");
+            System.out.println("ticket:" + ticket);
+        } catch (NullPointerException e) {
             e.printStackTrace();
+            log.debug("还未传入url");
         }
         return ticket;
     }

@@ -20,10 +20,16 @@ import java.util.List;
  * @author: xiaoweiba1028@gmail.com
  * @create: 2018-07-26 02:14
  **/
+
+
 @Repository
 public interface UserMapper extends BaseMapper<User>{
+    //查询用户列表信息
+    List<UserBackDto> findUserList(UserQuery userQuery);
+
     //查询用户信息
-    List<UserBackDto> findUser(UserQuery userQuery);
+    @Select("SELECT * FROM user WHERE id = #{id}")
+    User findUserById(@Param("id") Long id);
 
     // 更新用户状态
     @Update("UPDATE user u SET u.status = !u.status, u.update_at = #{update_at}, u.update_by = #{update_by}  WHERE u.id = #{id}")

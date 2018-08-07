@@ -10,11 +10,13 @@ import com.aliyuncs.dysmsapi.model.v20170525.SendSmsResponse;
 import com.aliyuncs.exceptions.ClientException;
 import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
+import com.ptteng.academy.framework.exception.ResourceIsNullException;
 import com.ptteng.academy.framework.property.AliyunSMSProperties;
 import com.ptteng.academy.util.RandNumUtil;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -57,18 +59,25 @@ public class AliyunConfig {
         private SMS sms;
     }
 
-    public Boolean sendSms(Long id, String phoneId) {
+    public Boolean sendSms(Long id, String phoneId) throws ClientException, ResourceIsNullException {
         AliyunConfig.SMS sms = AliyunConfig.newSMS();
         sms.setPhoneNumbers(phoneId);
         String code = RandNumUtil.getRandLength(4);
         //存入缓存
-        // stringRedisTemplate.opsForValue().set(code,phoneId);
+        try {
+            stringRedisTemplate.opsForValue().set(code,phoneId);
+        } catch (RedisConnectionFailureException e) {
+            throw new RedisConnectionFailureException("提醒: 短信发送失败");
+        }
         // JSON 格式
         sms.setTemplateParam("{\"code\":\"" + code + "\"}");
         log.debug("setTemplateParam" + sms.getTemplateParam());
         AliyunConfig.Result result = sendSms(sms);
         log.debug("result:" + JSONObject.toJSONString(result));
-        return result.getSendSmsResponse() != null || result.getSendSmsResponse().getCode().equals("OK") ;
+        if (result.getSendSmsResponse() == null || !result.getSendSmsResponse().getCode().equals("OK")) {
+            throw new ResourceIsNullException("提醒: 短信发送失败, 每分钟只能发送一次, 每小时最多五次, 每天最多十次~");
+        }
+        return  true;
     }
     /**
      * 发送短信
@@ -77,15 +86,14 @@ public class AliyunConfig {
      *
      * @param sms 短信
      */
-    public Result sendSms(SMS sms) {
+    public Result sendSms(SMS sms) throws ClientException {
         IAcsClient acsClient = getClient();
         SendSmsRequest request = getRequest(sms);
         SendSmsResponse sendSmsResponse = null;
         try {
             sendSmsResponse = acsClient.getAcsResponse(request);
         } catch (ClientException e) {
-            log.error("发送短信发生错误。错误代码是 [{}]，错误消息是 [{}]，错误请求ID是 [{}]，错误Msg是 [{}]，错误类型是 [{}]", e.getErrCode(), e.getMessage(), e.getRequestId(), e.getErrMsg(), e.getErrorType());
-            e.printStackTrace();
+            throw new ClientException("提醒: 发送短信发生错误。错误代码是:" + e.getErrCode() +" 错误消息是"+e.getMessage()+"错误请求ID是:"+e.getRequestId()+"错误Msg是:"+e.getErrMsg()+"错误类型是" + e.getErrorType());
         }
 
 

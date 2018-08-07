@@ -4,6 +4,8 @@ import com.github.pagehelper.PageInfo;
 import com.ptteng.academy.business.dto.*;
 import com.ptteng.academy.business.query.HomeVideoQuery;
 import com.ptteng.academy.business.query.PageQuery;
+import com.ptteng.academy.framework.exception.FindNullException;
+import com.ptteng.academy.framework.exception.ResourceIsNullException;
 import com.ptteng.academy.persistence.beans.Study;
 
 import java.util.List;
@@ -16,17 +18,17 @@ import java.util.List;
  **/
 
 public interface StudyService {
-    PageInfo<HomeVideoBannerDto> findVideoBannerByQuery(HomeVideoQuery homeVideoQuery);
+    PageInfo<HomeVideoBannerDto> findVideoBannerByQuery(HomeVideoQuery homeVideoQuery) throws FindNullException;
 
-    PageInfo<HomeVideoListDto> findVideosByQuery(HomeVideoQuery homeVideoQuery);
+    PageInfo<HomeVideoListDto> findVideosByQuery(HomeVideoQuery homeVideoQuery) throws FindNullException;
 
-    HomeVideoDto findStudyByQuery(Long studyId, Long userId, Integer studyType);
+    HomeVideoDto findStudyByQuery(Long studyId, Long userId, Integer studyType) throws ResourceIsNullException;
 
     Boolean updatePraiseCollectStatus(Long studyId, Long userId, Integer type);
 
     List<HomeBannerListDto> findArticleBanneryByQuery(Integer num) throws Exception;
 
-    PageInfo<HomeArticleListDto> findArticleByQuery(PageQuery pageQuery);
+    PageInfo<HomeArticleListDto> findArticleByQuery(PageQuery pageQuery) throws FindNullException;
 
-    ArticleDetailsDto findArticleById(Long id,Long stu);
+    ArticleDetailsDto findArticleById(Long id,Long stu) throws ResourceIsNullException;
 }

@@ -5,6 +5,7 @@ import com.ptteng.academy.business.dto.WeChatUserDto;
 import com.ptteng.academy.business.dto.WeixinAccessToken;
 import com.ptteng.academy.business.dto.WexinJsapiTicket;
 import com.ptteng.academy.business.vo.ResponseVO;
+import com.ptteng.academy.framework.exception.ResourceIsNullException;
 import com.ptteng.academy.service.WechatService;
 import com.ptteng.academy.util.ResultUtil;
 import com.ptteng.academy.util.WeChatUtil;
@@ -36,20 +37,15 @@ public class WechatController {
 
     @ApiOperation(value = "微信登陆", notes = "获取用户code值登陆")
     @GetMapping("/{code}")
-    public ResponseVO mychatAccredit(@PathVariable String code) {
+    public ResponseVO mychatAccredit(@PathVariable String code) throws ResourceIsNullException {
         log.info(code);
-        WeChatUserDto weChatUserDto = wechatService.userLogin(code);
-        return ResultUtil.success("微信登陆成功", weChatUserDto);
+        return ResultUtil.success("微信登陆成功", wechatService.userLogin(code));
     }
 
-    @ApiOperation(value = "获取微信接口权限", notes = "传入访问接口的url")
+    @ApiOperation(value = "获取微信接口权限", notes = "传入访问JS_SDK接口的url")
     @PostMapping("/authority")
-    public ResponseVO muchatAuthority(@RequestBody String url) throws Exception {
-        String jsapiTicket = null;
-            jsapiTicket = WexinJsapiTicket.getJsapiTicket();
+    public ResponseVO muchatAuthority(@RequestBody String url) throws ResourceIsNullException {
         // 注意 URL 一定要动态获取，不能 hardcode(硬编码), 签名用的url必须是调用JS接口页面的完整URL。
-        // String url = args[0];
-        Map<String, String> ret = WechatSignUtil.getWexinAuthority(jsapiTicket, url);
-        return ResultUtil.success("获取成功：", ret);
+        return ResultUtil.success("微信接口权限令牌获取成功：", wechatService.weChatAuthority(url));
     }
 }

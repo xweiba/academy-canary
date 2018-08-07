@@ -4,6 +4,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.ptteng.academy.business.dto.HomeBannerListDto;
 import com.ptteng.academy.business.dto.HomeVideoBannerDto;
 import com.ptteng.academy.business.query.HomeVideoQuery;
+import com.ptteng.academy.framework.exception.FindNullException;
+import com.ptteng.academy.framework.exception.ResourceIsNullException;
 import com.ptteng.academy.persistence.mapper.StudyMapper;
 import com.ptteng.academy.service.StudyService;
 import com.ptteng.academy.service.WechatService;
@@ -21,14 +23,14 @@ import javax.annotation.Resource;
 public class StudyServiceImplTest {
 
   @Resource
-  StudyService studyService;
+  private StudyService studyService;
   @Resource
   private StudyMapper studyMapper;
   @Resource
   private WechatService wechatService;
 
   @Test
-  public void findStudyByVideoQuery() {
+  public void findStudyByVideoQuery() throws FindNullException {
       HomeVideoQuery homeVideoQuery = new HomeVideoQuery();
       System.out.println();
       for (HomeVideoBannerDto homeVideoListDto:
@@ -49,14 +51,14 @@ public class StudyServiceImplTest {
   }
 
   @Test
-   public void findVoide() {
+   public void findVoide() throws FindNullException {
       HomeVideoQuery homeVideoQuery = new HomeVideoQuery();
 
       System.out.println(JSONObject.toJSONString(studyService.findVideoBannerByQuery(homeVideoQuery)));
   }
 
     @Test
-    public void  Wechat(){
+    public void  Wechat() throws ResourceIsNullException {
         System.out.println(wechatService.userLogin("0112dXoW17326U0EhvmW1esMoW12dXo7 "));
     }
 }

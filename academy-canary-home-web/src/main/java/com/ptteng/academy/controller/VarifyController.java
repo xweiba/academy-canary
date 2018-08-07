@@ -1,7 +1,9 @@
 package com.ptteng.academy.controller;
 
+import com.aliyuncs.exceptions.ClientException;
 import com.ptteng.academy.business.dto.*;
 import com.ptteng.academy.business.vo.ResponseVO;
+import com.ptteng.academy.framework.exception.ResourceIsNullException;
 import com.ptteng.academy.service.StudentCardService;
 import com.ptteng.academy.util.MailUtil;
 import com.ptteng.academy.service.UtilService;
@@ -48,10 +50,9 @@ public class VarifyController {
             @ApiImplicitParam(name = "phoneId", value = "手机号码", required = true, dataType = "Long")}
     )
     @PutMapping("/card/binding/phone/{id}")
-    public ResponseVO StudentBindingPhone(@PathVariable("id") Long id, @RequestBody Map<String, Object> phoneId) {
-        String phone = String.valueOf(phoneId.get("phoneId"));
-        log.debug("phone:" + phone);
-        return ResultUtil.success("StudentBindingPhone 执行了", utilService.sendSMS(id, phone));
+    public ResponseVO StudentBindingPhone(@PathVariable("id") Long id, @RequestBody Map<String, Object> phoneId) throws ClientException, ResourceIsNullException {
+        log.debug("phone:" + phoneId.get("phoneId"));
+        return ResultUtil.success("短信发送成功", utilService.sendSMS(id, String.valueOf(phoneId.get("phoneId"))));
     }
 
     @ApiOperation(value = "效验短信验证码", notes = "传入验证码效验")
@@ -59,13 +60,8 @@ public class VarifyController {
             @ApiImplicitParam(name = "captcha", value = "验证码", required = true, dataType = "Integer")}
     )
     @PostMapping("/card/binding/phone/{id}")
-    public ResponseVO StudentVerifyPhone(@PathVariable("id") Long id, @RequestBody Map<String,String> captcha) {
-        try {
-            return ResultUtil.success("验证成功",studentCardService.verifyCodePhone(id, captcha.get("captcha")));
-
-        }catch (Exception e) {
-            return ResultUtil.error("验证失败");
-        }
+    public ResponseVO StudentVerifyPhone(@PathVariable("id") Long id, @RequestBody Map<String, String> captcha) throws ResourceIsNullException {
+        return ResultUtil.success("短信验证成功", studentCardService.verifyCodePhone(id, captcha.get("captcha")));
     }
 
     @ApiOperation(value = "获取邮箱验证码", notes = "传入用户ID和用户邮箱发送验证码")
@@ -73,31 +69,19 @@ public class VarifyController {
             @ApiImplicitParam(name = "email", value = "邮箱", required = true, dataType = "String")}
     )
     @PostMapping("/card/binding/email/{id}")
-    public ResponseVO StudentBindingEmail(@PathVariable("id") Long id, @RequestBody Map<String, String> email) {
-        try {
-            mailUtil.sendMail(email.get("email"));
-        } catch (
-                Exception e
-                ) {
-            return ResultUtil.error("邮件发送失败");
-        }
-        return ResultUtil.success("StudentBindingEmail 执行了");
+    public ResponseVO StudentBindingEmail(@PathVariable("id") Long id, @RequestBody Map<String, String> email) throws ResourceIsNullException {
+        mailUtil.sendMail(email.get("email"));
+        return ResultUtil.success("邮件已发送, 请注意查收");
     }
 
-    @ApiOperation(value = "效验验证码", notes = "传入验证码效验")
+    @ApiOperation(value = "效验邮箱验证码", notes = "传入验证码效验")
     @ApiImplicitParams({@ApiImplicitParam(name = "id", value = "用户id", paramType = "path", required = true, dataType = "Long"),
             @ApiImplicitParam(name = "captcha", value = "验证码", required = true, dataType = "Integer")}
     )
     @PutMapping("/card/binding/email/{id}")
-    public ResponseVO StudentVerifyEmail(@PathVariable("id") Long id, @RequestBody Map<String, String> captcha) {
-        try {
-            return ResultUtil.success("验证成功", studentCardService.verifyCode(id, captcha.get("captcha")));
-        }catch (Exception e){return ResultUtil.error("验证失败");
-        }
+    public ResponseVO StudentVerifyEmail(@PathVariable("id") Long id, @RequestBody Map<String, String> captcha) throws ResourceIsNullException {
+        return ResultUtil.success("验证成功", studentCardService.verifyCode(id, captcha.get("captcha")));
     }
 }
-
-
-
 
 

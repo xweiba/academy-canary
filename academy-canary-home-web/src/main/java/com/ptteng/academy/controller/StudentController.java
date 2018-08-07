@@ -6,6 +6,8 @@ import com.ptteng.academy.business.enums.GradeEnum;
 import com.ptteng.academy.business.enums.ResponseCodeEnum;
 import com.ptteng.academy.business.query.StudentCardQuery;
 import com.ptteng.academy.business.vo.*;
+import com.ptteng.academy.framework.exception.FindNullException;
+import com.ptteng.academy.framework.exception.ResourceIsNullException;
 import com.ptteng.academy.service.SiginService;
 import com.ptteng.academy.service.StudentCardService;
 import com.ptteng.academy.util.ResultUtil;
@@ -39,72 +41,48 @@ public class StudentController {
     SiginService siginService;
     @Autowired
     StudentCardService studentCardService;
+
     @ApiOperation(value = "首页点击签到", notes = "首页查看用户签到信息")
-    @ApiImplicitParam(name = "id", value = "用户id",paramType = "path",required = true, dataType = "long")
+    @ApiImplicitParam(name = "id", value = "用户id", paramType = "path", required = true, dataType = "long")
     @GetMapping("/signing/{id}")
-    public ResponseVO getSigning(@PathVariable("id") Long id) throws ParseException {
-        try {
-            return ResultUtil.success("getSigning 执行了", siginService.selectSiginById(id));
-        } catch (NullPointerException e) {
-            return ResultUtil.error("指定用户不存在");
-        }
+    public ResponseVO getSigning(@PathVariable("id") Long id) throws ParseException, ResourceIsNullException {
+        return ResultUtil.success("查看用户签到信息成功", siginService.selectSiginById(id));
     }
 
     @ApiOperation(value = "签到页中用户点击签到", notes = "通过用户ID判断是否签到")
-    @ApiImplicitParam(name = "id", value = "用户id", required = true,paramType = "path", dataType = "long")
+    @ApiImplicitParam(name = "id", value = "用户id", required = true, paramType = "path", dataType = "long")
     @PutMapping("/signing/{id}")
-    public ResponseVO signing(@PathVariable("id") Long id) {
-        try {
-            return siginService.sigin(id);
-        }catch (NullPointerException e) {
-            return ResultUtil.error("指定用户不存在");
-        }
+    public ResponseVO signing(@PathVariable("id") Long id) throws ResourceIsNullException {
+        return ResultUtil.success("签到成功", siginService.sigin(id));
     }
 
     @ApiOperation(value = "学生证首页", notes = "通过用户ID获取首页信息")
-    @ApiImplicitParam(name = "id", value = "用户id", required = true,paramType = "path", dataType = "long")
+    @ApiImplicitParam(name = "id", value = "用户id", required = true, paramType = "path", dataType = "long")
     @GetMapping("/card/{id}")
-    public ResponseVO studentCard(@PathVariable("id") Long id) {
-        try {
-            StudentCardDto studentCardDto = studentCardService.selectAll(id);
-            return ResultUtil.success("查询成功", studentCardDto);
-        } catch (Exception e) {
-            return ResultUtil.error("用户不存在");
-        }
+    public ResponseVO studentCard(@PathVariable("id") Long id) throws ResourceIsNullException {
+        return ResultUtil.success("学生证首页查询成功", studentCardService.selectAll(id));
     }
 
     @ApiOperation(value = "学生证资料编辑", notes = "需要传用户头像")
     @PutMapping("/card/{id}")
-    public ResponseVO updateStudentCard(@PathVariable("id") Long id,@RequestBody @ApiParam(name = "用户对象",value = "传入json格式",required = true) StudentCardQuery studentCardQuery) {
+    public ResponseVO updateStudentCard(@PathVariable("id") Long id, @RequestBody @ApiParam(name = "用户对象", value = "传入json格式", required = true) StudentCardQuery studentCardQuery) throws ResourceIsNullException {
         studentCardQuery.setId(id);
         // 文件和参数一起上传, 待调试
-        boolean m = false;
-        try {
-             m = studentCardService.updateStudentCard(studentCardQuery);
-            if (m) {
-                return ResultUtil.success("修改成功");
-            }
-            return ResultUtil.success("修改失败");
-        } catch (NullPointerException e) {
-            return ResultUtil.error(ResponseCodeEnum.USER_UNEXIST);
-        }
-
+        studentCardService.updateStudentCard(studentCardQuery);
+        return ResultUtil.success("学生证资料修改成功");
     }
+
     @ApiOperation(value = "获取收藏文章信息", notes = "传入用户ID返回收藏文章列表")
-    @ApiImplicitParams({@ApiImplicitParam( name = "id", value = "用户id", paramType = "path",required = true, dataType = "Long"),@ApiImplicitParam(name = "pageNum",value = "显示的页数",required = true,dataType = "int")})
+    @ApiImplicitParams({@ApiImplicitParam(name = "id", value = "用户id", paramType = "path", required = true, dataType = "Long"), @ApiImplicitParam(name = "pageNum", value = "显示的页数", required = true, dataType = "int")})
     @PostMapping("/card/collect/articles/{id}")
-    public ResponseRowsVO getCollectArticle(@PathVariable("id") Long id, @RequestBody Map<String,Integer> pageNum) {
-        try {
-            return ResultUtil.success("获取成功", studentCardService.findCollectArticle(id, pageNum.get("pageNum")));
-        }catch (NullPointerException e) {
-            return ResultUtil.success("用户不存在",studentCardService.findCollectArticle(id, pageNum.get("pageNum")));
-        }
+    public ResponseRowsVO getCollectArticle(@PathVariable("id") Long id, @RequestBody Map<String, Integer> pageNum) throws FindNullException {
+        return ResultUtil.success("获取收藏文章信息成功", studentCardService.findCollectArticle(id, pageNum.get("pageNum")));
     }
 
     @ApiOperation(value = "获取收藏视频信息", notes = "传入用户ID返回收藏视频列表")
-    @ApiImplicitParams({@ApiImplicitParam( name = "id", value = "用户id", paramType = "path",required = true, dataType = "Long"),@ApiImplicitParam(name = "pageNum",value = "显示的页数",required = true,dataType = "int")})
+    @ApiImplicitParams({@ApiImplicitParam(name = "id", value = "用户id", paramType = "path", required = true, dataType = "Long"), @ApiImplicitParam(name = "pageNum", value = "显示的页数", required = true, dataType = "int")})
     @PostMapping("/card/collect/videos/{id}")
-    public ResponseRowsVO getCollectVideo(@PathVariable("id") Long id, @RequestBody Map<String,Integer> pageNum) {
-        return ResultUtil.success("getCollectArticle 已执行", studentCardService.findCollectVideo(id, pageNum.get("pageNum")));
+    public ResponseRowsVO getCollectVideo(@PathVariable("id") Long id, @RequestBody Map<String, Integer> pageNum) throws FindNullException {
+        return ResultUtil.success("获取收藏视频信息成功", studentCardService.findCollectVideo(id, pageNum.get("pageNum")));
     }
 }

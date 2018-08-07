@@ -46,7 +46,7 @@ public class TaskConfig implements SchedulingConfigurer {
                 //遍历map 判断时间
                 for (Map.Entry<String, Date> entry :
                         fileList.entrySet()) {
-                    if(new Date().getTime() >= entry.getValue().getTime()) {
+                    if (new Date().getTime() >= entry.getValue().getTime()) {
                         // 设置路径
                         File file = new File(DEFAULT_TEMP_DIR + entry.getKey());
                         log.info("缓存时间已到, 开始删除文件: " + file.getPath());
@@ -57,7 +57,8 @@ public class TaskConfig implements SchedulingConfigurer {
                             // 这里不能直接删除key, 因为正在遍历它,添加到list后面再删除
                             del_keys.add(entry.getKey());
                         }
-                    } else log.info("还未到失效时间: " + dateFormat.format(entry.getValue()));
+                    } else
+                        log.info("还未到失效时间: " + dateFormat.format(entry.getValue()));
                 }
                 // 删除key
                 if (!del_keys.isEmpty()) {

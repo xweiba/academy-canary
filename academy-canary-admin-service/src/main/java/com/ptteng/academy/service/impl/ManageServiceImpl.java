@@ -59,17 +59,17 @@ public class ManageServiceImpl implements ManageService {
         moduleQuery.setRole_id(getOnlineAccount().getRole_id());
         List<ModuleDto> moduleDtoList = moduleMapper.findModuleByName(moduleQuery);
         if (moduleDtoList.isEmpty()) {
-            throw new FindNullException();
+            throw new FindNullException("提醒: 该条件下无法搜索到模块~ 请尝试更换搜索条件~");
         }
         log.debug(JSONObject.toJSONString(moduleDtoList));
-        return new PageInfo<ModuleDto>(moduleDtoList);
+        return new PageInfo<>(moduleDtoList);
     }
 
     @Override
     public ModuleDto findModuleById(Long id) throws Exception {
         Module module = moduleMapper.selectByPrimaryKey(id);
         if (module == null) {
-            throw new ResourceIsNullException();
+            throw new ResourceIsNullException("提醒: 该模块不存在~");
         }
         ModuleDto moduleDto = new ModuleDto();
         BeanUtils.copyProperties(module, moduleDto);
@@ -82,7 +82,7 @@ public class ManageServiceImpl implements ManageService {
         moduleMapper.deleteRoleModulesByModuleId(id);
         int deleteInt = moduleMapper.deleteByPrimaryKey(id);
         if (deleteInt == 0) {
-            throw new ResourceIsNullException();
+            throw new ResourceIsNullException("提醒: 该模块不存在~");
         }
         return true;
     }
@@ -95,7 +95,7 @@ public class ManageServiceImpl implements ManageService {
         module.setUpdate_by(getOnlineAccount().getUsername());
         int updateStatus = moduleMapper.updateByPrimaryKeySelective(module);
         if (updateStatus == 0) {
-            throw new ResourceIsNullException();
+            throw new ResourceIsNullException("提醒: 未做出修改或更新的模块不存在~");
         }
         return true;
     }
@@ -135,7 +135,7 @@ public class ManageServiceImpl implements ManageService {
         moduleQuery.setRole_id(getOnlineAccount().getRole_id());
         List<ModuleDto> moduleDtoList = moduleMapper.findModuleByName(moduleQuery);
         if (moduleDtoList.isEmpty()) {
-            throw new FindNullException();
+            throw new FindNullException("提醒: 该用户一个模块权限都木有~");
         }
         return moduleDtoList;
     }
@@ -145,7 +145,7 @@ public class ManageServiceImpl implements ManageService {
         PageHelper.startPage(roleQuery.getPageNum(), roleQuery.getPageSize());
         List<RoleDto> roleList = roleMapper.findRoleByQuery(roleQuery);
         if (roleList.isEmpty()) {
-            throw new FindNullException();
+            throw new FindNullException("提醒: 该搜索条件下一个角色都没有~");
         }
         return new PageInfo<>(roleList);
     }
@@ -154,7 +154,7 @@ public class ManageServiceImpl implements ManageService {
     public List<RoleDto> findRoleNames() throws Exception {
         List<RoleDto> roleDtoList = roleMapper.findRoleNames();
         if (roleDtoList.isEmpty()) {
-            throw new FindNullException();
+            throw new FindNullException("提醒: 该搜索条件下一个角色都没有~");
         }
         return roleDtoList;
     }
@@ -163,7 +163,7 @@ public class ManageServiceImpl implements ManageService {
     public RoleDto findRoleById(Long id) throws Exception {
         RoleDto roleDto = roleMapper.findRoleById(id);
         if (roleDto==null) {
-            throw new ResourceIsNullException();
+            throw new ResourceIsNullException("提醒: 该角色不存在");
         }
         List<Long> modules = roleMapper.findRoleModuleById(id);
         roleDto.setModuleIds(modules);
@@ -177,7 +177,7 @@ public class ManageServiceImpl implements ManageService {
         roleMapper.deleteRoleModulesByRoleId(id);
         Integer deleteStatus = roleMapper.deleteByPrimaryKey(id);
         if (deleteStatus == 0){
-            throw new ResourceIsNullException();
+            throw new ResourceIsNullException("提醒: 该角色不存在~");
         }
         return true;
     }
@@ -243,7 +243,7 @@ public class ManageServiceImpl implements ManageService {
         PageHelper.startPage(accountQuery.getPageNum(), accountQuery.getPageSize());
         List<AccountDto> accountDtoList = accountMapper.findAccountByQuery(accountQuery);
         if (accountDtoList.isEmpty()) {
-            throw new FindNullException();
+            throw new FindNullException("提醒: 该搜索条件下一个账号都木有~ 请尝试更换搜索条件");
         }
         return new PageInfo<>(accountDtoList);
     }
@@ -258,7 +258,7 @@ public class ManageServiceImpl implements ManageService {
     public AccountDto findAccountById(Long id) throws Exception {
         AccountDto accountDto = accountMapper.findAccountById(id);
         if (accountDto == null) {
-            throw new FindNullException();
+            throw new FindNullException("提醒: 该账号不存在~");
         }
         return accountDto;
     }
@@ -292,7 +292,7 @@ public class ManageServiceImpl implements ManageService {
         int updateStatus = accountMapper.updateByPrimaryKeySelective(account);
 
         if (updateStatus == 0) {
-            throw new ResourceIsNullException();
+            throw new ResourceIsNullException("提醒: 密码未更新或该账号不存在~");
         }
         return true;
     }
@@ -300,7 +300,7 @@ public class ManageServiceImpl implements ManageService {
     @Override
     public Boolean deleteAccountById(Long id) throws Exception {
         if (accountMapper.deleteByPrimaryKey(id) == 0) {
-            throw new ResourceIsNullException();
+            throw new ResourceIsNullException("提醒: 该账号不存在");
         }
         return true;
     }

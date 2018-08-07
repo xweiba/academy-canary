@@ -8,6 +8,8 @@ import com.ptteng.academy.business.query.HomeVideoQuery;
 import com.ptteng.academy.business.query.PageQuery;
 import com.ptteng.academy.business.vo.ResponseRowsVO;
 import com.ptteng.academy.business.vo.ResponseVO;
+import com.ptteng.academy.framework.exception.FindNullException;
+import com.ptteng.academy.framework.exception.ResourceIsNullException;
 import com.ptteng.academy.service.StudyService;
 import com.ptteng.academy.util.ResultUtil;
 import io.swagger.annotations.*;
@@ -41,22 +43,22 @@ public class StudyController {
     /*视频*/
     @ApiOperation(value = "获取视频Banner列表", notes = "传入实体类")
     @PostMapping("/study/videos")
-    public ResponseRowsVO getVideosBanner(@RequestBody HomeVideoQuery homeVideoQuery) {
+    public ResponseRowsVO getVideosBanner(@RequestBody HomeVideoQuery homeVideoQuery) throws FindNullException {
         return ResultUtil.success("获取视频Banner数据成功", studyService.findVideoBannerByQuery(homeVideoQuery));
     }
 
     @ApiOperation(value = "下拉刷新获取新card列表", notes = "传入实体类")
     @ApiImplicitParam(name = "homeVideoQuery", value = "实体类其中有每页显示的条数和要显示的页数，还有年级和学科", required = true, dataType = "HomeVideoQuery")
     @PostMapping("/study/videos/pull")
-    public ResponseRowsVO getVideos(@RequestBody HomeVideoQuery homeVideoQuery) {
+    public ResponseRowsVO getVideos(@RequestBody HomeVideoQuery homeVideoQuery) throws FindNullException {
         return ResultUtil.success("下拉刷新获取数据成功", studyService.findVideosByQuery(homeVideoQuery));
     }
 
     @ApiOperation(value = "获取视频详情", notes = "传入用户ID和视频Id获取视频详情")
     @ApiImplicitParams({@ApiImplicitParam(name = "stuId", value = "传入学员ID", required = true, dataType = "Long"), @ApiImplicitParam(name = "id", value = "视频Id", paramType = "path", required = true, dataType = "Long")})
     @PostMapping("/study/video/{id}")
-    public ResponseVO getVideo(@PathVariable("id") Long id, @RequestBody Map<String,Long> stuId) {
-        return ResultUtil.success("getVideo 已执行", studyService.findStudyByQuery(id, stuId.get("stuId"), 2));
+    public ResponseVO getVideo(@PathVariable("id") Long id, @RequestBody Map<String, Long> stuId) throws ResourceIsNullException {
+        return ResultUtil.success("获取视频详情成功", studyService.findStudyByQuery(id, stuId.get("stuId"), 2));
     }
 
     @ApiOperation(value = "视频点赞操作", notes = "传入视频id和用户id-stuId点赞操作")
@@ -64,8 +66,8 @@ public class StudyController {
             @ApiImplicitParam(name = "stuId", value = "用户Id", required = true, dataType = "Long")
     })
     @PutMapping("/study/video/{id}/praise")
-    public ResponseVO videoPraise(@PathVariable("id") Long id, @RequestBody Map<String,Long> stuId) {
-        return ResultUtil.success("videoPraise 已执行", studyService.updatePraiseCollectStatus(id, stuId.get("stuId"), 1));
+    public ResponseVO videoPraise(@PathVariable("id") Long id, @RequestBody Map<String, Long> stuId) {
+        return ResultUtil.success("视频点赞成功", studyService.updatePraiseCollectStatus(id, stuId.get("stuId"), 1));
     }
 
     @ApiOperation(value = "视频收藏操作", notes = "传入视频id和用户id-stuId收藏操作")
@@ -73,33 +75,29 @@ public class StudyController {
             @ApiImplicitParam(name = "stuId", value = "用户Id", required = true, dataType = "Long")
     })
     @PutMapping("/study/video/{id}/collect")
-    public ResponseVO videoCollect(@PathVariable("id") Long id,@RequestBody  Map<String,Long> stuId) {
+    public ResponseVO videoCollect(@PathVariable("id") Long id, @RequestBody Map<String, Long> stuId) {
         log.info("videoCollect传入参数: " + id + stuId);
-        return ResultUtil.success("videoPraise 已执行", studyService.updatePraiseCollectStatus(id, stuId.get("stuId"), 2));
+        return ResultUtil.success("视频收藏成功", studyService.updatePraiseCollectStatus(id, stuId.get("stuId"), 2));
     }
 
     @ApiOperation(value = "获取banner文章信息", notes = "要显示的页数")
     @PostMapping("/study/article/banners")
-    public ResponseRowsVO getArticleBanner(@ApiParam @RequestBody Map<String,Integer> num) throws Exception {
-        Integer integer = num.get("num");
-        if (integer == null) {
-            throw new NullPointerException();
-        }
-        List<HomeBannerListDto> banners = studyService.findArticleBanneryByQuery(integer);
-        return ResultUtil.success("getArticleBanner 已执行", banners);
+    public ResponseRowsVO getArticleBanner(@ApiParam @RequestBody Map<String, Integer> num) throws Exception {
+        log.debug("num: " + num.get("num"));
+        return ResultUtil.success("获取banner文章成功", studyService.findArticleBanneryByQuery(num.get("num")));
     }
 
     @ApiOperation(value = "获取card文章列表", notes = "传入实体类")
     @PostMapping("/study/articles")
-    public ResponseRowsVO getArticles(@ApiParam(name = "pageQuery", value = "实体类其中有每页显示的条数和要显示的页数") @RequestBody PageQuery pageQuery) {
-        return ResultUtil.success("getArticles 已执行", studyService.findArticleByQuery(pageQuery));
+    public ResponseRowsVO getArticles(@ApiParam(name = "pageQuery", value = "实体类其中有每页显示的条数和要显示的页数") @RequestBody PageQuery pageQuery) throws FindNullException {
+        return ResultUtil.success("获取card文章列表成功", studyService.findArticleByQuery(pageQuery));
     }
 
     @ApiOperation(value = "获取card文章详情信息", notes = "通过文章id获取详情")
-    @ApiImplicitParam(name = "id", value = "文章id", required = true,paramType = "path",dataType = "Long")
+    @ApiImplicitParam(name = "id", value = "文章id", required = true, paramType = "path", dataType = "Long")
     @PostMapping("/study/article/{id}")
-    public ResponseVO getArticle(@PathVariable("id") Long id, @ApiParam (name = "stuId", value = "用户Id", required = true) @RequestBody Map<String,Long> stuId) {
-        return ResultUtil.success("getArticle 已执行", studyService.findArticleById(id,stuId.get("stuId")));
+    public ResponseVO getArticle(@PathVariable("id") Long id, @ApiParam(name = "stuId", value = "用户Id", required = true) @RequestBody Map<String, Long> stuId) throws ResourceIsNullException {
+        return ResultUtil.success("获取card文章详情成功", studyService.findArticleById(id, stuId.get("stuId")));
     }
 
     @ApiOperation(value = "文章点赞操作", notes = "传入文章id和用户id-stuId点赞操作")
@@ -107,17 +105,18 @@ public class StudyController {
             @ApiImplicitParam(name = "stuId", value = "用户Id", required = true, dataType = "Long")
     })
     @PutMapping("/study/article/{id}/praise")
-    public ResponseVO articlePraise(@PathVariable("id") Long id,@RequestBody Map<String,Long> stuId) {
+    public ResponseVO articlePraise(@PathVariable("id") Long id, @RequestBody Map<String, Long> stuId) {
         return ResultUtil.success("点赞操作成功", studyService.updatePraiseCollectStatus(id, stuId.get("stuId"), 1));
     }
 
     @ApiOperation(value = "文章收藏操作", notes = "传入视频id和用户id-stuId收藏操作")
-    @ApiImplicitParams({@ApiImplicitParam(name = "id", paramType = "path", value = "视频id", required = true, dataType = "Long"),
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "id", paramType = "path", value = "视频id", required = true, dataType = "Long"),
             @ApiImplicitParam(name = "stuId", value = "用户Id", required = true, dataType = "Long")
     })
     @PutMapping("/study/article/{id}/collect")
-    public ResponseVO articleCollect(@PathVariable("id") Long id,@RequestBody Map<String,Long> stuId) {
+    public ResponseVO articleCollect(@PathVariable("id") Long id, @RequestBody Map<String, Long> stuId) {
         log.info("videoCollect传入参数: " + id + stuId);
-        return ResultUtil.success("收藏操作成功", studyService.updatePraiseCollectStatus(id,stuId.get("stuId") , 2));
+        return ResultUtil.success("收藏操作成功", studyService.updatePraiseCollectStatus(id, stuId.get("stuId"), 2));
     }
 }

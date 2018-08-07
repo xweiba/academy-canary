@@ -21,7 +21,6 @@ import org.springframework.stereotype.Component;
 public class WeixinAccessTokenTask {
     private static Logger logger = LoggerFactory.getLogger(WeixinAccessTokenTask.class);
 
-
     // 第一次延迟1秒执行，当执行完后7100秒再执行
     @Scheduled(initialDelay = 1000, fixedDelay = 7000 * 1000 )
     public void getWeixinAccessToken(){
@@ -34,8 +33,6 @@ public class WeixinAccessTokenTask {
             e.printStackTrace();
             // 此处可能陷入死循环
         }
-
     }
-
 }
 

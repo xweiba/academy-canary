@@ -78,7 +78,7 @@ public class ConsumeServiceImpl implements ConsumeService {
         Boolean remove = authorMapper.deleteByPrimaryKey(primaryKey) > 0;
         log.debug("remove:" + remove);
         if (!remove) {
-            throw new ResourceIsNullException();
+            throw new ResourceIsNullException("提醒: 该作者已关联文章或不存在~");
         }
         return true;
     }
@@ -105,7 +105,7 @@ public class ConsumeServiceImpl implements ConsumeService {
     public AuthorDto getByPrimaryKey(Long primaryKey) throws Exception {
         Author author = authorMapper.selectByPrimaryKey(primaryKey);
         if (author == null){
-            throw new FindNullException();
+            throw new FindNullException("提醒: 该作者不存在~");
         }
         AuthorDto authorDto = new AuthorDto();
         BeanUtils.copyProperties(author, authorDto);
@@ -121,7 +121,7 @@ public class ConsumeServiceImpl implements ConsumeService {
     public List<AuthorDto> listAll() throws Exception {
         List<Author> authorList = authorMapper.selectAll();
         if (authorList.isEmpty()){
-            throw new FindNullException();
+            throw new FindNullException("提醒: 作者一个都木有了, 赶紧去视频编辑中添加吧!");
         }
         List<AuthorDto> authorDtoList = new ArrayList<AuthorDto>();
         for (Author au :
@@ -145,7 +145,7 @@ public class ConsumeServiceImpl implements ConsumeService {
         author.setAuthor_name(name);
         author = authorMapper.selectOne(author);
         if (author ==null){
-            throw new ResourceIsNullException("该老师不存在");
+            throw new ResourceIsNullException("该老师不存在~");
         }
         return author.getId();
     }
@@ -163,9 +163,9 @@ public class ConsumeServiceImpl implements ConsumeService {
     public PageInfo<UserBackDto> findUser(UserQuery userQuery) throws Exception {
         log.info("查询用户列表传入参数：" + userQuery);
         PageHelper.startPage(userQuery.getPageNum(), userQuery.getPageSize());
-        List<UserBackDto> userBackDtoList = userMapper.findUser(userQuery);
+        List<UserBackDto> userBackDtoList = userMapper.findUserList(userQuery);
         if (userBackDtoList.isEmpty()) {
-            throw new FindNullException();
+            throw new FindNullException("提醒: 该条件下无法搜索到用户~ 请尝试更换搜索条件~");
         }
         return new PageInfo<UserBackDto>(userBackDtoList);
     }
@@ -209,7 +209,7 @@ public class ConsumeServiceImpl implements ConsumeService {
         Integer integer = userMapper.updateUserStatus(id, new Date(),manageService.getOnlineAccount().getUsername());
         // 0 为无变化. 说明id不存在
         if (integer == 0){
-            throw new ResourceIsNullException();
+            throw new ResourceIsNullException("提醒: 该用户不存在或未做出修改~");
         }
         return integer;
     }
@@ -218,7 +218,7 @@ public class ConsumeServiceImpl implements ConsumeService {
     public UserDto findUserById(Long id) throws Exception {
         User user = userMapper.selectByPrimaryKey(id);
         if (user == null) {
-            throw new FindNullException();
+            throw new FindNullException("提醒: 该用户不存在~");
         }
         UserDto userDto = new UserDto();
         BeanUtils.copyProperties(user, userDto);

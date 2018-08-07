@@ -4,8 +4,9 @@ import com.github.pagehelper.PageInfo;
 import com.ptteng.academy.business.dto.HomeVideoDto;
 import com.ptteng.academy.business.dto.SigningDto;
 import com.ptteng.academy.business.dto.StudentCardDto;
-import com.ptteng.academy.business.dto.StudentCollectArticleDto;
 import com.ptteng.academy.business.query.StudentCardQuery;
+import com.ptteng.academy.framework.exception.FindNullException;
+import com.ptteng.academy.framework.exception.ResourceIsNullException;
 
 /**
  * description:
@@ -14,17 +15,17 @@ import com.ptteng.academy.business.query.StudentCardQuery;
  * Time:15:19
  */
 public interface StudentCardService {
-    StudentCardDto selectAll(Long id);
+    StudentCardDto selectAll(Long id) throws ResourceIsNullException;
 
-    boolean updateStudentCard(StudentCardQuery studentCardQuery);
+    boolean updateStudentCard(StudentCardQuery studentCardQuery) throws ResourceIsNullException;
 
-    PageInfo<StudentCollectArticleDto> findCollectArticle(Long id, Integer pageNum);
+    PageInfo findCollectArticle(Long id, Integer pageNum) throws FindNullException;
 
-    PageInfo<HomeVideoDto> findCollectVideo(Long id, Integer pageNum);
+    PageInfo<HomeVideoDto> findCollectVideo(Long id, Integer pageNum) throws FindNullException;
 
-    SigningDto verifyCode(Long id, String code);
+    SigningDto verifyCode(Long id, String code) throws ResourceIsNullException;
 
-    SigningDto verifyCodePhone(Long id, String code);
+    SigningDto verifyCodePhone(Long id, String code) throws ResourceIsNullException;
 
 }
 

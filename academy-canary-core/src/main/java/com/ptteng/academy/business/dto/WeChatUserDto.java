@@ -34,4 +34,5 @@ public class WeChatUserDto {
     private String language;
     // 用户头像
     private String headImgUrl;
+    private Boolean status;
 }

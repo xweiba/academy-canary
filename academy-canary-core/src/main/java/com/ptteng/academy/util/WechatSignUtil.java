@@ -1,5 +1,7 @@
 package com.ptteng.academy.util;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -15,6 +17,7 @@ import java.util.UUID;
  * @create: 2018-07-04 00:58
  **/
 
+@Slf4j
 public class WechatSignUtil {
 //    public static void main(String[] args) {
 //        String jsapi_ticket = "jsapi_ticket";
@@ -40,7 +43,7 @@ public class WechatSignUtil {
                 "&noncestr=" + nonce_str +
                 "&timestamp=" + timestamp +
                 "&url=" + url;
-        System.out.println(string1);
+        log.debug("待加密参数: " + string1);
 
         try
         {

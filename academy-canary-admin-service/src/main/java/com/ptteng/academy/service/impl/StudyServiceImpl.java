@@ -129,7 +129,7 @@ public class StudyServiceImpl implements StudyService {
         PageInfo bean = new PageInfo<StudyDto>(studyDtoList);
         // 判断是否查询到数据
         if (CollectionUtils.isEmpty(studyDtoList)) {
-            throw new FindNullException();
+            throw new FindNullException("提醒: 该条件下一篇文章都木有~ 请尝试更换搜索条件~");
         }
         if (studyQuery.getStudy_type() == 1) {
             List<ArticleListDto> articleListDtoList = new ArrayList<>();
@@ -176,16 +176,16 @@ public class StudyServiceImpl implements StudyService {
     @Override
     public Boolean updateStatusById(Long id) throws Exception {
         if (!studyMapper.updateStatusById(id)) {
-            throw new ResourceIsNullException();
+            throw new ResourceIsNullException("提醒: 更新的文章不存在~");
         }
         return true;
     }
 
     @Override
     public ArticleDto findArticleById(Long id) throws Exception {
-        Study study =  studyMapper.selectByPrimaryKey(id);
+        Study study = studyMapper.selectByPrimaryKey(id);
         if (study == null) {
-            throw new FindNullException();
+            throw new FindNullException("提醒: 该文章不存在~");
         }
         ArticleDto articleDto = new ArticleDto();
         BeanUtils.copyProperties(study, articleDto);
@@ -197,9 +197,8 @@ public class StudyServiceImpl implements StudyService {
     public VideoDto findVideoById(Long id) throws Exception {
         Study study = studyMapper.selectByPrimaryKey(id);
         if (study == null) {
-            throw new FindNullException();
+            throw new FindNullException("提醒: 该文章不存在~");
         }
-
         VideoDto videoDto = new VideoDto();
         BeanUtils.copyProperties(study, videoDto);
         log.debug("findVideoById: " + videoDto.toString());

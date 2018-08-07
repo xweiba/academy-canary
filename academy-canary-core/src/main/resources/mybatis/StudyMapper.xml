@@ -94,15 +94,12 @@
             AND sd.study_type = 99
         </if>
         <if test="study_type!=null">
-            AND sd.study_type = #{study_type}
+            AND sd.classify = 2 AND sd.study_type = #{study_type}
             <if test="grade!=0 and grade!=null">
                 AND sd.grade = #{grade}
             </if>
             <if test="subject!=0 and subject!=null">
                 AND sd.subject = #{subject}
-            </if>
-            <if test="classify!=0 and classify!=null">
-                AND sd.classify = 2
             </if>
         </if>
         order by sd.update_at ASC
@@ -112,7 +109,7 @@
             resultType="homeBannerListDto">
         SELECT * FROM (
         SELECT
-        sd.id, sd.cover_plan_url, sd.title, sd.study_type, sd.`status`,
+        sd.id, sd.cover_plan_url, sd.title, sd.study_type, sd.`status`, sd.classify,
         (SELECT COUNT(id) FROM study_user WHERE type = 1 AND study_id = sd.id)
         AS praise
         FROM
@@ -123,15 +120,12 @@
             AND study_type = 99
         </if>
         <if test="study_type!=null">
-            AND study_type = #{study_type}
+            AND study_type = #{study_type} AND classify = 1
             <if test="grade!=0 and grade!=null">
                 AND grade = #{grade}
             </if>
             <if test="subject!=0 and subject!=null">
                 AND subject = #{subject}
-            </if>
-            <if test="classify!=0 and classify!=null">
-                AND classify = 1
             </if>
         </if>
         <!-- 取点赞数最高的8条数据 -->

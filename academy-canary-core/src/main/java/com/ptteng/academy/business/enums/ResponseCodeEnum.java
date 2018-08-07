@@ -23,13 +23,16 @@ public enum ResponseCodeEnum {
     INVALID_ACCESS(500, "无效的请求，该请求已过期！"),
     DELETE_ERROR(500, "删除失败！"),
     USER_UNEXIST(501,"用户或请求资源不存在！"),
-    BEAN_UTIL_ERROR(200,"BeanUtils 数据源为空"),
+    BEAN_UTIL_ERROR(500,"数据转换失败! 请检查传入参数!"),
     CAST_TO_ERROR(500, "类型转换失败!"),
     IO_EXCEPTION_ERROR(500,"文件路径设置失败"),
     FILE_NOT_FOUND_ERROR(500,"File转换InputStream失败"),
-    SQL_PARAMETER_ERROR(500, "属性值不能与已有数据重复或为空"),
+    SQL_PARAMETER_ERROR(500, "属性值不能为空"),
+    SQL_KEY_PARAMETER_ERROR(500, "提交的属性值不能与已有属性值重复"),
     SQL_RESOURCE_ERROR(500,"资源不存在"),
-    SQL_PARAM_ERROR(500,"查询参数错误");
+    SQL_PARAM_ERROR(500,"查询参数错误"),
+    REDIS_GET_ERROR(500,"Redis初始化失败"),
+    SMS_SEND_ERROR(500,"短信发送失败");
 
     private Integer code;
     private String message;
