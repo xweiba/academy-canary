@@ -24,7 +24,7 @@ public interface StudyService {
 
     Boolean updatePraiseCollectStatus(Long studyId, Long userId, Integer type);
 
-    List<HomeBannerListDto> findArticleBanneryByQuery(Integer num);
+    List<HomeBannerListDto> findArticleBanneryByQuery(Integer num) throws Exception;
 
     PageInfo<HomeArticleListDto> findArticleByQuery(PageQuery pageQuery);
 

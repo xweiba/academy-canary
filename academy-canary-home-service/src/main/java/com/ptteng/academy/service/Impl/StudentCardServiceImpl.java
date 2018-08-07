@@ -14,6 +14,7 @@ import com.ptteng.academy.util.WechatDoloadImgUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
 
@@ -32,6 +33,8 @@ public class StudentCardServiceImpl implements StudentCardService {
     UserMapper userMapper;
     @Autowired
     StudyMapper studyMapper;
+    @Autowired
+    StringRedisTemplate stringRedisTemplate;
 
     //查询学生证资料
     @Override
@@ -81,5 +84,65 @@ public class StudentCardServiceImpl implements StudentCardService {
         PageInfo bean = new PageInfo<HomeVideoDto>(studyMapperCollectVideo);
         bean.setList(studyMapperCollectVideo);
         return bean;
+    }
+
+    //效验邮箱验证码
+    @Override
+    public SigningDto verifyCode(Long id, String code) {
+        SigningDto signingDto = new SigningDto();
+        try {
+            String email = stringRedisTemplate.opsForValue().get(code);
+            User user3 = new User();
+            user3.setId(id);
+            User user1= userMapper.selectOne(user3);
+            if (user1.getPhone() != null && !user1.getBinding()) {
+                user1.setBinding(true);
+                user1.setBean(user1.getBean()+ 20);
+                signingDto.setGainBean(20);
+                userMapper.updateByPrimaryKeySelective(user1);
+            }
+            signingDto.setState(true);
+            log.info("验证成功后的邮箱：" + email);
+            User user = new User();
+            user.setEmail(email);
+            user.setId(id);
+            userMapper.updateByPrimaryKeySelective(user);
+            return signingDto;
+
+        } catch (Exception e) {
+            signingDto.setState(false);
+            log.info("验证失败" + e);
+            return signingDto;
+        }
+    }
+
+    //效验手机验证码
+    @Override
+    public SigningDto verifyCodePhone(Long id, String code) {
+            SigningDto signingDto = new SigningDto();
+        try {
+            String phone = stringRedisTemplate.opsForValue().get(code);
+            User user3 = new User();
+            user3.setId(id);
+            User user1= userMapper.selectOne(user3);
+            if (user1.getEmail() != null && !user1.getBinding()) {
+                user1.setBinding(true);
+                user1.setBean(user1.getBean()+ 20);
+                signingDto.setGainBean(20);
+                userMapper.updateByPrimaryKeySelective(user1);
+            }
+            Long lPhone = Long.parseLong(phone);
+            log.info("验证成功后的电话：" +phone);
+            User user = new User();
+            user.setPhone(lPhone);
+            user.setId(id);
+            userMapper.updateByPrimaryKeySelective(user);
+            return signingDto;
+        } catch (Exception e) {
+            signingDto.setState(false);
+            log.info("验证失败" + e);
+            return signingDto;
+        }
+
     }
 }

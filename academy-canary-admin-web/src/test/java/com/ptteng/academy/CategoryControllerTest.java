@@ -27,7 +27,7 @@ public class CategoryControllerTest {
     private StudyService studyService;
 
     @Test
-    public void listAll() {
+    public void listAll() throws Exception {
         List<AuthorDto> authorList = consumeService.listAll();
         for (AuthorDto au :
                 authorList) {
@@ -47,7 +47,7 @@ public class CategoryControllerTest {
         System.out.println(consumeService.insert(authorDto).toString());
     }
     @Test
-    public void delete() {
+    public void delete() throws Exception {
         Assert.assertEquals(true, consumeService.removeByPrimaryKey(4L));
     }
     @Test

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException;
 import com.ptteng.academy.business.Converfor;
 import com.ptteng.academy.business.dto.*;
 import com.ptteng.academy.business.query.HomeVideoQuery;
@@ -13,6 +14,7 @@ import com.ptteng.academy.persistence.mapper.StudyMapper;
 import com.ptteng.academy.service.StudyService;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.mybatis.spring.MyBatisSystemException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -87,7 +89,7 @@ public class StudyServiceImpl implements StudyService{
     }
 //查询banner文章
     @Override
-    public List<HomeBannerListDto> findArticleBanneryByQuery(Integer num) {
+    public List<HomeBannerListDto> findArticleBanneryByQuery(Integer num) throws Exception{
         return studyMapper.findBannerArticleByQuery(num);
     }
 

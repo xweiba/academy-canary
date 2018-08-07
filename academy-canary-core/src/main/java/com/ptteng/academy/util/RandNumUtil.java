@@ -39,6 +39,7 @@ public class RandNumUtil {
         return pwd.toString();
     }
 
+    // 生成指定范围的随机数
     public static Integer getRandRange(int min, int max) {
         int randNum = ThreadLocalRandom.current().nextInt(min, max + 1);
         return randNum;

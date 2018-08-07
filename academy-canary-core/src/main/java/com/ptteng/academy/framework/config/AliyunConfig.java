@@ -15,6 +15,7 @@ import com.ptteng.academy.util.RandNumUtil;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.text.SimpleDateFormat;
@@ -33,6 +34,8 @@ public class AliyunConfig {
     // 自动注册短信服务的配置
     @Autowired
     private AliyunSMSProperties aliyunSMSProperties;
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
 
     public static SMS newSMS() {
         return new SMS();
@@ -57,14 +60,16 @@ public class AliyunConfig {
     public Boolean sendSms(Long id, String phoneId) {
         AliyunConfig.SMS sms = AliyunConfig.newSMS();
         sms.setPhoneNumbers(phoneId);
+        String code = RandNumUtil.getRandLength(4);
+        //存入缓存
+        // stringRedisTemplate.opsForValue().set(code,phoneId);
         // JSON 格式
-        sms.setTemplateParam("{\"code\":\"" + RandNumUtil.getRandLength(6) + "\"}");
+        sms.setTemplateParam("{\"code\":\"" + code + "\"}");
         log.debug("setTemplateParam" + sms.getTemplateParam());
         AliyunConfig.Result result = sendSms(sms);
         log.debug("result:" + JSONObject.toJSONString(result));
         return result.getSendSmsResponse() != null || result.getSendSmsResponse().getCode().equals("OK") ;
     }
-
     /**
      * 发送短信
      * 发送验证码类的短信时，每个号码每分钟最多发送一次，每个小时最多发送5次, 每天最多20次

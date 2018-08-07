@@ -199,6 +199,7 @@ public class StudyServiceImpl implements StudyService {
         if (study == null) {
             throw new FindNullException();
         }
+
         VideoDto videoDto = new VideoDto();
         BeanUtils.copyProperties(study, videoDto);
         log.debug("findVideoById: " + videoDto.toString());

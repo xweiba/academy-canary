@@ -76,4 +76,7 @@ public interface ManageService {
 
     // 通过SecurityUtils获取存储的账号信息
     AccountDto getOnlineAccount() throws Exception;
+
+    /* 更新密码 */
+    Boolean updatePassWord(AccountDto accountDto) throws Exception;
 }

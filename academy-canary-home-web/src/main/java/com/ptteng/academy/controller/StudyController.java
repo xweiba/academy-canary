@@ -12,6 +12,7 @@ import com.ptteng.academy.service.StudyService;
 import com.ptteng.academy.util.ResultUtil;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.type.TypeException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -79,8 +80,12 @@ public class StudyController {
 
     @ApiOperation(value = "获取banner文章信息", notes = "要显示的页数")
     @PostMapping("/study/article/banners")
-    public ResponseRowsVO getArticleBanner(@ApiParam @RequestBody Map<String,Integer> num) {
-        List<HomeBannerListDto> banners = studyService.findArticleBanneryByQuery(num.get("num"));
+    public ResponseRowsVO getArticleBanner(@ApiParam @RequestBody Map<String,Integer> num) throws Exception {
+        Integer integer = num.get("num");
+        if (integer == null) {
+            throw new NullPointerException();
+        }
+        List<HomeBannerListDto> banners = studyService.findArticleBanneryByQuery(integer);
         return ResultUtil.success("getArticleBanner 已执行", banners);
     }
 

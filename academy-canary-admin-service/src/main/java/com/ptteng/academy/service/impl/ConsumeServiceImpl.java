@@ -103,8 +103,12 @@ public class ConsumeServiceImpl implements ConsumeService {
 
     @Override
     public AuthorDto getByPrimaryKey(Long primaryKey) throws Exception {
+        Author author = authorMapper.selectByPrimaryKey(primaryKey);
+        if (author == null){
+            throw new FindNullException();
+        }
         AuthorDto authorDto = new AuthorDto();
-        BeanUtils.copyProperties(authorMapper.selectByPrimaryKey(primaryKey), authorDto);
+        BeanUtils.copyProperties(author, authorDto);
         return authorDto;
     }
 
@@ -115,8 +119,11 @@ public class ConsumeServiceImpl implements ConsumeService {
 
     @Override
     public List<AuthorDto> listAll() throws Exception {
-        List<AuthorDto> authorDtoList = new ArrayList<AuthorDto>();
         List<Author> authorList = authorMapper.selectAll();
+        if (authorList.isEmpty()){
+            throw new FindNullException();
+        }
+        List<AuthorDto> authorDtoList = new ArrayList<AuthorDto>();
         for (Author au :
                 authorList) {
             AuthorDto authorDto = new AuthorDto();
@@ -157,8 +164,10 @@ public class ConsumeServiceImpl implements ConsumeService {
         log.info("查询用户列表传入参数：" + userQuery);
         PageHelper.startPage(userQuery.getPageNum(), userQuery.getPageSize());
         List<UserBackDto> userBackDtoList = userMapper.findUser(userQuery);
-        PageInfo<UserBackDto> pageInfo = new PageInfo<UserBackDto>(userBackDtoList);
-        return pageInfo;
+        if (userBackDtoList.isEmpty()) {
+            throw new FindNullException();
+        }
+        return new PageInfo<UserBackDto>(userBackDtoList);
     }
 
     // 获取枚举列表

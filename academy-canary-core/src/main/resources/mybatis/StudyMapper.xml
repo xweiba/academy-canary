@@ -159,11 +159,11 @@
                 study st
             LEFT OUTER JOIN author au ON au.id = st.author
             LEFT OUTER JOIN study_user spraise_s ON spraise_s.type = 1
-                AND spraise_s.study_id = st.id
+                AND spraise_s.study_id = #{studyId}
                 AND spraise_s.user_id = #{userId}
             LEFT OUTER JOIN study_user scollect_s ON scollect_s.type = 2
                 AND scollect_s.user_id = #{userId}
-                AND scollect_s.study_id = st.id
+                AND scollect_s.study_id = #{studyId}
         WHERE
           st.id = #{studyId} AND st.`status` = 1 AND st.study_type = #{studyType}
           GROUP BY
@@ -212,7 +212,7 @@
         au.author_name, au.author_img
         FROM
         study s INNER JOIN author au ON s.author = au.id ) temp
-        WHERE study_type = 1 order by update_at DESC
+        WHERE study_type = 1 AND `status` = 1 order by update_at DESC
     </select>
 
     <select id="findCollectArticle"
@@ -291,11 +291,11 @@
                 study st
             LEFT OUTER JOIN author au ON au.id = st.author
             LEFT OUTER JOIN study_user spraise_s ON spraise_s.type = 1
-                AND spraise_s.study_id = st.id
+                AND spraise_s.study_id = #{studyId}
                 AND spraise_s.user_id = #{userId}
             LEFT OUTER JOIN study_user scollect_s ON scollect_s.type = 2
                 AND scollect_s.user_id = #{userId}
-                AND scollect_s.study_id = st.id
+                AND scollect_s.study_id =#{studyId}
         WHERE
           st.id = #{studyId} AND st.`status` = 1 AND st.study_type = 1
           GROUP BY

@@ -9,6 +9,8 @@ import com.ptteng.academy.business.dto.RoleDto;
 import com.ptteng.academy.business.query.AccountQuery;
 import com.ptteng.academy.business.query.ModuleQuery;
 import com.ptteng.academy.business.query.RoleQuery;
+import com.ptteng.academy.framework.exception.FindNullException;
+import com.ptteng.academy.framework.exception.ResourceIsNullException;
 import com.ptteng.academy.persistence.beans.Account;
 import com.ptteng.academy.persistence.beans.Module;
 import com.ptteng.academy.persistence.beans.Role;
@@ -17,11 +19,13 @@ import com.ptteng.academy.persistence.mapper.ModuleMapper;
 import com.ptteng.academy.persistence.mapper.RoleMapper;
 import com.ptteng.academy.service.ManageService;
 import com.ptteng.academy.util.PasswordUtil;
+import com.ptteng.academy.util.ResultUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -54,14 +58,21 @@ public class ManageServiceImpl implements ManageService {
         PageHelper.startPage(moduleQuery.getPageNum(), moduleQuery.getPageSize());
         moduleQuery.setRole_id(getOnlineAccount().getRole_id());
         List<ModuleDto> moduleDtoList = moduleMapper.findModuleByName(moduleQuery);
+        if (moduleDtoList.isEmpty()) {
+            throw new FindNullException();
+        }
         log.debug(JSONObject.toJSONString(moduleDtoList));
         return new PageInfo<ModuleDto>(moduleDtoList);
     }
 
     @Override
     public ModuleDto findModuleById(Long id) throws Exception {
+        Module module = moduleMapper.selectByPrimaryKey(id);
+        if (module == null) {
+            throw new ResourceIsNullException();
+        }
         ModuleDto moduleDto = new ModuleDto();
-        BeanUtils.copyProperties(moduleMapper.selectByPrimaryKey(id), moduleDto);
+        BeanUtils.copyProperties(module, moduleDto);
         return moduleDto;
     }
 
@@ -69,13 +80,11 @@ public class ManageServiceImpl implements ManageService {
     public Boolean deleteModule(Long id) throws Exception {
         // 先删除关系表
         moduleMapper.deleteRoleModulesByModuleId(id);
-        Boolean deleteStatus = false;
-        try {
-            deleteStatus = moduleMapper.deleteByPrimaryKey(id) > 0;
-        } catch (Exception e) {
-            throw new Exception("删除模块失败, 该模块不存在!");
+        int deleteInt = moduleMapper.deleteByPrimaryKey(id);
+        if (deleteInt == 0) {
+            throw new ResourceIsNullException();
         }
-        return deleteStatus;
+        return true;
     }
 
     @Override
@@ -84,7 +93,11 @@ public class ManageServiceImpl implements ManageService {
         BeanUtils.copyProperties(moduleDto, module);
         module.setUpdate_at(new Date());
         module.setUpdate_by(getOnlineAccount().getUsername());
-        return moduleMapper.updateByPrimaryKeySelective(module) > 0;
+        int updateStatus = moduleMapper.updateByPrimaryKeySelective(module);
+        if (updateStatus == 0) {
+            throw new ResourceIsNullException();
+        }
+        return true;
     }
 
     /**
@@ -99,25 +112,20 @@ public class ManageServiceImpl implements ManageService {
         module.setUpdate_by(getOnlineAccount().getUsername());
         module.setCreate_at(new Date());
         module.setCreate_by(getOnlineAccount().getUsername());
+
+        moduleMapper.insert(module);
+        log.debug("新增模块id" + module.getId());
         try {
-            moduleMapper.insert(module);
-            log.debug("新增模块id" + module.getId());
-            try {
-                // 添加当前用户权限
-                roleMapper.insertRoleModulesByRoleId(getOnlineAccount().getRole_id(), module.getId());
-                // 添加管理员和超级管理员的权限
-                roleMapper.insertRoleModulesByRoleId(1L, module.getId());
-                roleMapper.insertRoleModulesByRoleId(2L, module.getId());
-            } catch (Exception e) {
-                e.printStackTrace();
-                log.debug("当前用户是管理员或超级管理员");
-            }
-            return true;
-        } catch (Exception e) {
+            // 添加当前用户权限
+            roleMapper.insertRoleModulesByRoleId(getOnlineAccount().getRole_id(), module.getId());
+            // 添加管理员和超级管理员的权限
+            roleMapper.insertRoleModulesByRoleId(1L, module.getId());
+            roleMapper.insertRoleModulesByRoleId(2L, module.getId());
+        } catch (DuplicateKeyException e) {
             e.printStackTrace();
-            log.debug("添加失败");
+            log.debug("当前用户是管理员或超级管理员");
         }
-        return false;
+        return true;
     }
 
     @Override
@@ -125,27 +133,39 @@ public class ManageServiceImpl implements ManageService {
         ModuleQuery moduleQuery = new ModuleQuery();
         moduleQuery.setPageSize(9999);
         moduleQuery.setRole_id(getOnlineAccount().getRole_id());
-        return moduleMapper.findModuleByName(moduleQuery);
+        List<ModuleDto> moduleDtoList = moduleMapper.findModuleByName(moduleQuery);
+        if (moduleDtoList.isEmpty()) {
+            throw new FindNullException();
+        }
+        return moduleDtoList;
     }
 
     @Override
     public PageInfo<RoleDto> findRoleByQuery(RoleQuery roleQuery) throws Exception {
         PageHelper.startPage(roleQuery.getPageNum(), roleQuery.getPageSize());
         List<RoleDto> roleList = roleMapper.findRoleByQuery(roleQuery);
-        PageInfo bean = new PageInfo<RoleDto>(roleList);
-        return bean;
+        if (roleList.isEmpty()) {
+            throw new FindNullException();
+        }
+        return new PageInfo<>(roleList);
     }
 
     @Override
     public List<RoleDto> findRoleNames() throws Exception {
         List<RoleDto> roleDtoList = roleMapper.findRoleNames();
+        if (roleDtoList.isEmpty()) {
+            throw new FindNullException();
+        }
         return roleDtoList;
     }
 
     @Override
     public RoleDto findRoleById(Long id) throws Exception {
-        List<Long> modules = roleMapper.findRoleModuleById(id);
         RoleDto roleDto = roleMapper.findRoleById(id);
+        if (roleDto==null) {
+            throw new ResourceIsNullException();
+        }
+        List<Long> modules = roleMapper.findRoleModuleById(id);
         roleDto.setModuleIds(modules);
         return roleDto;
     }
@@ -155,7 +175,11 @@ public class ManageServiceImpl implements ManageService {
         // 注意角色与账号绑定的, 如果需要删除角色必须先取消账号的关联
         // 先删除关系表
         roleMapper.deleteRoleModulesByRoleId(id);
-        return roleMapper.deleteByPrimaryKey(id) > 0;
+        Integer deleteStatus = roleMapper.deleteByPrimaryKey(id);
+        if (deleteStatus == 0){
+            throw new ResourceIsNullException();
+        }
+        return true;
     }
 
     @Override
@@ -181,6 +205,7 @@ public class ManageServiceImpl implements ManageService {
                 e.printStackTrace();
             }
         }
+        // 前台只要id和角色名称
         roleDto.setId(role.getId());
         roleDto.setRole_name(role.getRole_name());
         roleDto.setModuleIds(null);
@@ -197,15 +222,18 @@ public class ManageServiceImpl implements ManageService {
         Long roleId = role.getId();
         // 2. 关联模块, 先删除原有的, 然后遍历插入
         roleMapper.deleteRoleModulesByRoleId(roleId);
-        for (Long ModuleId :
+        List<Long> moduleList = new ArrayList<>();
+        for (Long moduleId :
                 roleDto.getModuleIds()) {
             try {
-                roleMapper.insertRoleModulesByRoleId(roleId, ModuleId);
-            } catch (Exception e) {
+                roleMapper.insertRoleModulesByRoleId(roleId, moduleId);
+                moduleList.add(moduleId);
+            } catch (DataIntegrityViolationException e) {
                 log.debug("忽略部分错误id和原有id");
                 e.printStackTrace();
             }
         }
+        roleDto.setModuleIds(moduleList);
         return roleDto;
     }
 
@@ -214,8 +242,10 @@ public class ManageServiceImpl implements ManageService {
     public PageInfo<AccountDto> findAccountByQuery(AccountQuery accountQuery) throws Exception {
         PageHelper.startPage(accountQuery.getPageNum(), accountQuery.getPageSize());
         List<AccountDto> accountDtoList = accountMapper.findAccountByQuery(accountQuery);
-        PageInfo<AccountDto> pageInfo = new PageInfo<AccountDto>(accountDtoList);
-        return pageInfo;
+        if (accountDtoList.isEmpty()) {
+            throw new FindNullException();
+        }
+        return new PageInfo<>(accountDtoList);
     }
 
     // 验证账号密码
@@ -226,7 +256,11 @@ public class ManageServiceImpl implements ManageService {
 
     @Override
     public AccountDto findAccountById(Long id) throws Exception {
-        return accountMapper.findAccountById(id);
+        AccountDto accountDto = accountMapper.findAccountById(id);
+        if (accountDto == null) {
+            throw new FindNullException();
+        }
+        return accountDto;
     }
 
     @Override
@@ -255,18 +289,20 @@ public class ManageServiceImpl implements ManageService {
         account.setUpdate_by(getOnlineAccount().getUsername());
         account.setUpdate_at(new Date());
         log.debug("更新账号:" + account.toString());
+        int updateStatus = accountMapper.updateByPrimaryKeySelective(account);
 
-        try {
-            Boolean updateStatus = accountMapper.updateByPrimaryKeySelective(account) > 0;
-        } catch (Exception e) {
-            throw new Exception("更新失败");
+        if (updateStatus == 0) {
+            throw new ResourceIsNullException();
         }
         return true;
     }
 
     @Override
     public Boolean deleteAccountById(Long id) throws Exception {
-        return accountMapper.deleteByPrimaryKey(id) > 0;
+        if (accountMapper.deleteByPrimaryKey(id) == 0) {
+            throw new ResourceIsNullException();
+        }
+        return true;
     }
 
     @Override
@@ -279,12 +315,7 @@ public class ManageServiceImpl implements ManageService {
         account.setCreate_by(getOnlineAccount().getUsername());
         account.setUpdate_by(getOnlineAccount().getUsername());
         log.debug("新增账号account: " + account.toString());
-        try {
-            Boolean insertStatus = accountMapper.insert(account) > 0;
-        } catch (Exception e) {
-            throw new Exception("账号创建失败");
-        }
-        return true;
+        return accountMapper.insert(account) > 0;
     }
 
     // 通过SecurityUtils获取当前登陆的账号信息
@@ -292,5 +323,25 @@ public class ManageServiceImpl implements ManageService {
     public AccountDto getOnlineAccount() throws Exception {
         Subject subject = SecurityUtils.getSubject();
         return (AccountDto) subject.getPrincipal();
+    }
+
+    @Override
+    public Boolean updatePassWord(AccountDto accountDto) throws Exception {
+        log.info("updatePassword: " + accountDto);
+        String onlineUserName = getOnlineAccount().getUsername();
+        log.debug("修改密码用户:" + onlineUserName);
+        String oldPassWord = PasswordUtil.encrypt(accountDto.getOldPassword(), onlineUserName);
+        log.debug("oldPassWord:" + oldPassWord);
+        if (findAccountByPassword(oldPassWord)) {
+            log.debug("更新密码: " + accountDto.toString());
+            // 修改密码只能修改当前登陆用户的密码
+            Account account = new Account();
+            account.setId(getOnlineAccount().getId());
+            account.setPassword(PasswordUtil.encrypt(accountDto.getPassword(), onlineUserName));
+            account.setUpdate_at(new Date());
+            account.setUpdate_by(onlineUserName);
+            return accountMapper.updateByPrimaryKeySelective(account) > 0;
+        }
+        return false;
     }
 }

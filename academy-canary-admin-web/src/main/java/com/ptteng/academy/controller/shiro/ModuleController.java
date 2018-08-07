@@ -36,7 +36,7 @@ public class ModuleController {
     @ApiOperation(value = "获取模块信息列表", notes = "按id排序")
     @PostMapping("/modules")
     public ResponseRowsVO getModules(ModuleQuery moduleQuery) throws Exception {
-        return ResultUtil.success("getModules 已执行", manageService.findModuleByQuery(moduleQuery));
+        return ResultUtil.success("模块搜索完成", manageService.findModuleByQuery(moduleQuery));
     }
 
     /* 这里不能加权限 所有登陆用户都需要获取模块列表 */
@@ -69,12 +69,12 @@ public class ModuleController {
     public ResponseVO updateModule(@PathVariable("id") Long id, @RequestBody ModuleDto moduleDto) throws Exception {
         moduleDto.setId(id);
         log.info("updateModule:", moduleDto.toString());
-        return ResultUtil.success("updateModule 已执行", manageService.updateModule(moduleDto));
+        return ResultUtil.success("更新模块成功", manageService.updateModule(moduleDto));
     }
 
     @ApiOperation(value = "创建新模块", notes = "执行成功返回true")
     @PostMapping("/module")
     public ResponseVO createModule(@RequestBody ModuleDto moduleDto) throws Exception {
-        return ResultUtil.success("createModule 已执行", manageService.insertModule(moduleDto));
+        return ResultUtil.success("创建模块成功", manageService.insertModule(moduleDto));
     }
 }

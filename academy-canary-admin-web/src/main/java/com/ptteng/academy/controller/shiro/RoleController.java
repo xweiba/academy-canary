@@ -49,7 +49,7 @@ public class RoleController {
     @PostMapping("/roles")
     public ResponseRowsVO getRoles(@RequestBody RoleQuery roleQuery) throws Exception {
         log.info("roleQuery.toString():" + roleQuery.toString());
-        return ResultUtil.success("getRoles 已执行", manageService.findRoleByQuery(roleQuery));
+        return ResultUtil.success("获取角色成功", manageService.findRoleByQuery(roleQuery));
     }
 
     @RequiresPermissions(".role")
@@ -61,39 +61,24 @@ public class RoleController {
     }
 
     @RequiresPermissions(".role")
+    @ApiOperation(value = "创建角色")
     @PostMapping("/role")
-    public ResponseVO createRole(@RequestBody RoleDto roleDto) {
-        try {
-            return ResultUtil.success("角色创建成功", manageService.insertRole(roleDto));
-        } catch (DataIntegrityViolationException e) {
-            e.printStackTrace();
-            return ResultUtil.success("角色创建成功, 部分module Id错误.");
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResultUtil.error("角色创建失败");
-        }
+    public ResponseVO createRole(@RequestBody RoleDto roleDto) throws Exception {
+        return ResultUtil.success("角色创建成功", manageService.insertRole(roleDto));
+
     }
 
     @RequiresPermissions(".role")
+    @ApiOperation(value = "更新角色")
     @PutMapping("/role")
-    public ResponseVO updateRole(@RequestBody RoleDto roleDto) {
-        try {
-            roleDto = manageService.updateRole(roleDto);
-            return ResultUtil.success("角色更新成功", manageService.updateRole(roleDto));
-        }catch (Exception e) {
-            e.printStackTrace();
-            return ResultUtil.success("角色更新失败");
-        }
+    public ResponseVO updateRole(@RequestBody RoleDto roleDto) throws Exception {
+        return ResultUtil.success("角色更新成功", manageService.updateRole(roleDto));
     }
 
     @RequiresPermissions(".role")
+    @ApiOperation(value = "删除角色")
     @DeleteMapping("/role/{id}")
-    public ResponseVO deleteRole(@PathVariable("id") Long id) {
-        try {
-            Boolean role = manageService.deleteRoleById(id);
-            return ResultUtil.success("删除角色成功", role);
-        } catch (Exception e){
-            return ResultUtil.error("删除角色失败, 该角色不存在或与账号关联时无法删除!");
-        }
+    public ResponseVO deleteRole(@PathVariable("id") Long id) throws Exception {
+        return ResultUtil.success("删除角色成功", manageService.deleteRoleById(id));
     }
 }

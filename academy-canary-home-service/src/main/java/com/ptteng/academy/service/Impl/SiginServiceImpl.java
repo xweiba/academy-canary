@@ -5,7 +5,9 @@ import com.ptteng.academy.business.dto.UserDto;
 import com.ptteng.academy.business.enums.ResponseCodeEnum;
 import com.ptteng.academy.business.vo.ResponseVO;
 import com.ptteng.academy.persistence.beans.Signin;
+import com.ptteng.academy.persistence.beans.User;
 import com.ptteng.academy.persistence.mapper.LoginMapper;
+import com.ptteng.academy.persistence.mapper.UserMapper;
 import com.ptteng.academy.service.SiginService;
 import com.ptteng.academy.util.ResultUtil;
 import net.sf.jsqlparser.expression.DateTimeLiteralExpression;
@@ -29,6 +31,8 @@ import java.util.Date;
 public class SiginServiceImpl implements SiginService {
     @Autowired
     LoginMapper loginMapper;
+    @Autowired
+    UserMapper userMapper;
 
     //累计签到多少天
     private static int coutinus = 0;
@@ -100,13 +104,29 @@ public class SiginServiceImpl implements SiginService {
                         break;
                     }
                 }
-                //判断连续签到次数奖励逆袭豆
-                if (coutinus >= 5) {
-                signingDto.setGainBean(5);
-                }else {
-                    signingDto.setGainBean(coutinus);
-                }
-
+                User user1 = new User();
+                user1.setId(id);
+                User user = userMapper.selectOne(user1);
+                logger.info("用户信息："+user);
+                if(user.getBean() !=null){
+                    //判断连续签到次数奖励逆袭豆
+                    if (coutinus >= 5) {
+                        signingDto.setGainBean(5);
+                        user.setBean(user.getBean() + 5);
+                    } else {
+                        signingDto.setGainBean(coutinus);
+                        user.setBean(user.getBean() + coutinus);
+                    }
+                }else                     //判断连续签到次数奖励逆袭豆
+                    if (coutinus >= 5) {
+                        signingDto.setGainBean(5);
+                        user.setBean(user.getBean() + 5);
+                    } else {
+                        signingDto.setGainBean(coutinus);
+                        user.setBean(coutinus);
+                    }
+                //更新逆袭豆
+                userMapper.updateByPrimaryKeySelective(user);
                 final int size = 31;
                 char[] chs = new char[size];
                 for (int i = 0; i < size; i++) {

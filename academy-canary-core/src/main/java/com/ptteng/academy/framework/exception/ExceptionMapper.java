@@ -1,13 +1,12 @@
-package com.ptteng.academy.controller;
+package com.ptteng.academy.framework.exception;
 
 import com.ptteng.academy.business.enums.ResponseCodeEnum;
 import com.ptteng.academy.business.vo.ResponseVO;
-import com.ptteng.academy.framework.exception.FindNullException;
-import com.ptteng.academy.framework.exception.ResourceIsNullException;
 import com.ptteng.academy.util.ResultUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.ibatis.type.TypeException;
+import org.apache.shiro.authc.AuthenticationException;
 import org.mybatis.spring.MyBatisSystemException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -25,7 +24,7 @@ import java.io.IOException;
 
 @Slf4j
 @RestControllerAdvice
-public class ExceptionController {
+public class ExceptionMapper {
     // 设置本项目包路径
     private String classPath = "com.ptteng.academy";
 
@@ -66,6 +65,18 @@ public class ExceptionController {
         return ResultUtil.error(ResponseCodeEnum.SQL_PARAMETER_ERROR);
     }
 
+    // 数据库参数转换异常
+    @ExceptionHandler(value = StringIndexOutOfBoundsException.class)
+    public ResponseVO StringIndexOutOfBoundsExceptionErrorHandler(StringIndexOutOfBoundsException e) throws Exception {
+        log.debug("\n发生数据库参数转换异常\n异常类型是:[{}]\n异常消息是:[{}]\n异常详细位置是:\n[{}]\n异常详细信息是:\n[{}]\n",
+                e.getClass().getName(),
+                ExceptionUtils.getMessage(e),
+                // 获取异常发生位置
+                ExceptionUtils.getStackTrace(e).substring(ExceptionUtils.getStackTrace(e).indexOf(classPath), ExceptionUtils.getStackTrace(e).indexOf("org.springframework.cglib.proxy.MethodProxy.invoke")),
+                ExceptionUtils.getStackTrace(e));
+        return ResultUtil.error(ResponseCodeEnum.SQL_PARAMETER_ERROR);
+    }
+
     // 数据库约束异常
     @ExceptionHandler(value = DataIntegrityViolationException.class)
     public ResponseVO dataIntegrityViolationExceptionErrorHandler(DataIntegrityViolationException e) throws Exception {
@@ -80,7 +91,7 @@ public class ExceptionController {
 
     // 数据库资源不在
     @ExceptionHandler(value = ResourceIsNullException.class)
-    public ResponseVO RemoveResourceExceptionErrorHandler(ResourceIsNullException e) throws Exception{
+    public ResponseVO RemoveResourceExceptionErrorHandler(ResourceIsNullException e) throws Exception {
         log.debug("\n资源空异常\n异常类型是:[{}]\n异常消息是:[{}]\n异常详细位置是:\n[{}]\n异常详细信息是:\n[{}]\n",
                 e.getClass().getName(),
                 ExceptionUtils.getMessage(e),
@@ -88,7 +99,7 @@ public class ExceptionController {
                 ExceptionUtils.getStackTrace(e).substring(ExceptionUtils.getStackTrace(e).indexOf(classPath), ExceptionUtils.getStackTrace(e).indexOf("org.springframework.cglib.proxy.MethodProxy.invoke")),
                 ExceptionUtils.getStackTrace(e));
         // 判断是否使用了自定义消息
-        if (e.getMessage()!=null) {
+        if (e.getMessage() != null) {
             return ResultUtil.error(ResponseCodeEnum.SQL_RESOURCE_ERROR.getCode(), e.getMessage());
         }
         return ResultUtil.error(ResponseCodeEnum.SQL_RESOURCE_ERROR);
@@ -104,7 +115,7 @@ public class ExceptionController {
                 ExceptionUtils.getStackTrace(e).substring(ExceptionUtils.getStackTrace(e).indexOf(classPath), ExceptionUtils.getStackTrace(e).indexOf("org.springframework.cglib.proxy.MethodProxy.invoke")),
                 ExceptionUtils.getStackTrace(e));
         // 判断是否使用了自定义消息
-        if (e.getMessage()!=null) {
+        if (e.getMessage() != null) {
             return ResultUtil.error(ResponseCodeEnum.FIND_NULL_SUCCESS.getCode(), e.getMessage());
         }
         return ResultUtil.error(ResponseCodeEnum.FIND_NULL_SUCCESS);
@@ -112,7 +123,7 @@ public class ExceptionController {
 
     // 查询参数错误
     @ExceptionHandler(value = MyBatisSystemException.class)
-    public ResponseVO findParamExceptionErrorHandler(MyBatisSystemException e) throws Exception{
+    public ResponseVO findParamExceptionErrorHandler(MyBatisSystemException e) throws Exception {
         log.debug("\n发生sql参数错误异常\n异常类型是:[{}]\n异常消息是:[{}]\n异常详细位置是:\n[{}]\n异常详细信息是:\n[{}]\n",
                 e.getClass().getName(),
                 ExceptionUtils.getMessage(e),
@@ -120,6 +131,18 @@ public class ExceptionController {
                 ExceptionUtils.getStackTrace(e).substring(ExceptionUtils.getStackTrace(e).indexOf(classPath), ExceptionUtils.getStackTrace(e).indexOf("org.springframework.cglib.proxy.MethodProxy.invoke")),
                 ExceptionUtils.getStackTrace(e));
         return ResultUtil.error(ResponseCodeEnum.SQL_PARAM_ERROR);
+    }
+
+    /* 登陆异常处理 */
+    @ExceptionHandler(value = AuthenticationException.class)
+    public ResponseVO authenticationExceptionErrorHandler(AuthenticationException e) throws Exception {
+        log.debug("\n发生认证失败异常\n异常类型是:[{}]\n异常消息是:[{}]\n异常详细位置是:\n[{}]\n异常详细信息是:\n[{}]\n",
+                e.getClass().getName(),
+                ExceptionUtils.getMessage(e),
+                // 获取异常发生位置
+                ExceptionUtils.getStackTrace(e).substring(ExceptionUtils.getStackTrace(e).indexOf(classPath), ExceptionUtils.getStackTrace(e).indexOf("org.springframework.cglib.proxy.MethodProxy.invoke")),
+                ExceptionUtils.getStackTrace(e));
+        return ResultUtil.error(ResponseCodeEnum.LOGIN_ERROR);
     }
 
 
@@ -159,6 +182,7 @@ public class ExceptionController {
                 ExceptionUtils.getStackTrace(e));
         return ResultUtil.error(ResponseCodeEnum.NULL_POINTER_ERROR);
     }
+
     // 未处理异常
     @ExceptionHandler(value = Exception.class)
     public ResponseVO exceptionError(Exception e) {
@@ -166,7 +190,8 @@ public class ExceptionController {
                 e.getClass().getName(),
                 ExceptionUtils.getMessage(e),
                 // 获取异常发生位置
-                ExceptionUtils.getStackTrace(e).substring(ExceptionUtils.getStackTrace(e).indexOf(classPath), ExceptionUtils.getStackTrace(e).indexOf("org.springframework.cglib.proxy.MethodProxy.invoke")),
+                ExceptionUtils.getStackTrace(e).substring(ExceptionUtils.getStackTrace(e).indexOf(classPath),
+                ExceptionUtils.getStackTrace(e).indexOf("org")),
                 ExceptionUtils.getStackTrace(e));
         return ResultUtil.error(ResponseCodeEnum.ERROR);
     }

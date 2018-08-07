@@ -10,10 +10,7 @@ import com.ptteng.academy.service.SiginService;
 import com.ptteng.academy.service.StudentCardService;
 import com.ptteng.academy.util.ResultUtil;
 import com.sun.org.apache.regexp.internal.RE;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +32,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/student")
+@Api(tags = "StudentController", description = "学生证相关API")
 public class StudentController {
 
     @Autowired
@@ -45,14 +43,22 @@ public class StudentController {
     @ApiImplicitParam(name = "id", value = "用户id",paramType = "path",required = true, dataType = "long")
     @GetMapping("/signing/{id}")
     public ResponseVO getSigning(@PathVariable("id") Long id) throws ParseException {
-        return ResultUtil.success("getSigning 执行了", siginService.selectSiginById(id));
+        try {
+            return ResultUtil.success("getSigning 执行了", siginService.selectSiginById(id));
+        } catch (NullPointerException e) {
+            return ResultUtil.error("指定用户不存在");
+        }
     }
 
     @ApiOperation(value = "签到页中用户点击签到", notes = "通过用户ID判断是否签到")
     @ApiImplicitParam(name = "id", value = "用户id", required = true,paramType = "path", dataType = "long")
     @PutMapping("/signing/{id}")
     public ResponseVO signing(@PathVariable("id") Long id) {
-        return siginService.sigin(id);
+        try {
+            return siginService.sigin(id);
+        }catch (NullPointerException e) {
+            return ResultUtil.error("指定用户不存在");
+        }
     }
 
     @ApiOperation(value = "学生证首页", notes = "通过用户ID获取首页信息")
@@ -88,7 +94,11 @@ public class StudentController {
     @ApiImplicitParams({@ApiImplicitParam( name = "id", value = "用户id", paramType = "path",required = true, dataType = "Long"),@ApiImplicitParam(name = "pageNum",value = "显示的页数",required = true,dataType = "int")})
     @PostMapping("/card/collect/articles/{id}")
     public ResponseRowsVO getCollectArticle(@PathVariable("id") Long id, @RequestBody Map<String,Integer> pageNum) {
-        return ResultUtil.success("getCollectArticle 已执行", studentCardService.findCollectArticle(id, pageNum.get("pageNum")));
+        try {
+            return ResultUtil.success("获取成功", studentCardService.findCollectArticle(id, pageNum.get("pageNum")));
+        }catch (NullPointerException e) {
+            return ResultUtil.success("用户不存在",studentCardService.findCollectArticle(id, pageNum.get("pageNum")));
+        }
     }
 
     @ApiOperation(value = "获取收藏视频信息", notes = "传入用户ID返回收藏视频列表")

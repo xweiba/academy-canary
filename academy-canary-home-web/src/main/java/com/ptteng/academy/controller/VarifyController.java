@@ -2,14 +2,23 @@ package com.ptteng.academy.controller;
 
 import com.ptteng.academy.business.dto.*;
 import com.ptteng.academy.business.vo.ResponseVO;
+import com.ptteng.academy.service.StudentCardService;
+import com.ptteng.academy.util.MailUtil;
 import com.ptteng.academy.service.UtilService;
 import com.ptteng.academy.util.ResultUtil;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import javax.annotation.Resource;
 import java.util.Map;
 
@@ -23,7 +32,13 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/student")
-public class OtherController {
+@Api(tags = "VarifyController", description = "验证相关API")
+public class VarifyController {
+    @Resource
+    MailUtil mailUtil;
+    @Autowired
+    StudentCardService studentCardService;
+
 
     @Resource
     private UtilService utilService;
@@ -39,17 +54,18 @@ public class OtherController {
         return ResultUtil.success("StudentBindingPhone 执行了", utilService.sendSMS(id, phone));
     }
 
-    @ApiOperation(value = "效验验证码", notes = "传入验证码效验")
+    @ApiOperation(value = "效验短信验证码", notes = "传入验证码效验")
     @ApiImplicitParams({@ApiImplicitParam(name = "id", value = "用户id", paramType = "path", required = true, dataType = "Long"),
             @ApiImplicitParam(name = "captcha", value = "验证码", required = true, dataType = "Integer")}
     )
     @PostMapping("/card/binding/phone/{id}")
-    public ResponseVO StudentVerifyPhone(@PathVariable("id") Long id, @RequestBody Map<String, Object> captcha) {
-        System.out.println(captcha);
-        StudentBindStatusDto studentBindStatusVo = new StudentBindStatusDto();
-        studentBindStatusVo.setGainBean(20L);
-        studentBindStatusVo.setState(true);
-        return ResultUtil.success("StudentVerifyPhone 执行了", studentBindStatusVo);
+    public ResponseVO StudentVerifyPhone(@PathVariable("id") Long id, @RequestBody Map<String,String> captcha) {
+        try {
+            return ResultUtil.success("验证成功",studentCardService.verifyCodePhone(id, captcha.get("captcha")));
+
+        }catch (Exception e) {
+            return ResultUtil.error("验证失败");
+        }
     }
 
     @ApiOperation(value = "获取邮箱验证码", notes = "传入用户ID和用户邮箱发送验证码")
@@ -57,7 +73,14 @@ public class OtherController {
             @ApiImplicitParam(name = "email", value = "邮箱", required = true, dataType = "String")}
     )
     @PostMapping("/card/binding/email/{id}")
-    public ResponseVO StudentBindingEmail(@PathVariable("id") Long id, @RequestBody Map<String, Object> email) {
+    public ResponseVO StudentBindingEmail(@PathVariable("id") Long id, @RequestBody Map<String, String> email) {
+        try {
+            mailUtil.sendMail(email.get("email"));
+        } catch (
+                Exception e
+                ) {
+            return ResultUtil.error("邮件发送失败");
+        }
         return ResultUtil.success("StudentBindingEmail 执行了");
     }
 
@@ -66,11 +89,11 @@ public class OtherController {
             @ApiImplicitParam(name = "captcha", value = "验证码", required = true, dataType = "Integer")}
     )
     @PutMapping("/card/binding/email/{id}")
-    public ResponseVO StudentVerifyEmail(@PathVariable("id") Long id, @RequestBody Map<String, Object> captcha) {
-        StudentBindStatusDto studentBindStatusVo = new StudentBindStatusDto();
-        studentBindStatusVo.setGainBean(20L);
-        studentBindStatusVo.setState(true);
-        return ResultUtil.success("StudentVerifyMail 执行了", studentBindStatusVo);
+    public ResponseVO StudentVerifyEmail(@PathVariable("id") Long id, @RequestBody Map<String, String> captcha) {
+        try {
+            return ResultUtil.success("验证成功", studentCardService.verifyCode(id, captcha.get("captcha")));
+        }catch (Exception e){return ResultUtil.error("验证失败");
+        }
     }
 }
 
