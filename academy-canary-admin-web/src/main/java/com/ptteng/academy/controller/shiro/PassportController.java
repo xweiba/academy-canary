@@ -2,7 +2,6 @@ package com.ptteng.academy.controller.shiro;
 
 import com.alibaba.fastjson.JSONObject;
 import com.ptteng.academy.business.dto.AccountDto;
-import com.ptteng.academy.business.enums.ResponseCodeEnum;
 import com.ptteng.academy.business.vo.ResponseVO;
 import com.ptteng.academy.business.dto.LoginDto;
 import com.ptteng.academy.service.ManageService;
@@ -12,11 +11,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.AccountException;
-import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
-import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.springframework.web.bind.annotation.*;
 
@@ -59,7 +55,7 @@ public class PassportController {
         // 每个Realm都能在必要时对提交的AuthenticationTokens作出反应
         // 所以这一步在调用login(token)方法时,它会走到xxRealm.doGetAuthenticationInfo()方法中,具体验证方式详见此方法
         currentUser.login(token);
-        AccountDto accountDto = manageService.findAccountLoginById(loginDto.getAccountName());
+        AccountDto accountDto = manageService.findAccountLoginByName(loginDto.getAccountName());
         log.debug("currentUser.getSession(): " + currentUser.getSession().getTimeout() + "-" + currentUser.getSession().getHost() + JSONObject.toJSONString(currentUser.getSession()));
         return ResultUtil.success("登陆成功", accountDto);
     }

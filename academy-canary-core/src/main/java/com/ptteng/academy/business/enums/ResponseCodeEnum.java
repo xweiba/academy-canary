@@ -1,7 +1,5 @@
 package com.ptteng.academy.business.enums;
 
-import org.apache.ibatis.jdbc.SQL;
-
 /**
  * @program: canary
  * @description: 枚举返回状态码
@@ -15,7 +13,7 @@ public enum ResponseCodeEnum {
     ERROR(500, "服务器未知错误！"),
     NULL_POINTER_ERROR(500,"资源属性未正常初始化"),
     UNAUTHORIZED(500, "尚未登录！"),
-    FORBIDDEN(500, "您没有操作权限！"),
+    FORBIDDEN(500, "您没有该接口的操作权限！"),
     LOGIN_ERROR(500, "账号或密码错误！"),
     USER_EXIST(500, "已存在的用户！"),
     INVALID_AUTHCODE(500, "手机验证码无效！"),

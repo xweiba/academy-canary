@@ -1,6 +1,8 @@
 package com.ptteng.academy.framework.exception;
 
+import com.alibaba.fastjson.JSONObject;
 import com.aliyuncs.exceptions.ClientException;
+import com.google.gson.JsonObject;
 import com.ptteng.academy.business.enums.ResponseCodeEnum;
 import com.ptteng.academy.business.vo.ResponseVO;
 import com.ptteng.academy.util.ResultUtil;
@@ -8,15 +10,24 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.ibatis.type.TypeException;
 import org.apache.shiro.authc.AuthenticationException;
+import org.apache.shiro.authz.UnauthorizedException;
 import org.mybatis.spring.MyBatisSystemException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.redis.RedisConnectionFailureException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @program: canary
@@ -207,6 +218,22 @@ public class ExceptionMapper {
         return ResultUtil.error(ResponseCodeEnum.LOGIN_ERROR);
     }
 
+    /* 无权限异常 */
+    @ExceptionHandler(value = UnauthorizedException.class)
+    public ResponseVO UnauthorizedExceptionErrorHandler(UnauthorizedException e) throws Exception {
+        Integer indexStart = ExceptionUtils.getStackTrace(e).indexOf(classPath);
+        Integer indexEnd = indexStart + endIndex;
+        log.debug("\n发生无权限异常\n异常类型是:[{}]\n异常消息是:[{}]\n异常详细位置是:\n[{}]\n异常详细信息是:\n[{}]\n",
+                e.getClass().getName(),
+                ExceptionUtils.getMessage(e),
+                // 获取异常发生位置
+                ExceptionUtils.getStackTrace(e).substring(indexStart, indexEnd),
+                ExceptionUtils.getStackTrace(e));
+        if (e.getMessage().contains(exceptionTag)) {
+            return ResultUtil.error(500, e.getMessage());
+        }
+        return ResultUtil.error(ResponseCodeEnum.FORBIDDEN);
+    }
 
     /* 文件异常处理 */
     // 文件转换为输入流异常
@@ -245,7 +272,7 @@ public class ExceptionMapper {
 
     // redis 初始化异常
     @ExceptionHandler(value = RedisConnectionFailureException.class)
-    public ResponseVO redisConnectionFailureExceptionError (RedisConnectionFailureException e) {
+    public ResponseVO redisConnectionFailureExceptionError(RedisConnectionFailureException e) {
         Integer indexStart = ExceptionUtils.getStackTrace(e).indexOf(classPath);
         Integer indexEnd = indexStart + endIndex;
         log.debug("\n发生redis初始化异常\n异常类型是:[{}]\n异常消息是:[{}]\n异常详细位置是:\n[{}]\n异常详细信息是:\n[{}]\n",
@@ -254,11 +281,12 @@ public class ExceptionMapper {
                 // 获取异常发生位置
                 ExceptionUtils.getStackTrace(e).substring(indexStart, indexEnd),
                 ExceptionUtils.getStackTrace(e));
-        if (e.getMessage()!=null && e.getMessage().contains(exceptionTag)) {
+        if (e.getMessage() != null && e.getMessage().contains(exceptionTag)) {
             return ResultUtil.error(500, e.getMessage());
         }
         return ResultUtil.error(ResponseCodeEnum.REDIS_GET_ERROR);
     }
+
     // 阿里云短信异常
     @ExceptionHandler(value = ClientException.class)
     public ResponseVO clientExceptionError(ClientException e) {
@@ -270,7 +298,7 @@ public class ExceptionMapper {
                 // 获取异常发生位置
                 ExceptionUtils.getStackTrace(e).substring(indexStart, indexEnd),
                 ExceptionUtils.getStackTrace(e));
-        if (e.getMessage()!=null && e.getMessage().contains(exceptionTag)) {
+        if (e.getMessage() != null && e.getMessage().contains(exceptionTag)) {
             return ResultUtil.error(500, e.getMessage());
         }
         return ResultUtil.error(ResponseCodeEnum.SMS_SEND_ERROR);
@@ -287,7 +315,7 @@ public class ExceptionMapper {
                 // 获取异常发生位置
                 ExceptionUtils.getStackTrace(e).substring(indexStart, indexEnd),
                 ExceptionUtils.getStackTrace(e));
-        if (e.getMessage()!=null && e.getMessage().contains(exceptionTag)) {
+        if (e.getMessage() != null && e.getMessage().contains(exceptionTag)) {
             return ResultUtil.error(500, e.getMessage());
         }
         return ResultUtil.error(ResponseCodeEnum.NULL_POINTER_ERROR);
@@ -304,9 +332,32 @@ public class ExceptionMapper {
                 // 获取异常发生位置
                 ExceptionUtils.getStackTrace(e).substring(indexStart, indexEnd),
                 ExceptionUtils.getStackTrace(e));
-        if (e.getMessage()!=null && e.getMessage().contains(exceptionTag)) {
+        if (e.getMessage() != null && e.getMessage().contains(exceptionTag)) {
             return ResultUtil.error(500, e.getMessage());
         }
         return ResultUtil.error(ResponseCodeEnum.ERROR);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseBody
+    public ResponseVO handleConstraintViolationException(ConstraintViolationException cve) {
+        System.out.println("自定义异常");
+        Set<ConstraintViolation<?>> cves = cve.getConstraintViolations();
+        StringBuffer stringList = new StringBuffer();
+        for (ConstraintViolation<?> constraintViolation : cves) {
+            stringList.append(constraintViolation.getMessage());
+        }
+        return ResultUtil.error(stringList.toString());
+    }
+    @ExceptionHandler(value = MethodArgumentNotValidException.class)
+    public ResponseVO MethodArgumentNotValidHandler(MethodArgumentNotValidException exception){
+        //按需重新封装需要返回的错误信息
+        List<String> paramValidationResults = new ArrayList<>();
+        //解析原错误信息，封装后返回，此处返回非法的字段名称，错误信息
+        for (FieldError error : exception.getBindingResult().getFieldErrors()) {
+            String validationResult = error.getDefaultMessage();
+            paramValidationResults.add(validationResult);
+        }
+        return ResultUtil.error("输入参数错误", paramValidationResults);
     }
 }

@@ -162,7 +162,7 @@ public class ManageServiceImpl implements ManageService {
     @Override
     public RoleDto findRoleById(Long id) throws Exception {
         RoleDto roleDto = roleMapper.findRoleById(id);
-        if (roleDto==null) {
+        if (roleDto == null) {
             throw new ResourceIsNullException("提醒: 该角色不存在");
         }
         List<Long> modules = roleMapper.findRoleModuleById(id);
@@ -173,12 +173,19 @@ public class ManageServiceImpl implements ManageService {
     @Override
     public Boolean deleteRoleById(Long id) throws Exception {
         // 注意角色与账号绑定的, 如果需要删除角色必须先取消账号的关联
-        // 先删除关系表
+        // 先删除模块关系表
+
         roleMapper.deleteRoleModulesByRoleId(id);
-        Integer deleteStatus = roleMapper.deleteByPrimaryKey(id);
-        if (deleteStatus == 0){
-            throw new ResourceIsNullException("提醒: 该角色不存在~");
+
+        try {
+            Integer deleteStatus = roleMapper.deleteByPrimaryKey(id);
+            if (deleteStatus == 0) {
+                throw new ResourceIsNullException("提醒: 该角色不存在~");
+            }
+        } catch (DataIntegrityViolationException e) {
+            throw new DataIntegrityViolationException("提醒: 该角色已关联了账号~");
         }
+
         return true;
     }
 
@@ -269,7 +276,7 @@ public class ManageServiceImpl implements ManageService {
     }
 
     @Override
-    public AccountDto findAccountLoginById(String accountName) throws Exception {
+    public AccountDto findAccountLoginByName(String accountName) throws Exception {
         return accountMapper.findAccountLoginById(accountName);
     }
 

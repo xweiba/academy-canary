@@ -22,7 +22,9 @@ public class ResultUtil {
     public static ResponseVO error(int code, String message) {
         return vo(code, message);
     }
-
+    public static ResponseVO error(String message,  Object object) {
+        return vo(CommonConst.DEFAULT_ERROR_CODE, message, object);
+    }
     public static ResponseVO error(ResponseCodeEnum status) {
         return vo(status.getCode(), status.getMessage());
     }

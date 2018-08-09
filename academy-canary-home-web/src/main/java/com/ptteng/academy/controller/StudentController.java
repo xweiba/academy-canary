@@ -13,6 +13,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.constraints.Min;
+import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.util.Map;
 
@@ -38,7 +39,7 @@ public class StudentController {
     @ApiOperation(value = "首页点击签到", notes = "首页查看用户签到信息")
     @ApiImplicitParam(name = "id", value = "用户id", paramType = "path", required = true, dataType = "long")
     @GetMapping("/signing/{id}")
-    public ResponseVO getSigning(@Min(value = 0,message = "参数不能小于0")@PathVariable("id") Long id) throws ParseException, ResourceIsNullException {
+    public ResponseVO getSigning(@Min(value = 0,message = "参数不能小于0")@PathVariable("id") Long id) throws Exception {
         return ResultUtil.success("查看用户签到信息成功", siginService.selectSiginById(id));
     }
     @ApiOperation(value = "签到页中用户点击签到", notes = "通过用户ID判断是否签到")
@@ -51,7 +52,7 @@ public class StudentController {
     @ApiOperation(value = "学生证首页", notes = "通过用户ID获取首页信息")
     @ApiImplicitParam(name = "id", value = "用户id", required = true, paramType = "path", dataType = "long")
     @GetMapping("/card/{id}")
-    public ResponseVO studentCard(@Min(value = 0,message = "参数不能小于0")@PathVariable("id") Long id) throws ResourceIsNullException {
+    public ResponseVO studentCard(@Min(value = 0,message = "参数不能小于0")@PathVariable("id") Long id) throws Exception{
         return ResultUtil.success("学生证首页查询成功", studentCardService.selectAll(id));
     }
 

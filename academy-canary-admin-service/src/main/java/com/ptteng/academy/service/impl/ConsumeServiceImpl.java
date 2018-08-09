@@ -170,7 +170,6 @@ public class ConsumeServiceImpl implements ConsumeService {
         return new PageInfo<UserBackDto>(userBackDtoList);
     }
 
-    // 获取枚举列表
     @Override
     public List<Object> findListByName(String cName) throws Exception {
         List<Object> classify = new ArrayList<Object>();

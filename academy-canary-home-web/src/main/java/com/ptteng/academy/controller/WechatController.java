@@ -15,6 +15,7 @@ import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.websocket.server.PathParam;
@@ -31,6 +32,7 @@ import java.util.Map;
 @Api(tags = "WechatController", description = "微信相关Api")
 @RestController
 @RequestMapping("/a/student")
+@Validated
 public class WechatController {
     @Autowired
     WechatService wechatService;

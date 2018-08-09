@@ -62,7 +62,7 @@ public interface ManageService {
 
     AccountDto findAccountById(Long id) throws Exception;
 
-    AccountDto findAccountLoginById(String accountName) throws Exception;
+    AccountDto findAccountLoginByName(String accountName) throws Exception;
 
     AccountDto findAccountByUsername(String name) throws Exception;
 

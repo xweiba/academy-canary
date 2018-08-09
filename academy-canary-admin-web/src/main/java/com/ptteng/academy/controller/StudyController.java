@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.Min;
 import java.io.FileNotFoundException;
 import java.util.*;
 
@@ -56,7 +57,7 @@ public class StudyController {
     @ApiOperation(value = "上下架文章", notes = "返回执行结果")
     @ApiImplicitParam(name = "id", value = "文章id", required = true, paramType = "path", dataType = "Long", defaultValue = "1")
     @PutMapping("/article/{id}/status")
-    public ResponseVO articleStatus(@PathVariable("id") Long id) throws Exception {
+    public ResponseVO articleStatus(@Min (value = 0)@PathVariable("id") Long id) throws Exception {
         return ResultUtil.success("上/下架文章成功", studyService.updateStatusById(id));
     }
 
@@ -110,7 +111,7 @@ public class StudyController {
     @ApiOperation(value = "获取视频信息", notes = "获取视频信息")
     @ApiImplicitParam(name = "id", value = "视频Id", required = true, paramType = "path", dataType = "Long", defaultValue = "1")
     @GetMapping("/video/{id}")
-    public ResponseVO getVideo(@PathVariable("id") Long id) throws Exception {
+    public ResponseVO getVideo(@Min(value = 0,message = "不能小于0")@PathVariable("id") Long id) throws Exception {
         return ResultUtil.success("获取视频成功", studyService.findVideoById(id));
     }
 
@@ -118,7 +119,7 @@ public class StudyController {
     @ApiOperation(value = "视频更新", notes = "执行成功返回true")
     @ApiImplicitParam(name = "id", value = "视频Id", required = true, paramType = "path", dataType = "Long", defaultValue = "1")
     @PutMapping("/video/{id}")
-    public ResponseVO upDataVideo(@PathVariable("id") Long id, @RequestBody VideoDto videoDto) throws Exception {
+    public ResponseVO upDataVideo(@Min(value = 0,message = "不能小于0")@PathVariable("id") Long id, @RequestBody VideoDto videoDto) throws Exception {
         StudyDto studyDto = new StudyDto();
         videoDto.setId(id);
         BeanUtils.copyProperties(videoDto, studyDto);
@@ -129,7 +130,7 @@ public class StudyController {
     @ApiOperation(value = "上/下架视频", notes = "执行成功返回true")
     @ApiImplicitParam(name = "id", value = "视频Id", required = true, paramType = "path", dataType = "Long", defaultValue = "1")
     @PutMapping("/video/{id}/status")
-    public ResponseVO videoStatus(@PathVariable("id") Long id) throws Exception {
+    public ResponseVO videoStatus(@Min(value = 0,message = "不能小于0")@PathVariable("id") Long id) throws Exception {
         return ResultUtil.success("上/下架视频成功", studyService.updateStatusById(id));
     }
 

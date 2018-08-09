@@ -13,8 +13,10 @@ import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiImplicitParams;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.validator.constraints.Email;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -22,6 +24,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.Resource;
+import javax.validation.constraints.Min;
 import java.util.Map;
 
 /**
@@ -34,6 +37,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequestMapping("/student")
+@Validated
 @Api(tags = "VarifyController", description = "验证相关API")
 public class VarifyController {
     @Resource
@@ -60,7 +64,7 @@ public class VarifyController {
             @ApiImplicitParam(name = "captcha", value = "验证码", required = true, dataType = "Integer")}
     )
     @PostMapping("/card/binding/phone/{id}")
-    public ResponseVO StudentVerifyPhone(@PathVariable("id") Long id, @RequestBody Map<String, String> captcha) throws ResourceIsNullException {
+    public ResponseVO StudentVerifyPhone(@Min (value = 0,message = "id不能小于0")@PathVariable("id") Long id, @RequestBody Map<String, String> captcha) throws ResourceIsNullException {
         return ResultUtil.success("短信验证成功", studentCardService.verifyCodePhone(id, captcha.get("captcha")));
     }
 
@@ -69,7 +73,7 @@ public class VarifyController {
             @ApiImplicitParam(name = "email", value = "邮箱", required = true, dataType = "String")}
     )
     @PostMapping("/card/binding/email/{id}")
-    public ResponseVO StudentBindingEmail(@PathVariable("id") Long id, @RequestBody Map<String, String> email) throws ResourceIsNullException {
+    public ResponseVO StudentBindingEmail(@Min(value = 0,message = "id不能小于0")@PathVariable("id") Long id, @RequestBody Map<String, String> email) throws ResourceIsNullException {
         mailUtil.sendMail(email.get("email"));
         return ResultUtil.success("邮件已发送, 请注意查收");
     }
@@ -79,7 +83,7 @@ public class VarifyController {
             @ApiImplicitParam(name = "captcha", value = "验证码", required = true, dataType = "Integer")}
     )
     @PutMapping("/card/binding/email/{id}")
-    public ResponseVO StudentVerifyEmail(@PathVariable("id") Long id, @RequestBody Map<String, String> captcha) throws ResourceIsNullException {
+    public ResponseVO StudentVerifyEmail(@Min (value = 0,message = "id不能小于0")@PathVariable("id") Long id, @RequestBody Map<String, String> captcha) throws ResourceIsNullException {
         return ResultUtil.success("验证成功", studentCardService.verifyCode(id, captcha.get("captcha")));
     }
 }

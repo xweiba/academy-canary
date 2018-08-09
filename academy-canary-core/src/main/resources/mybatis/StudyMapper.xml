@@ -45,18 +45,18 @@
                 AND subject = #{subject}
             </if>
             <if test="praise!=null">
-                <if test="praise[0]!=0 and praise[0]!=null">
+                <if test="praise[0]!=null">
                     AND praise >= ${praise[0]}
                 </if>
-                <if test="praise[1]!=0 and praise[1]!=null">
+                <if test="praise[1]!=null">
                     AND ${praise[1]} >= praise
                 </if>
             </if>
             <if test="collect!=null">
-                <if test="collect[0]!=0 and collect[0]!=null">
+                <if test="collect[0]!=null">
                     AND collect >= ${collect[0]}
                 </if>
-                <if test="collect[1]!=0 and collect[1]!=null">
+                <if test="collect[1]!=null">
                     AND ${collect[1]} >= collect
                 </if>
             </if>
@@ -73,7 +73,7 @@
     <select id="findVideoByVideoQuery" parameterType="homeVideoQuery"
             resultType="homeVideoListDto">
         SELECT
-        sd.id, sd.title, sd.`status`,
+        sd.id, sd.title, sd.`status`, sd.grade, sd.subject,
         (SELECT COUNT(id) FROM study_user WHERE type = 1 AND study_id = sd.id)
         AS praise,
         (SELECT COUNT(id) FROM study_user WHERE type = 1 AND study_id = sd.id
@@ -109,7 +109,7 @@
             resultType="homeBannerListDto">
         SELECT * FROM (
         SELECT
-        sd.id, sd.cover_plan_url, sd.title, sd.study_type, sd.`status`, sd.classify,
+        sd.id, sd.cover_plan_url, sd.title, sd.study_type, sd.`status`, sd.classify, sd.grade, sd.subject,
         (SELECT COUNT(id) FROM study_user WHERE type = 1 AND study_id = sd.id)
         AS praise
         FROM

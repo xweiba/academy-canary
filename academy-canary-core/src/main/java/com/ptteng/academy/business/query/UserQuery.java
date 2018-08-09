@@ -4,6 +4,9 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.validator.constraints.Email;
+
+import javax.validation.constraints.Pattern;
 
 /**
  * @program: canary
@@ -21,8 +24,10 @@ public class UserQuery extends IQuery{
     @ApiModelProperty(notes = "昵称", required = false)
     private String nickName;    // 昵称
     @ApiModelProperty(notes = "email", required = false)
+    @Email(message = "请输入正确格式的邮箱")
     private String email;
     @ApiModelProperty(notes = "手机号", required = false)
+    @Pattern(regexp = "^1(3|4|5|7|8)\\d{9}$",message = "手机号码格式错误")
     private String phone;
     @ApiModelProperty(notes = "逆袭豆范围", required = false, dataType = "Integer[]")
     private Integer[] bean; // 一个数组, 包含一个范围

@@ -1,7 +1,8 @@
 package com.ptteng.academy.business.dto;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+
+import java.util.Date;
 
 /**
  * @program: canary
@@ -21,4 +22,5 @@ public class ArticleListDto {
     private Long praise; // 收藏数
     private Long collect; // 点赞数
     private Boolean status; // 状态
+    private Date update_at; // 更新时间
 }

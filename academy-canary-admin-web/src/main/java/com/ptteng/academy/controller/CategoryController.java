@@ -16,6 +16,8 @@ import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,7 +38,7 @@ public class CategoryController {
     @ApiOperation(value = "获取枚举列表", notes = "根据传入分类名称返回分类对象")
     @ApiImplicitParam(name = "cName", value = "分类名称: article|grade|subject", required = true, paramType = "path", dataType = "String", defaultValue = "article")
     @GetMapping("/classify/{cName}")
-    public ResponseVO getClassIfy(@PathVariable("cName") String cName) throws Exception {
+    public ResponseVO getClassIfy(@NotNull(message = "分类名称不能为空") @PathVariable("cName") String cName) throws Exception {
         return ResultUtil.success("获取分类列表成功", (Object) consumeService.findListByName(cName));
     }
 }

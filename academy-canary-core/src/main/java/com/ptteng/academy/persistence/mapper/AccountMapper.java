@@ -31,6 +31,6 @@ public interface AccountMapper extends BaseMapper<Account> {
     @Select("SELECT COUNT(*) FROM account WHERE password = #{password} AND id = #{id}")
     Boolean findAccountByPassword(@Param("id") Long id, @Param("password") String password);
 
-    @Select("SELECT ac.id, ac.username, ro.role_name FROM account ac, role ro WHERE ac.username = #{accountName} GROUP BY ac.id")
+    @Select("SELECT ac.id, ac.username, ro.role_name FROM account ac, role ro WHERE ac.role_id = ro.id AND ac.username = #{accountName}")
     AccountDto findAccountLoginById(@Param("accountName") String accountName);
 }

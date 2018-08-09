@@ -10,7 +10,7 @@
         WHERE us.id = #{id}
     </select>
 
-    <select id="findUser" parameterType="com.ptteng.academy.business.query.UserQuery"
+    <select id="findUserList" parameterType="com.ptteng.academy.business.query.UserQuery"
             resultType="com.ptteng.academy.business.dto.UserBackDto">
         SELECT * FROM user
         WHERE 1 = 1
@@ -27,10 +27,10 @@
             AND email = #{email}
         </if>
         <if test="bean!=null">
-            <if test="bean[0]!=0 and bean[0]!=null">
+            <if test="bean[0]!=null">
                 AND bean >= ${bean[0]}
             </if>
-            <if test="bean[1]!=0 and bean[1]!=null">
+            <if test="bean[1]!=null">
                 AND ${bean[1]} >= bean
             </if>
         </if>

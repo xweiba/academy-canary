@@ -15,10 +15,15 @@ import com.ptteng.academy.util.ResultUtil;
 import io.swagger.annotations.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.type.TypeException;
+import org.springframework.expression.ParseException;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
+import javax.validation.Valid;
+import javax.validation.constraints.Min;
 import java.beans.IntrospectionException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -34,6 +39,7 @@ import java.util.Map;
 @Slf4j
 @Api(tags = "StudyController", description = "文章/视频相关Api")
 @RestController
+@Validated
 @RequestMapping("/student")
 public class StudyController {
 
@@ -43,7 +49,7 @@ public class StudyController {
     /*视频*/
     @ApiOperation(value = "获取视频Banner列表", notes = "传入实体类")
     @PostMapping("/study/videos")
-    public ResponseRowsVO getVideosBanner(@RequestBody HomeVideoQuery homeVideoQuery) throws FindNullException {
+    public ResponseRowsVO getVideosBanner(@Valid @RequestBody HomeVideoQuery homeVideoQuery) throws  Exception {
         return ResultUtil.success("获取视频Banner数据成功", studyService.findVideoBannerByQuery(homeVideoQuery));
     }
 
@@ -57,7 +63,7 @@ public class StudyController {
     @ApiOperation(value = "获取视频详情", notes = "传入用户ID和视频Id获取视频详情")
     @ApiImplicitParams({@ApiImplicitParam(name = "stuId", value = "传入学员ID", required = true, dataType = "Long"), @ApiImplicitParam(name = "id", value = "视频Id", paramType = "path", required = true, dataType = "Long")})
     @PostMapping("/study/video/{id}")
-    public ResponseVO getVideo(@PathVariable("id") Long id, @RequestBody Map<String, Long> stuId) throws ResourceIsNullException {
+    public ResponseVO getVideo(@Min (value = 0,message = "id不能小于0")@PathVariable("id") Long id, @RequestBody Map<String, Long> stuId) throws Exception {
         return ResultUtil.success("获取视频详情成功", studyService.findStudyByQuery(id, stuId.get("stuId"), 2));
     }
 
@@ -66,7 +72,7 @@ public class StudyController {
             @ApiImplicitParam(name = "stuId", value = "用户Id", required = true, dataType = "Long")
     })
     @PutMapping("/study/video/{id}/praise")
-    public ResponseVO videoPraise(@PathVariable("id") Long id, @RequestBody Map<String, Long> stuId) {
+    public ResponseVO videoPraise(@Min (value = 0,message = "id不能小于0")@PathVariable("id") Long id, @RequestBody Map<String, Long> stuId) {
         return ResultUtil.success("视频点赞成功", studyService.updatePraiseCollectStatus(id, stuId.get("stuId"), 1));
     }
 
@@ -75,7 +81,7 @@ public class StudyController {
             @ApiImplicitParam(name = "stuId", value = "用户Id", required = true, dataType = "Long")
     })
     @PutMapping("/study/video/{id}/collect")
-    public ResponseVO videoCollect(@PathVariable("id") Long id, @RequestBody Map<String, Long> stuId) {
+    public ResponseVO videoCollect(@Min (value = 0,message = "id不能小于0")@PathVariable("id") Long id, @RequestBody Map<String, Long> stuId) {
         log.info("videoCollect传入参数: " + id + stuId);
         return ResultUtil.success("视频收藏成功", studyService.updatePraiseCollectStatus(id, stuId.get("stuId"), 2));
     }
@@ -96,7 +102,7 @@ public class StudyController {
     @ApiOperation(value = "获取card文章详情信息", notes = "通过文章id获取详情")
     @ApiImplicitParam(name = "id", value = "文章id", required = true, paramType = "path", dataType = "Long")
     @PostMapping("/study/article/{id}")
-    public ResponseVO getArticle(@PathVariable("id") Long id, @ApiParam(name = "stuId", value = "用户Id", required = true) @RequestBody Map<String, Long> stuId) throws ResourceIsNullException {
+    public ResponseVO getArticle(@Min (value = 0,message = "id不能小于0")@PathVariable("id") Long id, @ApiParam(name = "stuId", value = "用户Id", required = true) @RequestBody Map<String, Long> stuId) throws ResourceIsNullException {
         return ResultUtil.success("获取card文章详情成功", studyService.findArticleById(id, stuId.get("stuId")));
     }
 
@@ -105,7 +111,7 @@ public class StudyController {
             @ApiImplicitParam(name = "stuId", value = "用户Id", required = true, dataType = "Long")
     })
     @PutMapping("/study/article/{id}/praise")
-    public ResponseVO articlePraise(@PathVariable("id") Long id, @RequestBody Map<String, Long> stuId) {
+    public ResponseVO articlePraise(@Min (value = 0,message = "id不能小于0")@PathVariable("id") Long id, @RequestBody Map<String, Long> stuId) {
         return ResultUtil.success("点赞操作成功", studyService.updatePraiseCollectStatus(id, stuId.get("stuId"), 1));
     }
 
@@ -115,7 +121,7 @@ public class StudyController {
             @ApiImplicitParam(name = "stuId", value = "用户Id", required = true, dataType = "Long")
     })
     @PutMapping("/study/article/{id}/collect")
-    public ResponseVO articleCollect(@PathVariable("id") Long id, @RequestBody Map<String, Long> stuId) {
+    public ResponseVO articleCollect(@Min (value = 0,message = "id不能小于0")@PathVariable("id") Long id, @RequestBody Map<String, Long> stuId) {
         log.info("videoCollect传入参数: " + id + stuId);
         return ResultUtil.success("收藏操作成功", studyService.updatePraiseCollectStatus(id, stuId.get("stuId"), 2));
     }
